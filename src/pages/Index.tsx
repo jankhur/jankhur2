@@ -14,7 +14,7 @@ const Index = () => {
         transition={{ duration: 1, delay: 0.2 }}
         className="pt-28 pb-20 md:pt-36 md:pb-32 px-6 md:px-10"
       >
-        <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[0.95] tracking-tight uppercase">
+        <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
           JAN
           <br />
           KHÜR
