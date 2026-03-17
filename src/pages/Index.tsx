@@ -1,16 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { motion } from "framer-motion";
+import Header from "@/components/Header";
+import ImageFeed from "@/components/ImageFeed";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Hero: Large name like LundLund */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="pt-24 pb-16 md:pt-28 md:pb-24 px-6 md:px-10"
+      >
+        <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[0.85] tracking-tight uppercase">
+          JAN
+          <br />
+          KHÜR
+        </h1>
+      </motion.div>
+
+      {/* Image Feed */}
+      <main className="pb-32">
+        <ImageFeed />
+      </main>
+
+      {/* Minimal Footer */}
+      <footer className="px-6 md:px-10 py-12 border-t border-border">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <span className="nav-link">© 2025 Jan Khür</span>
+          <div className="flex gap-6">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="nav-link">
+              Instagram
+            </a>
+            <a href="mailto:hello@jankhur.com" className="nav-link">
+              Contact
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
