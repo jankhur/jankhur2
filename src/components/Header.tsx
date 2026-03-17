@@ -18,7 +18,7 @@ const Header = () => {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
         <Link to="/" className="nav-link text-sm font-normal tracking-[0.2em]">
-          JAN KHÜR
+          PORTFOLIO
         </Link>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
