@@ -1,22 +1,34 @@
 import { useRef, useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import { arildImages } from "@/data/editorialData";
 
 const EditorialArild = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    const onScroll = () => {
+      if (el.scrollLeft > 30) setHasScrolled(true);
+    };
+
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       e.preventDefault();
       el.scrollLeft += e.deltaY;
     };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("wheel", onWheel);
+    };
   }, []);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
@@ -83,6 +95,45 @@ const EditorialArild = () => {
           <span className="font-normal text-muted-foreground">, Obos</span>
         </span>
       </div>
+
+      {/* Scroll hint arrow — mobile only, fades out after scrolling */}
+      <AnimatePresence>
+        {!hasScrolled && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.4 } }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="fixed bottom-8 right-6 z-30 pointer-events-none md:hidden"
+          >
+            <motion.svg
+              width="48"
+              height="24"
+              viewBox="0 0 48 24"
+              fill="none"
+              className="text-foreground"
+              animate={{ x: [0, 10, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <motion.path
+                d="M0 12 C8 12, 12 6, 20 6 C28 6, 28 18, 36 12 L46 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <motion.path
+                d="M40 6 L47 12 L40 18"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </motion.svg>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style>{`div::-webkit-scrollbar { display: none; }`}</style>
     </div>
