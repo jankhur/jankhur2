@@ -22,7 +22,7 @@ const feedItems: FeedItem[] = [
   { src: `${BASE}/439841/xhbtr_5036bd9a-8283-4cb0-8db6-115b37b90691_w1200.jpg`, aspectRatio: 1.237, layout: "full", name: "Lofoten VIII", year: "2022" },
   { src: `${BASE}/263648/xhbtr_91267bec-4de7-408c-955c-45e0906463be_w1200.jpg`, aspectRatio: 0.799, layout: "right", name: "Sauvage", year: "2022" },
   { src: `${BASE}/439846/xhbtr_470b9ed6-5160-4e06-9181-60bca52dfc6e_w1200.jpg`, aspectRatio: 0.715, layout: "left", name: "Lofoten X", year: "2022" },
-  { src: `${BASE}/439871/xhbtr_d0a931c4-ea26-4ac7-b280-11c9338fa707_w1200.jpg`, aspectRatio: 0.800, layout: "right", name: "Lofoten XI", year: "2021" },
+  { src: `${BASE}/439871/xhbtr_d0a931c4-ea26-4ac7-b280-11c9338fa707_w1200.jpg`, aspectRatio: 0.800, layout: "right", name: "Thando", year: "2021" },
   { src: `${BASE}/439847/xhbtr_5388e9f9-d4aa-4cb0-9814-5e1406743f45_w1200.jpg`, aspectRatio: 0.794, layout: "left", name: "Lofoten XII", year: "2021" },
   { src: `${BASE}/681260/xhbtr_422eec6f-aff1-495d-8007-9a6dcad71155_w1200.jpg`, aspectRatio: 0.749, layout: "center", name: "Lofoten XIII", year: "2022" },
   { src: `${BASE}/439848/xhbtr_5da6f741-1b9a-42ac-9a36-7d072884d433_w1200.jpg`, aspectRatio: 0.751, layout: "right", name: "Lofoten XIV", year: "2022" },
