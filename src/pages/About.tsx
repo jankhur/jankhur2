@@ -84,7 +84,7 @@ const About = () => {
             className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 md:mb-20"
           >
             <div>
-              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                 Studio
               </h2>
               <p className="font-serif text-sm leading-relaxed text-foreground">
@@ -103,7 +103,7 @@ const About = () => {
             </div>
 
             <div>
-              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                 Agency
               </h2>
               <p className="font-serif text-sm leading-relaxed text-foreground">
@@ -111,7 +111,7 @@ const About = () => {
                 representation by licensing agency Connected Archives, working within the
                 realms of portrait, documentary, fashion, and fine-art photography.
               </p>
-              <p className="font-sans text-[10px] text-muted-foreground mt-2 tracking-wide">
+              <p className="font-serif text-[11px] text-muted-foreground mt-2 tracking-wide">
                 2023 — worldwide
               </p>
             </div>
@@ -126,7 +126,7 @@ const About = () => {
             transition={{ duration: 0.7 }}
             className="mb-16 md:mb-20"
           >
-            <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+            <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Memberships
             </h2>
             <div>
@@ -148,7 +148,7 @@ const About = () => {
                   key={i}
                   className="grid grid-cols-[50px_1fr] gap-x-4 py-2.5 border-b border-border/40 first:border-t"
                 >
-                  <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                   <span className="font-serif text-xs text-muted-foreground tabular-nums">
                     {m.year}
                   </span>
                   <span className="font-serif text-sm leading-relaxed text-foreground">
@@ -169,7 +169,7 @@ const About = () => {
           >
             {exhibitions.map((group) => (
               <div key={group.section} className="mb-12 last:mb-0">
-                <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                   {group.section}
                 </h2>
                 <div>
@@ -178,14 +178,14 @@ const About = () => {
                       key={i}
                       className="grid grid-cols-[50px_1fr] gap-x-4 py-2 border-b border-border/40 first:border-t"
                     >
-                      <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                      <span className="font-serif text-xs text-muted-foreground tabular-nums">
                         {item.year}
                       </span>
                       <div>
                         <span className="font-serif text-sm leading-relaxed text-foreground">
                           {item.title}
                         </span>
-                        <span className="font-sans text-[11px] text-muted-foreground ml-2">
+                        <span className="font-serif text-[11px] text-muted-foreground ml-2">
                           {item.venue}
                         </span>
                       </div>
@@ -201,12 +201,12 @@ const About = () => {
       {/* Footer */}
       <footer className="px-6 md:px-10 py-12 border-t border-border">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <span className="nav-link">© 2025 Jan Khür</span>
+          <span className="font-serif text-sm text-muted-foreground">© 2025 Jan Khür</span>
           <div className="flex gap-6">
-            <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="nav-link">
+            <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Instagram
             </a>
-            <a href="mailto:jankhur@gmail.com" className="nav-link">
+            <a href="mailto:jankhur@gmail.com" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Contact
             </a>
           </div>
