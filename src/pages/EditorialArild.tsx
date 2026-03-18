@@ -6,18 +6,29 @@ import { arildImages } from "@/data/editorialData";
 const EditorialArild = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    const onScroll = () => {
+      if (el.scrollLeft > 30) setHasScrolled(true);
+    };
+
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       e.preventDefault();
       el.scrollLeft += e.deltaY;
     };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("wheel", onWheel);
+    };
   }, []);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
