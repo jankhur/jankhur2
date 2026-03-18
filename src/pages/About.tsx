@@ -185,7 +185,7 @@ const About = () => {
                         <span className="font-serif text-sm leading-relaxed text-foreground">
                           {item.title}
                         </span>
-                        <span className="font-sans text-[11px] text-muted-foreground ml-2">
+                        <span className="font-serif text-[11px] text-muted-foreground ml-2">
                           {item.venue}
                         </span>
                       </div>
