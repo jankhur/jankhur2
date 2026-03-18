@@ -73,19 +73,47 @@ const SketchFace = () => (
   </svg>
 );
 
-// Landing — hand-drawn heart
+// Landing — hand-drawn heart with an arrow through it
 const SketchHeart = () => (
-  <svg width="32" height="30" viewBox="0 0 48 44" fill="none" className="text-foreground">
+  <svg width="44" height="40" viewBox="0 0 64 56" fill="none" className="text-foreground">
+    {/* Heart — rough, double-stroked for sketchiness */}
     <path
-      d="M24 40 C20 36, 4 26, 4 14 C4 8, 8 3, 14 3 C18 3, 22 6, 24 10 C26 6, 30 3, 34 3 C40 3, 44 8, 44 14 C44 26, 28 36, 24 40 Z"
+      d="M32 50 C27 45, 6 32, 6 18 C6 10, 11 4, 18 4 C23 4, 28 7, 32 13 C36 7, 41 4, 46 4 C53 4, 58 10, 58 18 C58 32, 37 45, 32 50 Z"
       stroke="currentColor"
-      strokeWidth="2.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       fill="none"
     />
-    {/* Highlight line */}
-    <path d="M14 10 C12 12, 10 16, 11 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+    {/* Second stroke — offset for hand-drawn feel */}
+    <path
+      d="M32 48 C28 44, 9 33, 9 19 C9 12, 13 6, 19 6 C23 6, 27 9, 32 14 C37 9, 41 6, 45 6 C51 6, 55 12, 55 19 C55 33, 36 44, 32 48"
+      stroke="currentColor"
+      strokeWidth="0.8"
+      strokeLinecap="round"
+      fill="none"
+      opacity="0.4"
+    />
+    {/* Arrow going through the heart diagonally */}
+    <path
+      d="M4 42 L52 8"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    {/* Arrow tip */}
+    <path
+      d="M46 6 L54 7 L50 14"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    {/* Arrow feathers */}
+    <path d="M4 42 L8 38 L6 44" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+    {/* Little highlight sparkle */}
+    <path d="M20 14 L21 11 L23 14 L21 16 Z" stroke="currentColor" strokeWidth="0.8" fill="none" />
   </svg>
 );
 
