@@ -59,8 +59,6 @@ const Editorial = () => {
     setLightboxImage(img);
   }, []);
 
-  const imgMaxHeight = "calc(100vh - 140px)";
-
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
@@ -68,7 +66,7 @@ const Editorial = () => {
       {/* Horizontal scroll container */}
       <div
         ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center"
+        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center justify-start"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
           scrollbarWidth: "none",
@@ -87,8 +85,7 @@ const Editorial = () => {
         {arildImages.map((img, i) => (
             <div
               key={img.id}
-              className="shrink-0 px-3 md:px-5 flex items-center"
-              style={{ maxHeight: imgMaxHeight }}
+              className="shrink-0 px-3 md:px-5 flex items-center justify-center"
             >
               <img
                 src={img.src}
@@ -96,9 +93,10 @@ const Editorial = () => {
                 draggable={false}
                 loading={i < 5 ? "eager" : "lazy"}
                 onClick={() => handleImageClick(img)}
-                className="max-h-full w-auto object-contain select-none transition-opacity duration-500"
+                className="w-auto object-contain select-none transition-opacity duration-500"
                 style={{
-                  maxHeight: imgMaxHeight,
+                  maxHeight: "85vh",
+                  maxWidth: "90vw",
                   cursor: isDragging ? "grabbing" : "pointer",
                 }}
               />
