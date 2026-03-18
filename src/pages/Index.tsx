@@ -109,7 +109,7 @@ const Index = () => {
                 Instagram
               </motion.a>
               <motion.a
-                href="mailto:jankhur@gmail.com"
+                href="mailto:jan@abrakadabra.studio"
                 className="nav-link inline-block"
                 whileHover={{
                   y: [0, -6, 0, -4, 0, -2, 0],
