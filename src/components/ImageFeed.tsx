@@ -15,7 +15,7 @@ interface VisualEditSourceInfo {
   displayName: string;
 }
 
-type SourceElementMap = Map<string, Set<WeakRef<Element>>>;
+type SourceElementMap = Map<string, Set<{ deref(): Element | undefined }>>;
 
 const BASE = "https://images.xhbtr.com/v2/uploads/images";
 const SOURCE_KEY = Symbol.for("__jsxSource__");
