@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 import { notesImages, years, type NoteImage } from "@/data/notesData";
 
 const Notes = () => {
@@ -120,6 +121,7 @@ const Notes = () => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
+      <SketchCursor type="notes" />
 
       {/* Horizontal scroll container */}
       <div

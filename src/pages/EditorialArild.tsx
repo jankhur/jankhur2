@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 import { arildImages } from "@/data/editorialData";
 
 const EditorialArild = () => {
@@ -56,6 +57,7 @@ const EditorialArild = () => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
+      <SketchCursor type="editorial" />
 
       <div
         ref={scrollRef}

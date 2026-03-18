@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 import { journeyProjects } from "@/data/journeyData";
 
 type LayoutType = "full" | "center" | "left" | "right";
@@ -30,6 +31,7 @@ const Journey = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
+      <SketchCursor type="journey" />
 
       <main className="pt-28 pb-32">
         <div className="flex flex-col gap-24 md:gap-32">
