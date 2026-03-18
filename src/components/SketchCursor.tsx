@@ -128,7 +128,7 @@ const illustrationMap: Record<string, React.FC> = {
   journey: SketchTracks,
   notes: SketchDiary,
   about: SketchFace,
-  heart: SketchHeart,
+  heart: SketchLov,
 };
 
 interface SketchCursorProps {
