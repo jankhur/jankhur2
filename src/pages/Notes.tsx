@@ -118,6 +118,21 @@ const Notes = () => {
     []
   );
 
+  const handleAreaClick = useCallback((e: React.MouseEvent) => {
+    if (dragState.current.moved) return;
+    // Don't scroll if clicking an image (let lightbox handle it)
+    if ((e.target as HTMLElement).tagName === "IMG") return;
+    const el = scrollRef.current;
+    if (!el) return;
+    const clickX = e.clientX;
+    const midpoint = window.innerWidth / 2;
+    const scrollAmount = window.innerWidth * 0.6;
+    el.scrollTo({
+      left: el.scrollLeft + (clickX > midpoint ? scrollAmount : -scrollAmount),
+      behavior: "smooth",
+    });
+  }, []);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
@@ -137,6 +152,7 @@ const Notes = () => {
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
+        onClick={handleAreaClick}
       >
         {/* Leading spacer */}
         <div className="shrink-0 w-[15vw]" />
