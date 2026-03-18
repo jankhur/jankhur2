@@ -4,9 +4,8 @@ interface FeedItem {
   src: string;
   aspectRatio: number;
   layout: "full" | "center" | "left" | "right";
-  captionPrefix?: string;
-  captionName?: string;
-  captionSuffix?: string;
+  name?: string;
+  year?: string;
 }
 
 const BASE = "https://images.xhbtr.com/v2/uploads/images";
