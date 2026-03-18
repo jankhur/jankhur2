@@ -107,8 +107,8 @@ const EditorialArild = () => {
             className="fixed bottom-1/2 translate-y-1/2 right-6 z-30 pointer-events-none md:hidden"
           >
             <motion.svg
-              width="48"
-              height="24"
+              width="64"
+              height="32"
               viewBox="0 0 48 24"
               fill="none"
               className="text-foreground"
