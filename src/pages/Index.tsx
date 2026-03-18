@@ -36,7 +36,7 @@ const Index = () => {
         className="pt-24 pb-12 md:pt-28 md:pb-16 px-6 md:px-10"
       >
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10">
-          <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
+          <h1 className="font-sans font-bold text-foreground text-[13vw] md:text-[10vw] leading-[1.05] tracking-tight uppercase">
             <span className="inline-flex">
               {nameLetters.filter(l => l.line === 0).map((l, i) => (
                 <motion.span
