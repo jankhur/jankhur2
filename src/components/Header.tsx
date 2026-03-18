@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { label: "Editorial", href: "/editorial" },
@@ -153,6 +153,7 @@ const Header = ({ showName = false }: HeaderProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [flashKey, setFlashKey] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
+  const location = useLocation();
 
   const handleHover = useCallback((index: number) => {
     if (hoveredIndex !== index) {
@@ -161,10 +162,17 @@ const Header = ({ showName = false }: HeaderProps) => {
     setHoveredIndex(index);
   }, [hoveredIndex]);
 
+  const handleNameClick = useCallback((e: React.MouseEvent) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [location.pathname]);
+
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
-        <Link to="/" className="relative h-6 flex items-center">
+        <Link to="/" onClick={handleNameClick} className="relative h-6 flex items-center cursor-pointer">
           <AnimatePresence mode="wait">
             {showName && (
               <motion.span
