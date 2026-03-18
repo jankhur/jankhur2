@@ -216,20 +216,22 @@ const Header = ({ showName = false }: HeaderProps) => {
                   <motion.div
                     key={`camera-${hoveredIndex}`}
                     className="absolute pointer-events-none hidden md:block"
-                    initial={{ opacity: 0, scale: 0.6, rotate: -15 }}
+                    initial={{ opacity: 0, scale: 0.5, rotate: -25 }}
                     animate={{
                       opacity: 1,
-                      scale: 1,
-                      rotate: [0, -8, 5, -3, 0],
-                      x: hoveredIndex % 2 === 0 ? 120 : -140,
-                      y: hoveredIndex * 72 - 10,
+                      scale: [0.5, 1.15, 0.9, 1.05, 1],
+                      rotate: [-20, 14, -10, 6, -2, 0],
+                      x: hoveredIndex % 2 === 0 ? 200 : -250,
+                      y: hoveredIndex * 72 - 15,
                     }}
-                    exit={{ opacity: 0, scale: 0.5, rotate: 15 }}
+                    exit={{ opacity: 0, scale: 0.4, rotate: 20 }}
                     transition={{
                       type: "spring",
-                      stiffness: 200,
-                      damping: 15,
-                      rotate: { duration: 0.6, ease: "easeInOut" },
+                      stiffness: 140,
+                      damping: 10,
+                      mass: 0.8,
+                      rotate: { duration: 0.8, ease: "easeInOut" },
+                      scale: { duration: 0.6, ease: "easeOut" },
                     }}
                     style={{ top: 0, left: "50%" }}
                   >
