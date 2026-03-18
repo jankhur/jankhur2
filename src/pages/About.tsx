@@ -84,7 +84,7 @@ const About = () => {
             className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 md:mb-20"
           >
             <div>
-              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                 Studio
               </h2>
               <p className="font-serif text-sm leading-relaxed text-foreground">
@@ -103,7 +103,7 @@ const About = () => {
             </div>
 
             <div>
-              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                 Agency
               </h2>
               <p className="font-serif text-sm leading-relaxed text-foreground">
@@ -126,7 +126,7 @@ const About = () => {
             transition={{ duration: 0.7 }}
             className="mb-16 md:mb-20"
           >
-            <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+            <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Memberships
             </h2>
             <div>
@@ -169,7 +169,7 @@ const About = () => {
           >
             {exhibitions.map((group) => (
               <div key={group.section} className="mb-12 last:mb-0">
-                <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                <h2 className="font-serif text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
                   {group.section}
                 </h2>
                 <div>
