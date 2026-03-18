@@ -94,7 +94,22 @@ const Header = ({ showName = false }: HeaderProps) => {
                       onClick={() => setMenuOpen(false)}
                       className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
                     >
-                      {item.label}
+                      {item.label === "About" ? (
+                        <motion.span
+                          className="inline-block"
+                          whileHover={{
+                            scaleY: 1.3,
+                            y: 8,
+                            filter: "blur(2px)",
+                            opacity: 0.6,
+                            transition: { duration: 0.6, ease: "easeOut" }
+                          }}
+                        >
+                          {item.label}
+                        </motion.span>
+                      ) : (
+                        item.label
+                      )}
                     </Link>
                   )}
                 </motion.li>
