@@ -23,6 +23,12 @@ const Notes = () => {
       el.scrollLeft += e.deltaY;
     };
 
+    const onScroll = () => {
+      if (el.scrollLeft > 30) setHasScrolled(true);
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
