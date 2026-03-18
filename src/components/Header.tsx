@@ -294,7 +294,10 @@ const Header = ({ showName = false }: HeaderProps) => {
                     }}
                     style={{ top: 0, left: "50%" }}
                   >
-                    <HandDrawnCamera />
+                    {(() => {
+                      const Illustration = menuIllustrations[hoveredIndex!];
+                      return <Illustration />;
+                    })()}
                     <AnimatePresence mode="wait">
                       <FlashBurst key={flashKey} />
                     </AnimatePresence>
