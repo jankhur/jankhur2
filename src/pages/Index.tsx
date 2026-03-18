@@ -83,11 +83,18 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="md:pb-[1.5vw] md:max-w-xs lg:max-w-sm shrink-0">
             
-            <p className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6">Oslo-based Czech photographer working across editorial, commercial, and independent art projects. Focused on portraiture, social documentary, and analogue photography.
-
-
-
-            </p>
+            <motion.p
+              className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6"
+              whileHover={{
+                scaleY: 1.15,
+                y: 6,
+                filter: "blur(2px)",
+                opacity: 0.5,
+                transition: { duration: 0.6, ease: "easeOut" }
+              }}
+            >
+              Oslo-based Czech photographer working across editorial, commercial, and independent art projects. Focused on portraiture, social documentary, and analogue photography.
+            </motion.p>
             <div className="flex gap-4">
               <motion.a
                 href="https://www.instagram.com/jankhur"
