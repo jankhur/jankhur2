@@ -17,7 +17,7 @@ const feedItems: FeedItem[] = [
   { src: `${BASE}/681280/xhbtr_cf1a18ae-f668-433e-ac16-26eb2aa676e7_w1200.jpg`, aspectRatio: 0.811, layout: "center", name: "Lofoten III", year: "2023" },
   { src: `${BASE}/353528/xhbtr_bebeee25-e142-4edc-833a-a79d4a839283_w1200.jpg`, aspectRatio: 0.754, layout: "right", name: "Lofoten IV", year: "2023" },
   { src: `${BASE}/439791/xhbtr_e0e13b4f-9715-45b2-b24c-a07b1278f906_w1200.jpg`, aspectRatio: 0.824, layout: "left", name: "Japan", year: "2023" },
-  { src: `${BASE}/236538/xhbtr_11f77d4d-e61f-49c1-81da-40c1bdd12861_w1200.jpg`, aspectRatio: 0.894, layout: "center", name: "Lofoten VI", year: "2022" },
+  { src: `${BASE}/236538/xhbtr_11f77d4d-e61f-49c1-81da-40c1bdd12861_w1200.jpg`, aspectRatio: 0.894, layout: "center", name: "Daniele", year: "2022" },
   { src: `${BASE}/681279/xhbtr_edf61716-c289-4c68-9130-fb888ddde03f_w1200.jpg`, aspectRatio: 0.802, layout: "center", name: "Lofoten VII", year: "2024" },
   { src: `${BASE}/439841/xhbtr_5036bd9a-8283-4cb0-8db6-115b37b90691_w1200.jpg`, aspectRatio: 1.237, layout: "full", name: "Lofoten VIII", year: "2022" },
   { src: `${BASE}/263648/xhbtr_91267bec-4de7-408c-955c-45e0906463be_w1200.jpg`, aspectRatio: 0.799, layout: "right", name: "Lofoten IX", year: "2022" },
