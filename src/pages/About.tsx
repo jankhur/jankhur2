@@ -42,7 +42,7 @@ const exhibitions = [
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header showName />
 
       <div className="pt-28 md:pt-36 pb-24 px-6 md:px-10">
         <div className="max-w-3xl mx-auto">
