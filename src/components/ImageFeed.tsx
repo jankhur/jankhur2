@@ -140,11 +140,11 @@ const ImageFeed = () => {
         const titleId = `${captionId}-title`;
         const yearId = `${captionId}-year`;
         const sourceLine = feedItemSourceLines[index] ?? feedItemSourceLines[0];
-        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, "div");
-        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, "img");
-        const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, "p");
-        const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
-        const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
+        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, 3, "div");
+        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, 5, "img");
+        const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, 7, "p");
+        const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 9, "span");
+        const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 11, "span");
 
         return (
           <motion.div
