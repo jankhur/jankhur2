@@ -54,6 +54,19 @@ const EditorialArild = () => {
     setTimeout(() => setIsDragging(false), 50);
   }, []);
 
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (dragState.current.isDown) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    const clickX = e.clientX;
+    const midpoint = window.innerWidth / 2;
+    const scrollAmount = window.innerWidth * 0.6;
+    el.scrollTo({
+      left: el.scrollLeft + (clickX > midpoint ? scrollAmount : -scrollAmount),
+      behavior: "smooth",
+    });
+  }, []);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
@@ -72,6 +85,7 @@ const EditorialArild = () => {
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
+        onClick={handleClick}
       >
         <div className="shrink-0 w-[15vw]" />
 
