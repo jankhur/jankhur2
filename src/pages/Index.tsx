@@ -88,24 +88,32 @@ const Index = () => {
 
 
             </p>
-            <div>
-              <h2 className="nav-link mb-3">Contact</h2>
-              <div className="space-y-1">
-                <a
-                  href="https://www.instagram.com/jankhur"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link flex items-center gap-2">
-                  
-                  Instagram <span aria-hidden>→</span>
-                </a>
-                <a
-                  href="mailto:jankhur@gmail.com"
-                  className="nav-link flex items-center gap-2">
-                  
-                  Email <span aria-hidden>→</span>
-                </a>
-              </div>
+            <div className="flex gap-4">
+              <motion.a
+                href="https://www.instagram.com/jankhur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link inline-block"
+                whileHover={{ 
+                  rotate: [0, -10, 12, -8, 5, 0],
+                  scale: 1.15,
+                  transition: { duration: 0.5 }
+                }}
+                whileTap={{ scale: 0.8, rotate: 360 }}
+              >
+                Instagram ✦
+              </motion.a>
+              <motion.a
+                href="mailto:jankhur@gmail.com"
+                className="nav-link inline-block"
+                whileHover={{
+                  y: [0, -6, 0, -4, 0, -2, 0],
+                  transition: { duration: 0.6, repeat: Infinity }
+                }}
+                whileTap={{ scale: 1.4, transition: { type: "spring", stiffness: 500 } }}
+              >
+                Email ☻
+              </motion.a>
             </div>
           </motion.div>
         </div>
