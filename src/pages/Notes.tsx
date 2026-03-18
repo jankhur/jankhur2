@@ -8,6 +8,7 @@ const Notes = () => {
   const [currentYear, setCurrentYear] = useState(years[0]);
   const [lightboxImage, setLightboxImage] = useState<NoteImage | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
 
   // Convert vertical wheel to horizontal scroll
