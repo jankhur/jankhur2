@@ -166,7 +166,7 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !menuOpen && (
         <motion.div
           className="fixed pointer-events-none z-[100] hidden md:block"
           initial={{ opacity: 0, scale: 0.5 }}
