@@ -201,12 +201,12 @@ const About = () => {
       {/* Footer */}
       <footer className="px-6 md:px-10 py-12 border-t border-border">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <span className="nav-link">© 2025 Jan Khür</span>
+          <span className="font-serif text-sm text-muted-foreground">© 2025 Jan Khür</span>
           <div className="flex gap-6">
-            <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="nav-link">
+            <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Instagram
             </a>
-            <a href="mailto:jankhur@gmail.com" className="nav-link">
+            <a href="mailto:jankhur@gmail.com" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Contact
             </a>
           </div>
