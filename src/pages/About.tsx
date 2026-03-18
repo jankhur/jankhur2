@@ -52,12 +52,12 @@ const About = () => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20 flex flex-col md:flex-row md:justify-between md:items-end gap-8"
+            className="mb-16 md:mb-20"
           >
-            <h1 className="font-sans font-bold text-4xl md:text-5xl text-foreground tracking-tight uppercase">
+            <h1 className="font-sans font-bold text-4xl md:text-5xl text-foreground tracking-tight uppercase mb-6">
               Jan Khür
             </h1>
-            <div className="flex flex-col gap-1.5 font-sans text-xs text-muted-foreground tracking-wide">
+            <div className="flex flex-col gap-1 font-serif text-sm text-muted-foreground">
               <a
                 href="https://www.instagram.com/jankhur"
                 target="_blank"
