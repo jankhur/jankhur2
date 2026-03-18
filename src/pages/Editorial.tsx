@@ -3,41 +3,70 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { editorialProjects } from "@/data/editorialProjects";
 
+type LayoutType = "full" | "center" | "left" | "right";
+const layoutSequence: LayoutType[] = ["center", "right", "left", "center", "left", "right"];
+
+function getLayoutClasses(layout: LayoutType): string {
+  switch (layout) {
+    case "full":
+      return "w-full px-6 md:px-10 flex flex-col items-center";
+    case "center":
+      return "w-full flex flex-col items-center px-6 md:px-0 md:max-w-[45%] mx-auto";
+    case "left":
+      return "w-full px-6 md:pl-10 md:pr-0 md:max-w-[55%] flex flex-col items-center md:items-start";
+    case "right":
+      return "w-full px-6 md:pr-10 md:pl-0 md:max-w-[55%] ml-auto flex flex-col items-center md:items-end";
+    default:
+      return "w-full px-6 md:px-10 flex flex-col items-center";
+  }
+}
+
+const fadeInVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
+};
+
 const Editorial = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
 
-      <main className="px-6 md:px-10 pt-28 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {editorialProjects.map((project, i) => (
-            <motion.div
-              key={project.slug}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-            >
-              <Link
-                to={`/editorial/${project.slug}`}
-                className="group block"
+      <main className="pt-28 pb-32">
+        <div className="flex flex-col gap-24 md:gap-32">
+          {editorialProjects.map((project, i) => {
+            const layout = layoutSequence[i % layoutSequence.length];
+            return (
+              <motion.div
+                key={project.slug}
+                variants={fadeInVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+                className={getLayoutClasses(layout)}
               >
-                <div className="overflow-hidden mb-4">
-                  <img
-                    src={project.thumbnail}
-                    alt={project.title}
-                    className="w-full aspect-[3/4] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="font-serif text-sm">
-                  <span className="font-bold text-foreground">{project.title}</span>
-                  {project.subtitle && (
-                    <span className="font-normal text-muted-foreground">, {project.subtitle}</span>
-                  )}
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  to={`/editorial/${project.slug}`}
+                  className="group block"
+                >
+                  <div className="overflow-hidden">
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain transition-transform duration-700 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="mt-3 font-serif text-sm">
+                    <span className="font-bold text-foreground">{project.title}</span>
+                    {project.subtitle && (
+                      <span className="font-normal text-muted-foreground">, {project.subtitle}</span>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </main>
     </div>
