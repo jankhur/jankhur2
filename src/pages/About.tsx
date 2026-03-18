@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 },
 };
 
@@ -44,18 +44,20 @@ const About = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="pt-32 md:pt-40 pb-24 px-6 md:px-10">
-        <div className="max-w-5xl mx-auto">
-          {/* Header — Name + Contact */}
+      <div className="pt-28 md:pt-36 pb-24 px-6 md:px-10">
+        <div className="max-w-3xl mx-auto">
+          {/* Header — Name + Contact stacked */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="visible"
-            transition={{ duration: 0.8 }}
-            className="mb-24 md:mb-32"
+            transition={{ duration: 0.7 }}
+            className="mb-16 md:mb-20 flex flex-col md:flex-row md:justify-between md:items-end gap-8"
           >
-            <h1 className="font-serif text-5xl md:text-7xl mb-12 text-foreground">Jan Khür</h1>
-            <div className="flex flex-wrap gap-x-8 gap-y-2 font-serif text-base text-muted-foreground">
+            <h1 className="font-sans font-bold text-4xl md:text-5xl text-foreground tracking-tight uppercase">
+              Jan Khür
+            </h1>
+            <div className="flex flex-col gap-1.5 font-sans text-xs text-muted-foreground tracking-wide">
               <a
                 href="https://www.instagram.com/jankhur"
                 target="_blank"
@@ -72,122 +74,127 @@ const About = () => {
             </div>
           </motion.div>
 
-          {/* CV Sections — stacked with generous spacing */}
-          <div className="space-y-20 md:space-y-28">
-            {/* Exhibitions */}
-            <motion.section
-              variants={fadeIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              {exhibitions.map((group) => (
-                <div key={group.section} className="mb-16 last:mb-0">
-                  <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8">
-                    {group.section}
-                  </h2>
-                  <div className="space-y-0">
-                    {group.items.map((item, i) => (
-                      <div
-                        key={i}
-                        className="grid grid-cols-[60px_1fr_1fr] md:grid-cols-[80px_1fr_1fr] gap-x-4 py-3 border-b border-border/40 first:border-t"
-                      >
-                        <span className="font-sans text-xs text-muted-foreground tabular-nums pt-0.5">
-                          {item.year}
-                        </span>
+          {/* Studio & Agency — first, side by side */}
+          <motion.section
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 md:mb-20"
+          >
+            <div>
+              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                Studio
+              </h2>
+              <p className="font-serif text-sm leading-relaxed text-foreground">
+                <a
+                  href="https://abrakadabra.studio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold hover:opacity-50 transition-opacity"
+                >
+                  Abrakadabra
+                </a>{" "}
+                provides photographic services and creative direction. Founded by Jan Khür
+                and Julie Hrnčířová in Oslo in 2021. With a focus on playfulness, honesty and
+                originality.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                Agency
+              </h2>
+              <p className="font-serif text-sm leading-relaxed text-foreground">
+                <span className="font-semibold">Connected Archives</span> — From 2023 worldwide
+                representation by licensing agency Connected Archives, working within the
+                realms of portrait, documentary, fashion, and fine-art photography.
+              </p>
+              <p className="font-sans text-[10px] text-muted-foreground mt-2 tracking-wide">
+                2023 — worldwide
+              </p>
+            </div>
+          </motion.section>
+
+          {/* Memberships */}
+          <motion.section
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="mb-16 md:mb-20"
+          >
+            <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              Memberships
+            </h2>
+            <div>
+              {[
+                {
+                  year: "2022",
+                  name: "Bjørka",
+                  desc: "Member of Bjørka Foundation, photographic collective and studio for analogue camera based artists",
+                  location: "Oslo (NO)",
+                },
+                {
+                  year: "2019",
+                  name: "Forbundet Frie Fotografer (FFF)",
+                  desc: "Member of The Norwegian Association for Fine Art Photographers",
+                  location: "Oslo (NO)",
+                },
+              ].map((m, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-[50px_1fr] gap-x-4 py-2.5 border-b border-border/40 first:border-t"
+                >
+                  <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                    {m.year}
+                  </span>
+                  <span className="font-serif text-sm leading-relaxed text-foreground">
+                    <span className="font-semibold">{m.name}</span> — {m.desc}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.section>
+
+          {/* Exhibitions — constrained width, two-column grid */}
+          <motion.section
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            {exhibitions.map((group) => (
+              <div key={group.section} className="mb-12 last:mb-0">
+                <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                  {group.section}
+                </h2>
+                <div>
+                  {group.items.map((item, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-[50px_1fr] gap-x-4 py-2 border-b border-border/40 first:border-t"
+                    >
+                      <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                        {item.year}
+                      </span>
+                      <div>
                         <span className="font-serif text-sm leading-relaxed text-foreground">
                           {item.title}
                         </span>
-                        <span className="font-sans text-xs text-muted-foreground pt-0.5 text-right md:text-left">
+                        <span className="font-sans text-[11px] text-muted-foreground ml-2">
                           {item.venue}
                         </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </motion.section>
-
-            {/* Studio & Agency — side by side */}
-            <motion.section
-              variants={fadeIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-16"
-            >
-              <div>
-                <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8">
-                  Studio
-                </h2>
-                <p className="font-serif text-sm leading-relaxed text-foreground">
-                  <a
-                    href="https://abrakadabra.studio/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold hover:opacity-50 transition-opacity"
-                  >
-                    Abrakadabra
-                  </a>{" "}
-                  provides photographic services and creative direction. It was founded by Jan Khür
-                  and Julie Hrnčířová in Oslo in 2021. With a focus on playfulness, honesty and
-                  originality.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8">
-                  Agency
-                </h2>
-                <p className="font-serif text-sm leading-relaxed text-foreground">
-                  <span className="font-semibold">Connected Archives</span> — From 2023 worldwide
-                  representation by licensing agency Connected Archives who is working within the
-                  realms of portrait, documentary, fashion, and fine-art photography pictures live on
-                  the pages of renowned newspapers and magazines.
-                </p>
-                <p className="font-sans text-[10px] text-muted-foreground mt-3 tracking-wide">
-                  2023 — worldwide
-                </p>
-              </div>
-            </motion.section>
-
-            {/* Memberships */}
-            <motion.section
-              variants={fadeIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8">
-                Memberships
-              </h2>
-              <div className="space-y-0">
-                <div className="grid grid-cols-[60px_1fr_1fr] md:grid-cols-[80px_1fr_1fr] gap-x-4 py-3 border-b border-border/40 border-t">
-                  <span className="font-sans text-xs text-muted-foreground tabular-nums pt-0.5">2022</span>
-                  <span className="font-serif text-sm leading-relaxed text-foreground">
-                    <span className="font-semibold">Bjørka</span> — Member of Bjørka Foundation,
-                    photographic collective and studio for analogue camera based artist
-                  </span>
-                  <span className="font-sans text-xs text-muted-foreground pt-0.5 text-right md:text-left">
-                    Oslo (NO)
-                  </span>
-                </div>
-                <div className="grid grid-cols-[60px_1fr_1fr] md:grid-cols-[80px_1fr_1fr] gap-x-4 py-3 border-b border-border/40">
-                  <span className="font-sans text-xs text-muted-foreground tabular-nums pt-0.5">2019</span>
-                  <span className="font-serif text-sm leading-relaxed text-foreground">
-                    <span className="font-semibold">Forbundet Frie Fotografer (FFF)</span> — member
-                    of The Norwegian Association for Fine Art Photographers
-                  </span>
-                  <span className="font-sans text-xs text-muted-foreground pt-0.5 text-right md:text-left">
-                    Oslo (NO)
-                  </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </motion.section>
-          </div>
+            ))}
+          </motion.section>
         </div>
       </div>
 
