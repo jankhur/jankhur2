@@ -104,26 +104,26 @@ const EditorialArild = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="fixed bottom-1/2 translate-y-1/2 right-6 z-30 pointer-events-none md:hidden"
+            className="fixed top-1/2 -translate-y-1/2 left-0 z-30 pointer-events-none md:hidden"
           >
             <motion.svg
-              width="64"
+              width="140"
               height="32"
-              viewBox="0 0 48 24"
+              viewBox="0 0 140 32"
               fill="none"
               className="text-foreground"
               animate={{ x: [0, 10, 0] }}
               transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             >
               <motion.path
-                d="M0 12 C8 12, 12 6, 20 6 C28 6, 28 18, 36 12 L46 12"
+                d="M0 16 C20 16, 30 8, 50 8 C70 8, 70 24, 90 16 L130 16"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 fill="none"
               />
               <motion.path
-                d="M40 6 L47 12 L40 18"
+                d="M122 8 L134 16 L122 24"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
