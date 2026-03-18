@@ -89,7 +89,7 @@ const EditorialArild = () => {
         <div className="shrink-0 w-[30vw]" />
       </div>
 
-      <div className="fixed bottom-8 left-6 md:left-10 z-30 pointer-events-none">
+      <div className="fixed bottom-12 left-6 md:left-10 z-30 pointer-events-none">
         <span className="font-serif text-sm text-foreground">
           <span className="font-bold">Arild Eriksen</span>
           <span className="font-normal text-muted-foreground">, Obos</span>
