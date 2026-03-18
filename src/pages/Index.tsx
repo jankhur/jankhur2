@@ -35,7 +35,7 @@ const Index = () => {
         transition={{ duration: 0.4 }}
         className="pt-24 pb-12 md:pt-28 md:pb-16 px-6 md:px-10">
         
-        <div className="flex flex-col md:flex-row md:items-end gap-10 md:gap-16">
+        <div className="max-w-[90vw] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-10 md:gap-16">
           <h1 className="font-sans font-bold text-foreground text-[13vw] md:text-[10vw] leading-[1.05] tracking-tight uppercase">
             <span className="inline-flex">
               {nameLetters.filter((l) => l.line === 0).map((l, i) =>
