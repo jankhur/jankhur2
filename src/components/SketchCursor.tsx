@@ -133,6 +133,7 @@ interface SketchCursorProps {
 const SketchCursor = ({ type }: SketchCursorProps) => {
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     // Only on desktop
@@ -141,6 +142,9 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
 
     const onMove = (e: MouseEvent) => {
       setPos({ x: e.clientX, y: e.clientY });
+      // Check if menu overlay is open (nav with z-40)
+      const nav = document.querySelector("nav.fixed");
+      setMenuOpen(!!nav);
       if (!visible) setVisible(true);
     };
 
@@ -162,7 +166,7 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !menuOpen && (
         <motion.div
           className="fixed pointer-events-none z-[100] hidden md:block"
           initial={{ opacity: 0, scale: 0.5 }}
