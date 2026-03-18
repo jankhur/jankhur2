@@ -147,11 +147,6 @@ const FlashBurst = () => (
     <line x1="27" y1="33" x2="33" y2="27" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
   </motion.svg>
 );
-    <line x1="27" y1="7" x2="33" y2="13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="7" y1="33" x2="13" y2="27" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="27" y1="33" x2="33" y2="27" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-  </motion.svg>
-);
 
 const Header = ({ showName = false }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
