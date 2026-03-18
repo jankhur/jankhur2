@@ -8,18 +8,7 @@ interface FeedItem {
   year?: string;
 }
 
-interface VisualEditSourceInfo {
-  fileName: string;
-  lineNumber: number;
-  columnNumber: number;
-  displayName: string;
-}
-
-type SourceElementMap = Map<string, Set<{ deref(): Element | undefined }>>;
-
 const BASE = "https://images.xhbtr.com/v2/uploads/images";
-const SOURCE_KEY = Symbol.for("__jsxSource__");
-const REGISTERED_SOURCE_KEY = Symbol.for("__lovableRegisteredSourceKey__");
 
 const feedItems: FeedItem[] = [
   // Portfolio images
@@ -73,114 +62,54 @@ const feedItems: FeedItem[] = [
   { src: `${BASE}/352643/xhbtr_db9ac87f-0e1f-4cc8-beda-477265cdfb11_w1200.jpg`, aspectRatio: 0.698, layout: "right", name: "South Africa", year: "2022" },
 ];
 
-const feedItemSourceLines = [
-  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
-  44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-  62, 63, 64, 65, 66, 67, 68, 70, 72, 73,
-] as const;
-
 const fadeInVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
 };
 
-function getSourceElementMap(): SourceElementMap | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
+const ImageFeedItem = ({ item, index }: { item: FeedItem; index: number }) => {
+  const captionId = `feed-caption-${index + 1}`;
+  const titleId = `${captionId}-title`;
+  const yearId = `${captionId}-year`;
 
-  return (window as Window & { sourceElementMap?: SourceElementMap }).sourceElementMap ?? null;
-}
-
-function getSourceKey(sourceInfo: VisualEditSourceInfo): string {
-  return `${sourceInfo.fileName}:${sourceInfo.lineNumber}:${sourceInfo.columnNumber}`;
-}
-
-function registerVisualEditNode(node: HTMLElement, sourceInfo: VisualEditSourceInfo) {
-  const taggedNode = node as HTMLElement & Record<string | symbol, unknown>;
-  const sourceKey = getSourceKey(sourceInfo);
-
-  if (taggedNode[REGISTERED_SOURCE_KEY] === sourceKey) {
-    return;
-  }
-
-  taggedNode[SOURCE_KEY] = sourceInfo;
-  taggedNode[REGISTERED_SOURCE_KEY] = sourceKey;
-
-  const sourceElementMap = getSourceElementMap();
-  if (!sourceElementMap) {
-    return;
-  }
-
-  const refs = sourceElementMap.get(sourceKey) ?? new Set<{ deref(): Element | undefined }>();
-  refs.add({ deref: () => node });
-  sourceElementMap.set(sourceKey, refs);
-}
-
-function createVisualEditRef<T extends HTMLElement>(sourceLine: number, columnNumber: number, displayName: string) {
-  return (node: T | null) => {
-    if (!node) {
-      return;
-    }
-
-    registerVisualEditNode(node, {
-      fileName: "src/components/ImageFeed.tsx",
-      lineNumber: sourceLine,
-      columnNumber,
-      displayName,
-    });
-  };
-}
+  return (
+    <motion.div
+      variants={fadeInVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      className={getLayoutClasses(item.layout)}
+      data-feed-item={captionId}
+    >
+      <img
+        src={item.src}
+        alt={`Jan Khür photography ${index + 1}`}
+        className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
+        loading="lazy"
+      />
+      {item.name && (
+        <p
+          className="mt-3 font-serif text-sm leading-relaxed"
+          data-caption-id={captionId}
+          aria-labelledby={item.year ? `${titleId} ${yearId}` : titleId}
+        >
+          <span id={titleId} className="font-bold text-foreground">{item.name}</span>
+          {item.year && (
+            <span id={yearId} className="font-normal text-muted-foreground">, {item.year}</span>
+          )}
+        </p>
+      )}
+    </motion.div>
+  );
+};
 
 const ImageFeed = () => {
   return (
     <div className="flex flex-col gap-3 md:gap-20">
-      {feedItems.map((item, index) => {
-        const captionId = `feed-caption-${index + 1}`;
-        const titleId = `${captionId}-title`;
-        const yearId = `${captionId}-year`;
-        const sourceLine = feedItemSourceLines[index] ?? feedItemSourceLines[0];
-        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, 3, "div");
-        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, 5, "img");
-        const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, 7, "p");
-        const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 9, "span");
-        const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 11, "span");
-
-        return (
-          <motion.div
-            key={item.src}
-            ref={itemRef}
-            variants={fadeInVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className={getLayoutClasses(item.layout)}
-            data-feed-item={captionId}
-          >
-            <img
-              ref={imageRef}
-              src={item.src}
-              alt={`Jan Khür photography ${index + 1}`}
-              className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
-              loading="lazy"
-            />
-            {item.name && (
-              <p
-                ref={captionRef}
-                className="mt-3 font-serif text-sm leading-relaxed"
-                data-caption-id={captionId}
-                aria-labelledby={item.year ? `${titleId} ${yearId}` : titleId}
-              >
-                <span ref={titleRef} id={titleId} className="font-bold text-foreground">{item.name}</span>
-                {item.year && (
-                  <span ref={yearRef} id={yearId} className="font-normal text-muted-foreground">, {item.year}</span>
-                )}
-              </p>
-            )}
-          </motion.div>
-        );
-      })}
+      {feedItems.map((item, index) => (
+        <ImageFeedItem key={item.src} item={item} index={index} />
+      ))}
     </div>
   );
 };
