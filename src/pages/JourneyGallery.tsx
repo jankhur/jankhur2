@@ -87,7 +87,7 @@ const JourneyGallery = () => {
         </div>
       </main>
 
-      <div className="fixed bottom-8 left-6 md:left-10 z-30 pointer-events-none">
+      <div className="fixed bottom-12 left-6 md:left-10 z-30 pointer-events-none">
         <span className="font-serif text-sm text-foreground">
           <span className="font-bold">{gallery.title}</span>
         </span>
