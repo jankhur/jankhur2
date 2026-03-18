@@ -78,13 +78,25 @@ const Header = ({ showName = false }: HeaderProps) => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: i * 0.06, duration: 0.4 }}
                 >
-                  <Link
-                    to={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
-                  >
-                    {item.label}
-                  </Link>
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMenuOpen(false)}
+                      className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </motion.li>
               ))}
             </ul>
