@@ -112,7 +112,7 @@ const Index = () => {
                 }}
                 whileTap={{ scale: 1.4, transition: { type: "spring", stiffness: 500 } }}
               >
-                Email ☻
+                Email
               </motion.a>
             </div>
           </motion.div>
