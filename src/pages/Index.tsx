@@ -76,6 +76,41 @@ const Index = () => {
         </h1>
       </motion.div>
 
+      {/* Bio & Contact Strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        className="px-6 md:px-10 pb-20 md:pb-28"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-20">
+          <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground max-w-2xl">
+            Jan Khür is an Oslo-based photographer working between editorial,
+            commercial and independent works. With a focus on portraiture,
+            documentary and analogue processes.
+          </p>
+          <div>
+            <h2 className="nav-link mb-4">Contact</h2>
+            <div className="space-y-2">
+              <a
+                href="https://www.instagram.com/jankhur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link flex items-center gap-2"
+              >
+                Instagram <span aria-hidden>→</span>
+              </a>
+              <a
+                href="mailto:jankhur@gmail.com"
+                className="nav-link flex items-center gap-2"
+              >
+                Email <span aria-hidden>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Image Feed */}
       <main className="pb-32">
         <ImageFeed />
