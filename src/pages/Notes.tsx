@@ -107,9 +107,6 @@ const Notes = () => {
     []
   );
 
-  // Image height: use viewport height minus padding
-  const imgHeight = "75vh";
-
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
@@ -117,7 +114,7 @@ const Notes = () => {
       {/* Horizontal scroll container */}
       <div
         ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center"
+        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center justify-start"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
           scrollbarWidth: "none",
@@ -133,18 +130,11 @@ const Notes = () => {
         <div className="shrink-0 w-[15vw]" />
 
         {/* Images */}
-        {notesImages.map((img, i) => {
-          const width =
-            img.aspectRatio >= 1
-              ? `calc(${imgHeight} * ${img.aspectRatio})`
-              : `calc(${imgHeight} * ${img.aspectRatio})`;
-
-          return (
+        {notesImages.map((img, i) => (
             <div
               key={img.id}
               data-year={img.year}
-              className="shrink-0 px-3 md:px-5"
-              style={{ height: imgHeight }}
+              className="shrink-0 px-3 md:px-5 flex items-center justify-center"
             >
               <img
                 src={img.src}
@@ -152,15 +142,15 @@ const Notes = () => {
                 draggable={false}
                 loading={i < 5 ? "eager" : "lazy"}
                 onClick={() => handleImageClick(img)}
-                className="h-full w-auto object-cover select-none transition-opacity duration-500"
+                className="w-auto object-contain select-none transition-opacity duration-500"
                 style={{
-                  width,
+                  maxHeight: "85vh",
+                  maxWidth: "90vw",
                   cursor: isDragging ? "grabbing" : "pointer",
                 }}
               />
             </div>
-          );
-        })}
+        ))}
 
         {/* Trailing spacer */}
         <div className="shrink-0 w-[30vw]" />
