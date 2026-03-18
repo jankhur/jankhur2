@@ -83,7 +83,7 @@ const ImageFeed = () => {
           <img
             src={item.src}
             alt={`Jan Khür photography ${index + 1}`}
-            className="w-full h-auto block"
+            className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
             loading="lazy"
           />
           {item.name && (
@@ -101,15 +101,15 @@ const ImageFeed = () => {
 function getLayoutClasses(layout: FeedItem["layout"]): string {
   switch (layout) {
     case "full":
-      return "w-full px-6 md:px-10";
+      return "w-full px-6 md:px-10 flex flex-col items-center";
     case "center":
       return "w-full flex flex-col items-center px-6 md:px-0 md:max-w-[45%] mx-auto";
     case "left":
-      return "w-full px-6 md:pl-10 md:pr-0 md:max-w-[55%]";
+      return "w-full px-6 md:pl-10 md:pr-0 md:max-w-[55%] flex flex-col items-center md:items-start";
     case "right":
-      return "w-full px-6 md:pr-10 md:pl-0 md:max-w-[55%] ml-auto";
+      return "w-full px-6 md:pr-10 md:pl-0 md:max-w-[55%] ml-auto flex flex-col items-center md:items-end";
     default:
-      return "w-full px-6 md:px-10";
+      return "w-full px-6 md:px-10 flex flex-col items-center";
   }
 }
 
