@@ -84,14 +84,11 @@ const Editorial = () => {
         <div className="shrink-0 w-[15vw]" />
 
         {/* Images */}
-        {arildImages.map((img, i) => {
-          const width = `calc(${imgHeight} * ${img.aspectRatio})`;
-
-          return (
+        {arildImages.map((img, i) => (
             <div
               key={img.id}
-              className="shrink-0 px-3 md:px-5"
-              style={{ height: imgHeight }}
+              className="shrink-0 px-3 md:px-5 flex items-center"
+              style={{ maxHeight: imgMaxHeight }}
             >
               <img
                 src={img.src}
@@ -99,15 +96,14 @@ const Editorial = () => {
                 draggable={false}
                 loading={i < 5 ? "eager" : "lazy"}
                 onClick={() => handleImageClick(img)}
-                className="h-full w-auto object-cover select-none transition-opacity duration-500"
+                className="max-h-full w-auto object-contain select-none transition-opacity duration-500"
                 style={{
-                  width,
+                  maxHeight: imgMaxHeight,
                   cursor: isDragging ? "grabbing" : "pointer",
                 }}
               />
             </div>
-          );
-        })}
+        ))}
 
         {/* Trailing spacer */}
         <div className="shrink-0 w-[30vw]" />
