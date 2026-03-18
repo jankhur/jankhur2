@@ -74,9 +74,9 @@ const feedItems: FeedItem[] = [
 ];
 
 const feedItemSourceLines = [
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-  33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-  51, 52, 53, 54, 55, 56, 57, 59, 61, 62,
+  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
+  44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+  62, 63, 64, 65, 66, 67, 68, 70, 72, 73,
 ] as const;
 
 const fadeInVariants = {
@@ -117,7 +117,7 @@ function registerVisualEditNode(node: HTMLElement, sourceInfo: VisualEditSourceI
   sourceElementMap.set(sourceKey, refs);
 }
 
-function createVisualEditRef<T extends HTMLElement>(sourceLine: number, displayName: string) {
+function createVisualEditRef<T extends HTMLElement>(sourceLine: number, columnNumber: number, displayName: string) {
   return (node: T | null) => {
     if (!node) {
       return;
@@ -126,7 +126,7 @@ function createVisualEditRef<T extends HTMLElement>(sourceLine: number, displayN
     registerVisualEditNode(node, {
       fileName: "src/components/ImageFeed.tsx",
       lineNumber: sourceLine,
-      columnNumber: 3,
+      columnNumber,
       displayName,
     });
   };
@@ -140,11 +140,11 @@ const ImageFeed = () => {
         const titleId = `${captionId}-title`;
         const yearId = `${captionId}-year`;
         const sourceLine = feedItemSourceLines[index] ?? feedItemSourceLines[0];
-        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, "div");
-        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, "img");
-        const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, "p");
-        const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
-        const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
+        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, 3, "div");
+        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, 5, "img");
+        const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, 7, "p");
+        const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 9, "span");
+        const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, 11, "span");
 
         return (
           <motion.div
