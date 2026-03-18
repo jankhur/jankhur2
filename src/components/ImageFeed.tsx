@@ -57,11 +57,10 @@ const ImageFeed = () => {
             className="w-full h-auto block"
             loading="lazy"
           />
-          {item.captionName && (
-            <p className="mt-3 font-serif text-sm text-muted-foreground leading-relaxed">
-              {item.captionPrefix && <span>{item.captionPrefix} </span>}
-              <span className="font-bold text-foreground">{item.captionName}</span>
-              {item.captionSuffix && <span> {item.captionSuffix}</span>}
+          {item.name && (
+            <p className="mt-3 font-serif text-sm leading-relaxed">
+              <span className="font-bold text-foreground">{item.name}</span>
+              {item.year && <span className="font-normal text-muted-foreground">, {item.year}</span>}
             </p>
           )}
         </motion.div>
