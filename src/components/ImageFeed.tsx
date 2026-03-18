@@ -14,7 +14,7 @@ const feedItems: FeedItem[] = [
   // Portfolio images
   { src: `${BASE}/439792/xhbtr_abf226bb-2939-4158-80fd-07eaa2bc1ad1_w1200.jpg`, aspectRatio: 1.276, layout: "full", name: "Lofoten I", year: "2022" },
   { src: `${BASE}/352746/xhbtr_aaef9b47-2c36-4759-b65f-9e9cf1637598_w1200.jpg`, aspectRatio: 1.242, layout: "full", name: "Lofoten II", year: "2022" },
-  { src: `${BASE}/681280/xhbtr_cf1a18ae-f668-433e-ac16-26eb2aa676e7_w1200.jpg`, aspectRatio: 0.811, layout: "center", name: "Lofoten III", year: "2023" },
+  { src: `${BASE}/681280/xhbtr_cf1a18ae-f668-433e-ac16-26eb2aa676e7_w1200.jpg`, aspectRatio: 0.811, layout: "center", name: "Alpine", year: "2023" },
   { src: `${BASE}/353528/xhbtr_bebeee25-e142-4edc-833a-a79d4a839283_w1200.jpg`, aspectRatio: 0.754, layout: "right", name: "Lofoten IV", year: "2023" },
   { src: `${BASE}/439791/xhbtr_e0e13b4f-9715-45b2-b24c-a07b1278f906_w1200.jpg`, aspectRatio: 0.824, layout: "left", name: "Japan", year: "2023" },
   { src: `${BASE}/236538/xhbtr_11f77d4d-e61f-49c1-81da-40c1bdd12861_w1200.jpg`, aspectRatio: 0.894, layout: "center", name: "Daniele", year: "2022" },
