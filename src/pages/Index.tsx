@@ -2,6 +2,16 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 
+const nameLetters = [
+  { char: "J", line: 0 },
+  { char: "A", line: 0 },
+  { char: "N", line: 0 },
+  { char: "K", line: 1 },
+  { char: "H", line: 1 },
+  { char: "Ü", line: 1 },
+  { char: "R", line: 1 },
+];
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -15,9 +25,43 @@ const Index = () => {
         className="pt-28 pb-20 md:pt-36 md:pb-32 px-6 md:px-10"
       >
         <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
-          JAN
+          <span className="inline-flex">
+            {nameLetters.filter(l => l.line === 0).map((l, i) => (
+              <motion.span
+                key={`line0-${i}`}
+                className="inline-block"
+                animate={{ y: [0, -8, 0, 6, 0] }}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.12,
+                  repeat: 7,
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                }}
+              >
+                {l.char}
+              </motion.span>
+            ))}
+          </span>
           <br />
-          KHÜR
+          <span className="inline-flex">
+            {nameLetters.filter(l => l.line === 1).map((l, i) => (
+              <motion.span
+                key={`line1-${i}`}
+                className="inline-block"
+                animate={{ y: [0, -8, 0, 6, 0] }}
+                transition={{
+                  duration: 0.6,
+                  delay: (i + 3) * 0.12,
+                  repeat: 7,
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                }}
+              >
+                {l.char}
+              </motion.span>
+            ))}
+          </span>
         </h1>
       </motion.div>
 
