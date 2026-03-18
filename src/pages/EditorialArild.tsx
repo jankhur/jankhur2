@@ -104,7 +104,7 @@ const EditorialArild = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.4 } }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="fixed bottom-8 right-6 z-30 pointer-events-none md:hidden"
+            className="fixed bottom-1/2 translate-y-1/2 right-6 z-30 pointer-events-none md:hidden"
           >
             <motion.svg
               width="48"
