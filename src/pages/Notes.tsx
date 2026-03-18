@@ -8,6 +8,7 @@ const Notes = () => {
   const [currentYear, setCurrentYear] = useState(years[0]);
   const [lightboxImage, setLightboxImage] = useState<NoteImage | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
 
   // Convert vertical wheel to horizontal scroll
@@ -22,8 +23,17 @@ const Notes = () => {
       el.scrollLeft += e.deltaY;
     };
 
+    const onScroll = () => {
+      if (el.scrollLeft > 30) setHasScrolled(true);
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   // Track scroll to update year
@@ -157,7 +167,7 @@ const Notes = () => {
       </div>
 
       {/* Year indicator — fixed bottom-left */}
-      <div className="fixed bottom-8 left-6 md:left-10 z-30 pointer-events-none">
+      <div className="fixed bottom-12 left-6 md:left-10 z-30 pointer-events-none">
         <AnimatePresence mode="wait">
           <motion.span
             key={currentYear}
@@ -225,6 +235,45 @@ const Notes = () => {
             >
               Close
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll hint arrow — mobile only */}
+      <AnimatePresence>
+        {!hasScrolled && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.4 } }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="fixed top-1/2 -translate-y-1/2 left-0 z-30 pointer-events-none md:hidden"
+          >
+            <motion.svg
+              width="140"
+              height="32"
+              viewBox="0 0 140 32"
+              fill="none"
+              className="text-foreground"
+              animate={{ x: [0, 10, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <motion.path
+                d="M0 16 C20 16, 30 8, 50 8 C70 8, 70 24, 90 16 L130 16"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <motion.path
+                d="M122 8 L134 16 L122 24"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </motion.svg>
           </motion.div>
         )}
       </AnimatePresence>
