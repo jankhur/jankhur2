@@ -154,7 +154,7 @@ const Notes = () => {
                 onClick={() => handleImageClick(img)}
                 className="w-auto object-contain select-none transition-opacity duration-500"
                 style={{
-                  maxHeight: "85vh",
+                  maxHeight: "75vh",
                   maxWidth: "90vw",
                   cursor: isDragging ? "grabbing" : "pointer",
                 }}

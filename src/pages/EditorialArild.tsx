@@ -81,7 +81,7 @@ const EditorialArild = () => {
               draggable={false}
               loading={i < 5 ? "eager" : "lazy"}
               className="w-auto object-contain select-none transition-opacity duration-500"
-              style={{ maxHeight: "85vh", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "default" }}
+              style={{ maxHeight: "75vh", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "default" }}
             />
           </div>
         ))}
