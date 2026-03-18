@@ -206,7 +206,7 @@ const Notes = () => {
           <button
             key={year}
             onClick={() => jumpToYear(year)}
-            className={`font-sans text-[10px] tracking-[0.15em] uppercase transition-opacity duration-300 ${
+            className={`font-serif text-xs tracking-[0.1em] transition-opacity duration-300 ${
               currentYear === year
                 ? "text-foreground opacity-100"
                 : "text-foreground opacity-30 hover:opacity-60"
