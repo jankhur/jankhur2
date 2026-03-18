@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
+import SketchCursor from "@/components/SketchCursor";
 
 const nameLetters = [
 { char: "J", line: 0 },
