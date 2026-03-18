@@ -137,7 +137,7 @@ const Index = () => {
             <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Instagram
             </a>
-            <a href="mailto:jankhur@gmail.com" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="mailto:jan@abrakadabra.studio" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Contact
             </a>
           </div>
