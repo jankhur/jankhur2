@@ -86,11 +86,9 @@ const Index = () => {
             <motion.p
               className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6"
               whileHover={{
-                scaleY: 1.15,
-                y: 6,
-                filter: "blur(2px)",
-                opacity: 0.5,
-                transition: { duration: 0.6, ease: "easeOut" }
+                rotate: [0, -0.5, 0.5, -0.3, 0],
+                y: [0, -2, 0],
+                transition: { duration: 0.5, ease: "easeInOut" }
               }}
             >
               Oslo-based Czech photographer working across editorial, commercial, and independent art projects. Focused on portraiture, social documentary, and analogue photography.
