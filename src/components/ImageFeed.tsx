@@ -56,6 +56,9 @@ const ImageFeed = () => {
             className="w-full h-auto block"
             loading="lazy"
           />
+          {item.caption && (
+            <p className="mt-2 text-xs text-muted-foreground tracking-wide">{item.caption}</p>
+          )}
         </motion.div>
       ))}
     </div>
