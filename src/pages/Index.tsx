@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
+import SketchCursor from "@/components/SketchCursor";
 
 const nameLetters = [
 { char: "J", line: 0 },
@@ -27,6 +28,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header showName={scrolled} />
+      <SketchCursor type="heart" />
 
       {/* Hero: Name + Bio side by side */}
       <motion.div

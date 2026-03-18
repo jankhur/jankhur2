@@ -73,12 +73,29 @@ const SketchFace = () => (
   </svg>
 );
 
+// Landing — hand-drawn heart
+const SketchHeart = () => (
+  <svg width="32" height="30" viewBox="0 0 48 44" fill="none" className="text-foreground">
+    <path
+      d="M24 40 C20 36, 4 26, 4 14 C4 8, 8 3, 14 3 C18 3, 22 6, 24 10 C26 6, 30 3, 34 3 C40 3, 44 8, 44 14 C44 26, 28 36, 24 40 Z"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    {/* Highlight line */}
+    <path d="M14 10 C12 12, 10 16, 11 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+  </svg>
+);
+
 const illustrationMap: Record<string, React.FC> = {
   editorial: SketchMagazine,
   commercial: SketchMoney,
   journey: SketchTracks,
   notes: SketchDiary,
   about: SketchFace,
+  heart: SketchHeart,
 };
 
 interface SketchCursorProps {
