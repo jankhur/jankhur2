@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 16 },

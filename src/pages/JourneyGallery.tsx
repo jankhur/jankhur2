@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 import { japanImages, southAfricaImages, type JourneyImage } from "@/data/journeyData";
 
 const galleryMap: Record<string, { images: JourneyImage[]; title: string }> = {

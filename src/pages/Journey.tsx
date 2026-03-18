@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import SketchCursor from "@/components/SketchCursor";
 import { journeyProjects } from "@/data/journeyData";
 
 type LayoutType = "full" | "center" | "left" | "right";
