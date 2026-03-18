@@ -28,86 +28,86 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header showName={scrolled} />
 
-      {/* Hero: Large name */}
+      {/* Hero: Name + Bio side by side */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: scrolled ? 0 : 1 }}
         transition={{ duration: 0.4 }}
         className="pt-28 pb-20 md:pt-36 md:pb-32 px-6 md:px-10"
       >
-        <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
-          <span className="inline-flex">
-            {nameLetters.filter(l => l.line === 0).map((l, i) => (
-              <motion.span
-                key={`line0-${i}`}
-                className="inline-block"
-                animate={{ y: [0, -8, 0, 6, 0] }}
-                transition={{
-                  duration: 0.6,
-                  delay: i * 0.12,
-                  repeat: 7,
-                  repeatType: "loop",
-                  ease: "easeInOut",
-                }}
-              >
-                {l.char}
-              </motion.span>
-            ))}
-          </span>
-          <br />
-          <span className="inline-flex">
-            {nameLetters.filter(l => l.line === 1).map((l, i) => (
-              <motion.span
-                key={`line1-${i}`}
-                className="inline-block"
-                animate={{ y: [0, -8, 0, 6, 0] }}
-                transition={{
-                  duration: 0.6,
-                  delay: (i + 3) * 0.12,
-                  repeat: 7,
-                  repeatType: "loop",
-                  ease: "easeInOut",
-                }}
-              >
-                {l.char}
-              </motion.span>
-            ))}
-          </span>
-        </h1>
-      </motion.div>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10">
+          <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
+            <span className="inline-flex">
+              {nameLetters.filter(l => l.line === 0).map((l, i) => (
+                <motion.span
+                  key={`line0-${i}`}
+                  className="inline-block"
+                  animate={{ y: [0, -8, 0, 6, 0] }}
+                  transition={{
+                    duration: 0.6,
+                    delay: i * 0.12,
+                    repeat: 7,
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                  }}
+                >
+                  {l.char}
+                </motion.span>
+              ))}
+            </span>
+            <br />
+            <span className="inline-flex">
+              {nameLetters.filter(l => l.line === 1).map((l, i) => (
+                <motion.span
+                  key={`line1-${i}`}
+                  className="inline-block"
+                  animate={{ y: [0, -8, 0, 6, 0] }}
+                  transition={{
+                    duration: 0.6,
+                    delay: (i + 3) * 0.12,
+                    repeat: 7,
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                  }}
+                >
+                  {l.char}
+                </motion.span>
+              ))}
+            </span>
+          </h1>
 
-      {/* Bio & Contact Strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="px-6 md:px-10 pb-20 md:pb-28"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-20">
-          <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground max-w-2xl">
-            Jan Khür is an Oslo-based photographer working between editorial,
-            commercial and independent works. With a focus on portraiture,
-            documentary and analogue processes.
-          </p>
-          <div>
-            <h2 className="nav-link mb-4">Contact</h2>
-            <div className="space-y-2">
-              <a
-                href="https://www.instagram.com/jankhur"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-link flex items-center gap-2"
-              >
-                Instagram <span aria-hidden>→</span>
-              </a>
-              <a
-                href="mailto:jankhur@gmail.com"
-                className="nav-link flex items-center gap-2"
-              >
-                Email <span aria-hidden>→</span>
-              </a>
+          {/* Bio & Contact */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="md:pb-[1.5vw] md:max-w-xs lg:max-w-sm shrink-0"
+          >
+            <p className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6">
+              Oslo-based photographer working between editorial,
+              commercial and independent works. With a focus on portraiture,
+              documentary and analogue processes.
+            </p>
+            <div>
+              <h2 className="nav-link mb-3">Contact</h2>
+              <div className="space-y-1">
+                <a
+                  href="https://www.instagram.com/jankhur"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-link flex items-center gap-2"
+                >
+                  Instagram <span aria-hidden>→</span>
+                </a>
+                <a
+                  href="mailto:jankhur@gmail.com"
+                  className="nav-link flex items-center gap-2"
+                >
+                  Email <span aria-hidden>→</span>
+                </a>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
 
