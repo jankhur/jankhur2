@@ -101,7 +101,7 @@ const Index = () => {
                 }}
                 whileTap={{ scale: 0.8, rotate: 360 }}
               >
-                Instagram ✦
+                Instagram
               </motion.a>
               <motion.a
                 href="mailto:jankhur@gmail.com"
