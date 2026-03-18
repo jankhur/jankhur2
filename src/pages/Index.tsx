@@ -48,7 +48,7 @@ const Index = () => {
                 transition={{
                   duration: 0.6,
                   delay: i * 0.12,
-                  repeat: 7,
+                  repeat: 5,
                   repeatType: "loop",
                   ease: "easeInOut"
                 }}>
@@ -67,7 +67,7 @@ const Index = () => {
                 transition={{
                   duration: 0.6,
                   delay: (i + 3) * 0.12,
-                  repeat: 7,
+                  repeat: 5,
                   repeatType: "loop",
                   ease: "easeInOut"
                 }}>
