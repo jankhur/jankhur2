@@ -73,48 +73,53 @@ const SketchFace = () => (
   </svg>
 );
 
-// Landing — hand-drawn heart with an arrow through it
-const SketchHeart = () => (
-  <svg width="44" height="40" viewBox="0 0 64 56" fill="none" className="text-foreground">
-    {/* Heart — rough, double-stroked for sketchiness */}
+// Landing — hand-drawn "Løv" text
+const SketchLov = () => (
+  <motion.svg
+    width="48"
+    height="28"
+    viewBox="0 0 72 40"
+    fill="none"
+    className="text-foreground"
+    animate={{ scale: [1, 1.08, 1, 1.05, 1] }}
+    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+  >
+    {/* L */}
     <path
-      d="M32 50 C27 45, 6 32, 6 18 C6 10, 11 4, 18 4 C23 4, 28 7, 32 13 C36 7, 41 4, 46 4 C53 4, 58 10, 58 18 C58 32, 37 45, 32 50 Z"
+      d="M6 6 C6 8, 5 22, 6 30 C7 32, 12 31, 18 30"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      fill="none"
+    />
+    {/* ø */}
+    <path
+      d="M26 16 C22 16, 20 20, 20 24 C20 28, 23 31, 27 31 C31 31, 34 28, 34 24 C34 20, 31 16, 26 16"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      strokeLinejoin="round"
       fill="none"
     />
-    {/* Second stroke — offset for hand-drawn feel */}
+    {/* slash through ø */}
+    <path d="M22 30 L32 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    {/* v */}
     <path
-      d="M32 48 C28 44, 9 33, 9 19 C9 12, 13 6, 19 6 C23 6, 27 9, 32 14 C37 9, 41 6, 45 6 C51 6, 55 12, 55 19 C55 33, 36 44, 32 48"
+      d="M40 16 C42 24, 44 28, 46 30 C48 28, 52 20, 54 16"
       stroke="currentColor"
-      strokeWidth="0.8"
-      strokeLinecap="round"
-      fill="none"
-      opacity="0.4"
-    />
-    {/* Arrow going through the heart diagonally */}
-    <path
-      d="M4 42 L52 8"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-    {/* Arrow tip */}
-    <path
-      d="M46 6 L54 7 L50 14"
-      stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       fill="none"
     />
-    {/* Arrow feathers */}
-    <path d="M4 42 L8 38 L6 44" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-    {/* Little highlight sparkle */}
-    <path d="M20 14 L21 11 L23 14 L21 16 Z" stroke="currentColor" strokeWidth="0.8" fill="none" />
-  </svg>
+    {/* little heart dot */}
+    <path
+      d="M60 10 C61 8, 64 8, 64 10 C64 12, 62 14, 60 15 C58 14, 56 12, 56 10 C56 8, 59 8, 60 10"
+      stroke="currentColor"
+      strokeWidth="1"
+      strokeLinecap="round"
+      fill="currentColor"
+    />
+  </motion.svg>
 );
 
 const illustrationMap: Record<string, React.FC> = {
