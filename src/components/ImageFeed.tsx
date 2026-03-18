@@ -57,7 +57,7 @@ const ImageFeed = () => {
             loading="lazy"
           />
           {item.caption && (
-            <p className="mt-2 text-xs text-muted-foreground tracking-wide">{item.caption}</p>
+            <p className="mt-3 font-serif text-sm text-muted-foreground leading-relaxed">{item.caption}</p>
           )}
         </motion.div>
       ))}
