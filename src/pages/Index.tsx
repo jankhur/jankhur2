@@ -81,7 +81,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="md:pb-[1.5vw] md:max-w-xs lg:max-w-sm shrink-0">
+            className="md:pb-[1.5vw] md:flex-1 shrink-0">
             
             <motion.p
               className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6"
