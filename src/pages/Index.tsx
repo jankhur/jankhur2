@@ -28,6 +28,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header showName={scrolled} />
+      <SketchCursor type="heart" />
 
       {/* Hero: Name + Bio side by side */}
       <motion.div
