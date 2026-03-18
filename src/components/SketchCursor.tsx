@@ -139,7 +139,7 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
           className="fixed pointer-events-none z-[100] hidden md:block"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{
-            opacity: 0.6,
+            opacity: 1,
             scale: 1,
             x: pos.x + 16,
             y: pos.y + 16,
