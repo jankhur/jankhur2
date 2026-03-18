@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const navItems = [
   { label: "Editorial", href: "/editorial" },
   { label: "Commercial", href: "https://abrakadabra.studio/", external: true },
-  { label: "Portfolio", href: "/portfolio" },
+  
   { label: "Journey", href: "/journey" },
   { label: "Notes", href: "/notes" },
   { label: "About", href: "/about" },
