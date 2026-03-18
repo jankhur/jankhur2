@@ -30,7 +30,10 @@ const Notes = () => {
     el.addEventListener("scroll", onScroll, { passive: true });
 
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   // Track scroll to update year
