@@ -87,7 +87,7 @@ const ImageFeed = () => {
             loading="lazy"
           />
           {item.name && (
-            <p className="mt-3 font-serif text-sm leading-relaxed">
+            <p className="mt-6 font-serif text-sm leading-relaxed">
               <span className="font-bold text-foreground">{item.name}</span>
               {item.year && <span className="font-normal text-muted-foreground">, {item.year}</span>}
             </p>
