@@ -67,8 +67,8 @@ const About = () => {
                 @jankhur
               </a>
               <span>(+47) 98 642 904</span>
-              <a href="mailto:jankhur@gmail.com" className="hover:text-foreground transition-colors">
-                jankhur@gmail.com
+              <a href="mailto:jan@abrakadabra.studio" className="hover:text-foreground transition-colors">
+                jan@abrakadabra.studio
               </a>
               <span>Oslo, Norway</span>
             </div>
@@ -206,7 +206,7 @@ const About = () => {
             <a href="https://www.instagram.com/jankhur" target="_blank" rel="noopener noreferrer" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Instagram
             </a>
-            <a href="mailto:jankhur@gmail.com" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="mailto:jan@abrakadabra.studio" className="font-serif text-sm text-muted-foreground hover:text-foreground transition-colors">
               Contact
             </a>
           </div>
