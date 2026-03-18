@@ -11,14 +11,31 @@ const navItems = [
   { label: "About", href: "/about" },
 ];
 
-const Header = () => {
+interface HeaderProps {
+  showName?: boolean;
+}
+
+const Header = ({ showName = false }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
-        <Link to="/" className="nav-link text-sm font-normal tracking-[0.2em]">
-          PORTFOLIO
+        <Link to="/" className="relative h-6 flex items-center">
+          <AnimatePresence mode="wait">
+            {showName && (
+              <motion.span
+                key="name"
+                initial={{ opacity: 0, y: 20, scale: 0.5 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.8 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="text-sm font-bold tracking-[0.2em] text-foreground uppercase"
+              >
+                JAN KHÜR
+              </motion.span>
+            )}
+          </AnimatePresence>
         </Link>
         <button
           onClick={() => setMenuOpen(!menuOpen)}

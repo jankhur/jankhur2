@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
@@ -13,15 +14,25 @@ const nameLetters = [
 ];
 
 const Index = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header showName={scrolled} />
 
-      {/* Hero: Large name like LundLund */}
+      {/* Hero: Large name */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.2 }}
+        animate={{ opacity: scrolled ? 0 : 1 }}
+        transition={{ duration: 0.4 }}
         className="pt-28 pb-20 md:pt-36 md:pb-32 px-6 md:px-10"
       >
         <h1 className="font-sans font-bold text-foreground text-[15vw] md:text-[12vw] leading-[1.1] tracking-tight uppercase">
