@@ -84,32 +84,39 @@ const Header = ({ showName = false }: HeaderProps) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setMenuOpen(false)}
-                      className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
+                      className="font-serif text-4xl md:text-5xl text-foreground"
                     >
-                      {item.label}
+                      <motion.span
+                        className="inline-block"
+                        whileHover={{
+                          scaleY: 1.3,
+                          y: 8,
+                          filter: "blur(2px)",
+                          opacity: 0.6,
+                          transition: { duration: 0.6, ease: "easeOut" }
+                        }}
+                      >
+                        {item.label}
+                      </motion.span>
                     </a>
                   ) : (
                     <Link
                       to={item.href}
                       onClick={() => setMenuOpen(false)}
-                      className="font-serif text-4xl md:text-5xl text-foreground hover:opacity-50 transition-opacity duration-300"
+                      className="font-serif text-4xl md:text-5xl text-foreground"
                     >
-                      {item.label === "About" ? (
-                        <motion.span
-                          className="inline-block"
-                          whileHover={{
-                            scaleY: 1.3,
-                            y: 8,
-                            filter: "blur(2px)",
-                            opacity: 0.6,
-                            transition: { duration: 0.6, ease: "easeOut" }
-                          }}
-                        >
-                          {item.label}
-                        </motion.span>
-                      ) : (
-                        item.label
-                      )}
+                      <motion.span
+                        className="inline-block"
+                        whileHover={{
+                          scaleY: 1.3,
+                          y: 8,
+                          filter: "blur(2px)",
+                          opacity: 0.6,
+                          transition: { duration: 0.6, ease: "easeOut" }
+                        }}
+                      >
+                        {item.label}
+                      </motion.span>
                     </Link>
                   )}
                 </motion.li>
