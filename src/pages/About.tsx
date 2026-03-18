@@ -111,7 +111,7 @@ const About = () => {
                 representation by licensing agency Connected Archives, working within the
                 realms of portrait, documentary, fashion, and fine-art photography.
               </p>
-              <p className="font-sans text-[10px] text-muted-foreground mt-2 tracking-wide">
+              <p className="font-serif text-[11px] text-muted-foreground mt-2 tracking-wide">
                 2023 — worldwide
               </p>
             </div>
