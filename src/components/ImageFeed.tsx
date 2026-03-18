@@ -112,8 +112,8 @@ function registerVisualEditNode(node: HTMLElement, sourceInfo: VisualEditSourceI
     return;
   }
 
-  const refs = sourceElementMap.get(sourceKey) ?? new Set<WeakRef<Element>>();
-  refs.add(new WeakRef(node));
+  const refs = sourceElementMap.get(sourceKey) ?? new Set<{ deref(): Element | undefined }>();
+  refs.add({ deref: () => node });
   sourceElementMap.set(sourceKey, refs);
 }
 
