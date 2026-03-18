@@ -10,7 +10,7 @@ interface FeedItem {
 const BASE = "https://images.xhbtr.com/v2/uploads/images";
 
 const feedItems: FeedItem[] = [
-  { src: `${BASE}/439792/xhbtr_abf226bb-2939-4158-80fd-07eaa2bc1ad1_w1200.jpg`, aspectRatio: 1.276, layout: "full", caption: "Project Title — Publication, 2024" },
+  { src: `${BASE}/439792/xhbtr_abf226bb-2939-4158-80fd-07eaa2bc1ad1_w1200.jpg`, aspectRatio: 1.276, layout: "full", caption: "Lofoten — Sunset, 2022" },
   { src: `${BASE}/352746/xhbtr_aaef9b47-2c36-4759-b65f-9e9cf1637598_w1200.jpg`, aspectRatio: 1.242, layout: "full", caption: "Project Title — Client Name" },
   { src: `${BASE}/681280/xhbtr_cf1a18ae-f668-433e-ac16-26eb2aa676e7_w1200.jpg`, aspectRatio: 0.811, layout: "center", caption: "Project Title — Magazine, 2023" },
   { src: `${BASE}/353528/xhbtr_bebeee25-e142-4edc-833a-a79d4a839283_w1200.jpg`, aspectRatio: 0.754, layout: "right", caption: "Project Title — Editorial" },
