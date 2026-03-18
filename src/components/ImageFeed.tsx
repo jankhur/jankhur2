@@ -70,30 +70,43 @@ const fadeInVariants = {
 const ImageFeed = () => {
   return (
     <div className="flex flex-col gap-3 md:gap-20">
-      {feedItems.map((item, index) => (
-        <motion.div
-          key={index}
-          variants={fadeInVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-          className={getLayoutClasses(item.layout)}
-        >
-          <img
-            src={item.src}
-            alt={`Jan Khür photography ${index + 1}`}
-            className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
-            loading="lazy"
-          />
-          {item.name && (
-            <p className="mt-3 font-serif text-sm leading-relaxed">
-              <span className="font-bold text-foreground">{item.name}</span>
-              {item.year && <span className="font-normal text-muted-foreground">, {item.year}</span>}
-            </p>
-          )}
-        </motion.div>
-      ))}
+      {feedItems.map((item, index) => {
+        const captionId = `feed-caption-${index + 1}`;
+        const titleId = `${captionId}-title`;
+        const yearId = `${captionId}-year`;
+
+        return (
+          <motion.div
+            key={item.src}
+            variants={fadeInVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+            className={getLayoutClasses(item.layout)}
+            data-feed-item={captionId}
+          >
+            <img
+              src={item.src}
+              alt={`Jan Khür photography ${index + 1}`}
+              className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
+              loading="lazy"
+            />
+            {item.name && (
+              <p
+                className="mt-3 font-serif text-sm leading-relaxed"
+                data-caption-id={captionId}
+                aria-labelledby={item.year ? `${titleId} ${yearId}` : titleId}
+              >
+                <span id={titleId} className="font-bold text-foreground">{item.name}</span>
+                {item.year && (
+                  <span id={yearId} className="font-normal text-muted-foreground">, {item.year}</span>
+                )}
+              </p>
+            )}
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
