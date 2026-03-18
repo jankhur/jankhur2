@@ -54,10 +54,10 @@ const About = () => {
             transition={{ duration: 0.7 }}
             className="mb-16 md:mb-20"
           >
-            <h1 className="font-sans font-bold text-4xl md:text-5xl text-foreground tracking-tight uppercase mb-6">
+            <h1 className="font-serif font-semibold text-4xl md:text-5xl text-foreground tracking-tight mb-6">
               Jan Khür
             </h1>
-            <div className="flex flex-col gap-1 font-serif text-sm text-muted-foreground">
+            <div className="flex flex-col gap-1 font-serif text-sm text-foreground">
               <a
                 href="https://www.instagram.com/jankhur"
                 target="_blank"
