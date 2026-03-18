@@ -178,7 +178,7 @@ const About = () => {
                       key={i}
                       className="grid grid-cols-[50px_1fr] gap-x-4 py-2 border-b border-border/40 first:border-t"
                     >
-                      <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                      <span className="font-serif text-xs text-muted-foreground tabular-nums">
                         {item.year}
                       </span>
                       <div>
