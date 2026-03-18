@@ -57,6 +57,7 @@ const EditorialArild = () => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
+      <SketchCursor type="editorial" />
 
       <div
         ref={scrollRef}

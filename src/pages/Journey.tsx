@@ -31,6 +31,7 @@ const Journey = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
+      <SketchCursor type="journey" />
 
       <main className="pt-28 pb-32">
         <div className="flex flex-col gap-24 md:gap-32">

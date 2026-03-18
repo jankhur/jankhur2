@@ -121,6 +121,7 @@ const Notes = () => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-background">
       <Header showName />
+      <SketchCursor type="notes" />
 
       {/* Horizontal scroll container */}
       <div
