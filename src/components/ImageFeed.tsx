@@ -140,6 +140,8 @@ const ImageFeed = () => {
         const titleId = `${captionId}-title`;
         const yearId = `${captionId}-year`;
         const sourceLine = feedItemSourceLines[index] ?? feedItemSourceLines[0];
+        const itemRef = createVisualEditRef<HTMLDivElement>(sourceLine, "div");
+        const imageRef = createVisualEditRef<HTMLImageElement>(sourceLine, "img");
         const captionRef = createVisualEditRef<HTMLParagraphElement>(sourceLine, "p");
         const titleRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
         const yearRef = createVisualEditRef<HTMLSpanElement>(sourceLine, "span");
@@ -147,6 +149,7 @@ const ImageFeed = () => {
         return (
           <motion.div
             key={item.src}
+            ref={itemRef}
             variants={fadeInVariants}
             initial="hidden"
             whileInView="visible"
@@ -156,6 +159,7 @@ const ImageFeed = () => {
             data-feed-item={captionId}
           >
             <img
+              ref={imageRef}
               src={item.src}
               alt={`Jan Khür photography ${index + 1}`}
               className="block h-auto w-auto max-h-[85vh] max-w-[90vw] object-contain"
