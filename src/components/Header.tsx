@@ -15,37 +15,52 @@ interface HeaderProps {
 }
 
 const HandDrawnCamera = () => (
-  <svg width="64" height="52" viewBox="0 0 64 52" fill="none" className="text-foreground">
-    {/* Camera body — sketchy rectangle */}
+  <svg width="72" height="58" viewBox="0 0 72 58" fill="none" className="text-foreground">
+    {/* Camera body — crude wobbly box */}
     <path
-      d="M6 16 C5 15, 7 13, 10 13 L54 12 C57 12, 59 14, 58 16 L57 40 C57 43, 55 44, 52 44 L12 45 C9 45, 7 43, 7 40 Z"
+      d="M8 18 C6 17, 5 15, 8 14 L56 11 C60 10, 63 13, 62 17 L60 42 C59 46, 56 48, 52 47 L14 49 C10 49, 7 46, 8 42 Z"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+      strokeDasharray="3 1"
+    />
+    {/* Lens — messy double circle */}
+    <path
+      d="M35 23 C41 21, 47 25, 46 31 C45 37, 40 40, 34 39 C28 39, 24 35, 25 30 C25 25, 29 22, 35 23"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      fill="none"
+    />
+    <path
+      d="M35 27 C38 26, 40 28, 40 31 C39 33, 37 35, 35 34 C32 34, 30 32, 31 30 C31 28, 33 27, 35 27"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      fill="none"
+    />
+    {/* Viewfinder — crude bump */}
+    <path
+      d="M26 14 L24 5 C23 3, 26 1, 28 2 L42 2 C44 1, 46 3, 45 5 L43 11"
+      stroke="currentColor"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       fill="none"
     />
-    {/* Lens — wobbly circle */}
+    {/* Shutter button — wobbly dot */}
     <path
-      d="M32 22 C37 21, 42 24, 41 29 C41 34, 37 37, 32 37 C27 37, 23 34, 23 29 C23 24, 27 22, 32 22"
+      d="M52 6 C54 5, 56 6, 55 8 C55 10, 53 11, 51 9 C50 8, 51 6, 52 6"
       stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
+      strokeWidth="1.5"
       fill="none"
     />
-    {/* Inner lens */}
-    <circle cx="32" cy="29" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
-    {/* Viewfinder bump */}
-    <path
-      d="M24 13 L22 6 C22 4, 24 3, 26 3 L38 3 C40 3, 42 4, 42 6 L40 13"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-    {/* Shutter button */}
-    <circle cx="48" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    {/* Strap loop left */}
+    <path d="M8 20 C3 19, 2 22, 5 24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+    {/* Strap loop right */}
+    <path d="M62 18 C67 17, 68 21, 65 23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
   </svg>
 );
 
