@@ -69,7 +69,7 @@ const feedItems: FeedItem[] = [
     src: `${BASE}/681279/xhbtr_edf61716-c289-4c68-9130-fb888ddde03f_w1200.jpg`,
     aspectRatio: 0.802,
     layout: "center",
-    name: "Lofoten VII",
+    name: "South of France",
     year: "2024",
   },
   {
