@@ -118,14 +118,14 @@ function ExhibitionSection({ heading, years }: { heading: string; years: Exhibit
 
       <div className="flex flex-col">
         {years.map((yearGroup) => (
-          <div key={yearGroup.year} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6 mb-4">
+          <div key={yearGroup.year} className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1fr] gap-x-4 mb-4">
             <span className="font-serif text-base font-bold text-foreground pt-0.5">
               {yearGroup.year}
             </span>
             <div className="flex flex-col gap-1">
               {yearGroup.entries.map((entry, i) => (
                 <p key={i} className="font-serif text-base leading-relaxed text-foreground">
-                  <em>{entry.title}</em>, {entry.venue}
+                  <em className="font-semibold">{entry.title}</em>, {entry.venue}
                 </p>
               ))}
             </div>
@@ -172,53 +172,56 @@ const About = () => {
             </div>
           </motion.div>
 
-          {/* Studio & Agency */}
-          <motion.section
-            variants={fadeIn}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20"
-          >
-            <h2 className="font-serif text-base text-foreground mb-3">Studio & Agency</h2>
-            <div className="border-t border-foreground mb-6" />
+          {/* Two-column layout: left half for sections */}
+          <div className="md:w-1/2">
+            {/* Studio & Agency */}
+            <motion.section
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="mb-16 md:mb-20"
+            >
+              <h2 className="font-serif text-base text-foreground mb-3">Studio & Agency</h2>
+              <div className="border-t border-foreground mb-6" />
 
-            <div className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6 mb-4">
-              <span className="font-serif text-base font-bold text-foreground pt-0.5">Studio</span>
-              <p className="font-serif text-base leading-relaxed text-foreground">
-                <a
-                  href="https://abrakadabra.studio/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:opacity-50 transition-opacity"
-                >
-                  <em>Abrakadabra</em>
-                </a>{" "}
-                — photographic services and creative direction. Founded by Jan Khür
-                and Julie Hrnčířová in Oslo in 2021. Focus on playfulness, honesty and
-                originality.
-              </p>
-            </div>
+              <div className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1fr] gap-x-4 mb-4">
+                <span className="font-serif text-base font-bold text-foreground pt-0.5">Studio</span>
+                <p className="font-serif text-base leading-relaxed text-foreground">
+                  <a
+                    href="https://abrakadabra.studio/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-50 transition-opacity"
+                  >
+                    <em className="font-semibold">Abrakadabra</em>
+                  </a>{" "}
+                  — photographic services and creative direction. Founded by Jan Khür
+                  and Julie Hrnčířová in Oslo in 2021. Focus on playfulness, honesty and
+                  originality.
+                </p>
+              </div>
 
-            <div className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6">
-              <span className="font-serif text-base font-bold text-foreground pt-0.5">Agency</span>
-              <p className="font-serif text-base leading-relaxed text-foreground">
-                <em>Connected Archives</em> — From 2023, worldwide representation by licensing agency
-                Connected Archives, working within the realms of portrait, documentary, fashion,
-                and fine-art photography.
-              </p>
-            </div>
-          </motion.section>
+              <div className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1fr] gap-x-4">
+                <span className="font-serif text-base font-bold text-foreground pt-0.5">Agency</span>
+                <p className="font-serif text-base leading-relaxed text-foreground">
+                  <em className="font-semibold">Connected Archives</em> — From 2023, worldwide representation by licensing agency,
+                  working within the realms of portrait, documentary, fashion,
+                  and fine-art photography.
+                </p>
+              </div>
+            </motion.section>
 
-          {/* Memberships */}
-          <ExhibitionSection heading="Memberships" years={memberships} />
+            {/* Memberships */}
+            <ExhibitionSection heading="Memberships" years={memberships} />
 
-          {/* Solo Exhibitions */}
-          <ExhibitionSection heading="Solo Exhibitions" years={soloExhibitions} />
+            {/* Group Exhibitions */}
+            <ExhibitionSection heading="Group Exhibitions" years={groupExhibitions} />
 
-          {/* Group Exhibitions */}
-          <ExhibitionSection heading="Group Exhibitions" years={groupExhibitions} />
+            {/* Solo Exhibitions */}
+            <ExhibitionSection heading="Solo Exhibitions" years={soloExhibitions} />
+          </div>
         </div>
       </div>
 
