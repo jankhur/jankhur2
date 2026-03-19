@@ -340,13 +340,6 @@ const feedItems: FeedItem[] = [
     name: "Japan",
     year: "2022",
   },
-  {
-    src: `${BASE}/352643/xhbtr_db9ac87f-0e1f-4cc8-beda-477265cdfb11_w1200.jpg`,
-    aspectRatio: 0.698,
-    layout: "right",
-    name: "South Africa",
-    year: "2022",
-  },
 ];
 
 const feedItemSourceLines = [
