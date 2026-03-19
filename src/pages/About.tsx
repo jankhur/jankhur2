@@ -138,10 +138,12 @@ function ExhibitionSection({ heading, years }: { heading: string; years: Exhibit
 }
 
 const About = () => {
+  const [julieHover, setJulieHover] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
-      <SketchCursor type="about" />
+      <SketchCursor type={julieHover ? "heart" : "about"} />
 
       <div className="pt-28 md:pt-36 pb-24 px-6 md:px-10">
         <div className="max-w-4xl mx-auto">
