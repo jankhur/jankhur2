@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import SketchCursor from "@/components/SketchCursor";
@@ -137,10 +138,12 @@ function ExhibitionSection({ heading, years }: { heading: string; years: Exhibit
 }
 
 const About = () => {
+  const [julieHover, setJulieHover] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
-      <SketchCursor type="about" />
+      <SketchCursor type={julieHover ? "heart" : "about"} />
 
       <div className="pt-28 md:pt-36 pb-24 px-6 md:px-10">
         <div className="max-w-4xl mx-auto">
@@ -198,7 +201,18 @@ const About = () => {
                     <em className="font-semibold">Abrakadabra</em>
                   </a>{" "}
                   — photographic services and creative direction. Founded by Jan Khür
-                  and Julie Hrnčířová in Oslo in 2021. Focus on playfulness, honesty and
+                  and{" "}
+                  <a
+                    href="https://juliehrncirova.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-50 transition-opacity"
+                    onMouseEnter={() => setJulieHover(true)}
+                    onMouseLeave={() => setJulieHover(false)}
+                  >
+                    Julie Hrnčířová
+                  </a>{" "}
+                  in Oslo in 2021. Focus on playfulness, honesty and
                   originality.
                 </p>
               </div>

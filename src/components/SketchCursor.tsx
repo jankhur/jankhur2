@@ -73,6 +73,35 @@ const SketchFace = () => (
   </svg>
 );
 
+// Heart — pulsing hand-drawn heart
+const SketchHeart = () => (
+  <motion.svg
+    width="36"
+    height="34"
+    viewBox="0 0 60 56"
+    fill="none"
+    className="text-foreground"
+    animate={{ scale: [1, 1.2, 1, 1.15, 1] }}
+    transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+  >
+    <path
+      d="M30 50 C22 42, 6 32, 6 18 C6 10, 12 4, 18 4 C22 4, 26 6, 30 12 C34 6, 38 4, 42 4 C48 4, 54 10, 54 18 C54 32, 38 42, 30 50"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <path
+      d="M18 12 C14 12, 12 16, 13 20"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      fill="none"
+    />
+  </motion.svg>
+);
+
 // Landing — hand-drawn "Løv" text
 const SketchLov = () => (
   <motion.svg
@@ -128,7 +157,8 @@ const illustrationMap: Record<string, React.FC> = {
   journey: SketchTracks,
   notes: SketchDiary,
   about: SketchFace,
-  heart: SketchLov,
+  heart: SketchHeart,
+  lov: SketchLov,
 };
 
 interface SketchCursorProps {
