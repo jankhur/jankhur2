@@ -195,7 +195,7 @@ const feedItems: FeedItem[] = [
     src: `${BASE}/681268/xhbtr_86f3e615-3216-4597-a5c9-dc9b0a2ce052_w1200.jpg`,
     aspectRatio: 0.749,
     layout: "right",
-    name: "Fjord swan",
+    name: "Fjord Swan",
     year: "2020",
   },
   {
