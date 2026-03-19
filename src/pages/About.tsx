@@ -5,7 +5,7 @@ import SketchCursor from "@/components/SketchCursor";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0 }
 };
 
 interface ExhibitionEntry {
@@ -19,92 +19,92 @@ interface ExhibitionYear {
 }
 
 const soloExhibitions: ExhibitionYear[] = [
-  {
-    year: "2012",
-    entries: [
-      { title: "Imagine Being There Right Now", venue: "TOAST Gallery, Zlin (CZ)" },
-    ],
-  },
-];
+{
+  year: "2012",
+  entries: [
+  { title: "Imagine Being There Right Now", venue: "TOAST Gallery, Zlin (CZ)" }]
+
+}];
+
 
 const groupExhibitions: ExhibitionYear[] = [
-  {
-    year: "2025",
-    entries: [
-      { title: "Polagraph Gallery", venue: "group show of represented photographers, Polagraph Gallery, Praha (CZ)" },
-      { title: 'Oslo Negative — "Convergence"', venue: "photo festival as part of Bjørka group show, Nasjonalgalleriet i Oslo (NO)" },
-    ],
-  },
-  {
-    year: "2024",
-    entries: [
-      { title: "Nookart Gallery — Mirror, Mirror", venue: "photo exhibition, Nookart Gallery, Prague (CZ)" },
-      { title: "Oslo Negative", venue: "photo festival as part of Bjørka group show, Gamle Veterinar Skole (NO)" },
-      { title: 'Forbundet Frie Fotografer "50-årsjubileum"', venue: "Salongutstilling, Fotogalleriet, Oslo (NO)" },
-      { title: "Oslo Open — Bjørka", venue: "group show at Bjørka during Oslo Open (NO)" },
-    ],
-  },
-  {
-    year: "2023",
-    entries: [
-      { title: "Polagraph Gallery", venue: "photo exhibition duo with Julie Hrncirova, Polagraph Gallery, Praha (CZ)" },
-      { title: "Oslo Negative — DEMO", venue: "photo festival as part of Bjørka group show, Oslo Negative (NO)" },
-    ],
-  },
-  {
-    year: "2021",
-    entries: [
-      { title: "Rampen", venue: "photo exhibition duo with Julie Hrncirova, Rampen, Oslo (NO)" },
-      { title: "Vinslottet", venue: "photo exhibition duo with Julie Hrncirova, Vinslottet, Oslo (NO)" },
-    ],
-  },
-  {
-    year: "2019",
-    entries: [
-      { title: "Group Hug n.3", venue: "Low Standarts, Oslo (NO)" },
-    ],
-  },
-  {
-    year: "2017",
-    entries: [
-      { title: "Disco", venue: "duo exhibition with Marthe Bleu, CYAN Gallery, Oslo (NO)" },
-      { title: "KRYSS TVERS", venue: "Skippergata, Oslo (NO)" },
-    ],
-  },
-  {
-    year: "2013",
-    entries: [
-      { title: "Shuffeling Pixels", venue: "Photogether Gallery, Zlin (CZ)" },
-      { title: "Shuffeling Pixels", venue: "Studio Huddle, Toronto (CA)" },
-      { title: "TRANSGENDER ME", venue: "during Prague Pride 2013, NTK Gallery, National Library of Technology, Prague (CZ)" },
-      { title: "XRXR: Photocopy Philadelphia", venue: "Napoleon Gallery, Philadelphia (USA)" },
-      { title: "Czeggs", venue: "Frameless Gallery, London (UK)" },
-    ],
-  },
-  {
-    year: "2012",
-    entries: [
-      { title: "UTB Graduation Show BcA.", venue: "Factory Gallery, Zlin (CZ)" },
-    ],
-  },
-];
+{
+  year: "2025",
+  entries: [
+  { title: "Polagraph Gallery", venue: "group show of represented photographers, Polagraph Gallery, Praha (CZ)" },
+  { title: 'Oslo Negative — "Convergence"', venue: "photo festival as part of Bjørka group show, Nasjonalgalleriet i Oslo (NO)" }]
+
+},
+{
+  year: "2024",
+  entries: [
+  { title: "Nookart Gallery — Mirror, Mirror", venue: "photo exhibition, Nookart Gallery, Prague (CZ)" },
+  { title: "Oslo Negative", venue: "photo festival as part of Bjørka group show, Gamle Veterinar Skole (NO)" },
+  { title: 'Forbundet Frie Fotografer "50-årsjubileum"', venue: "Salongutstilling, Fotogalleriet, Oslo (NO)" },
+  { title: "Oslo Open — Bjørka", venue: "group show at Bjørka during Oslo Open (NO)" }]
+
+},
+{
+  year: "2023",
+  entries: [
+  { title: "Polagraph Gallery", venue: "photo exhibition duo with Julie Hrncirova, Polagraph Gallery, Praha (CZ)" },
+  { title: "Oslo Negative — DEMO", venue: "photo festival as part of Bjørka group show, Oslo Negative (NO)" }]
+
+},
+{
+  year: "2021",
+  entries: [
+  { title: "Rampen", venue: "photo exhibition duo with Julie Hrncirova, Rampen, Oslo (NO)" },
+  { title: "Vinslottet", venue: "photo exhibition duo with Julie Hrncirova, Vinslottet, Oslo (NO)" }]
+
+},
+{
+  year: "2019",
+  entries: [
+  { title: "Group Hug n.3", venue: "Low Standarts, Oslo (NO)" }]
+
+},
+{
+  year: "2017",
+  entries: [
+  { title: "Disco", venue: "duo exhibition with Marthe Bleu, CYAN Gallery, Oslo (NO)" },
+  { title: "KRYSS TVERS", venue: "Skippergata, Oslo (NO)" }]
+
+},
+{
+  year: "2013",
+  entries: [
+  { title: "Shuffeling Pixels", venue: "Photogether Gallery, Zlin (CZ)" },
+  { title: "Shuffeling Pixels", venue: "Studio Huddle, Toronto (CA)" },
+  { title: "TRANSGENDER ME", venue: "during Prague Pride 2013, NTK Gallery, National Library of Technology, Prague (CZ)" },
+  { title: "XRXR: Photocopy Philadelphia", venue: "Napoleon Gallery, Philadelphia (USA)" },
+  { title: "Czeggs", venue: "Frameless Gallery, London (UK)" }]
+
+},
+{
+  year: "2012",
+  entries: [
+  { title: "UTB Graduation Show BcA.", venue: "Factory Gallery, Zlin (CZ)" }]
+
+}];
+
 
 const memberships: ExhibitionYear[] = [
-  {
-    year: "2022",
-    entries: [
-      { title: "Bjørka", venue: "Member of Bjørka Foundation, photographic collective and studio for analogue camera based artists, Oslo (NO)" },
-    ],
-  },
-  {
-    year: "2019",
-    entries: [
-      { title: "Forbundet Frie Fotografer (FFF)", venue: "Member of The Norwegian Association for Fine Art Photographers, Oslo (NO)" },
-    ],
-  },
-];
+{
+  year: "2022",
+  entries: [
+  { title: "Bjørka", venue: "Member of Bjørka Foundation, photographic collective and studio for analogue camera based artists, Oslo (NO)" }]
 
-function ExhibitionSection({ heading, years }: { heading: string; years: ExhibitionYear[] }) {
+},
+{
+  year: "2019",
+  entries: [
+  { title: "Forbundet Frie Fotografer (FFF)", venue: "Member of The Norwegian Association for Fine Art Photographers, Oslo (NO)" }]
+
+}];
+
+
+function ExhibitionSection({ heading, years }: {heading: string;years: ExhibitionYear[];}) {
   return (
     <motion.section
       variants={fadeIn}
@@ -112,29 +112,29 @@ function ExhibitionSection({ heading, years }: { heading: string; years: Exhibit
       whileInView="visible"
       viewport={{ once: true }}
       transition={{ duration: 0.7 }}
-      className="mb-16 md:mb-20"
-    >
+      className="mb-16 md:mb-20">
+      
       <h2 className="font-serif text-base text-foreground mb-3">{heading}</h2>
       <div className="border-t border-foreground mb-6" />
 
       <div className="flex flex-col">
-        {years.map((yearGroup) => (
-          <div key={yearGroup.year} className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1fr] gap-x-4 mb-4">
+        {years.map((yearGroup) =>
+        <div key={yearGroup.year} className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1fr] gap-x-4 mb-4">
             <span className="font-serif text-base font-bold text-foreground pt-0.5">
               {yearGroup.year}
             </span>
             <div className="flex flex-col gap-1">
-              {yearGroup.entries.map((entry, i) => (
-                <p key={i} className="font-serif text-base leading-relaxed text-foreground">
+              {yearGroup.entries.map((entry, i) =>
+            <p key={i} className="font-serif text-base leading-relaxed text-foreground">
                   <em className="font-semibold">{entry.title}</em>, {entry.venue}
                 </p>
-              ))}
+            )}
             </div>
           </div>
-        ))}
+        )}
       </div>
-    </motion.section>
-  );
+    </motion.section>);
+
 }
 
 const About = () => {
@@ -153,9 +153,9 @@ const About = () => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20"
-          >
-            <h1 className="font-serif font-semibold text-4xl md:text-5xl text-foreground tracking-tight mb-6">
+            className="mb-16 md:mb-20">
+            
+            <h1 className="font-serif font-semibold text-4xl text-foreground tracking-tight mb-6 md:text-lg">
               Jan Khür
             </h1>
             <div className="flex flex-col gap-1 font-serif text-base text-foreground">
@@ -163,8 +163,8 @@ const About = () => {
                 href="https://www.instagram.com/jankhur"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
-              >
+                className="hover:text-foreground transition-colors">
+                
                 @jankhur
               </a>
               <span>(+47) 98 642 904</span>
@@ -184,8 +184,8 @@ const About = () => {
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="mb-16 md:mb-20"
-            >
+              className="mb-16 md:mb-20">
+              
               <h2 className="font-serif text-base text-foreground mb-3">Studio & Agency</h2>
               <div className="border-t border-foreground mb-6" />
 
@@ -196,8 +196,8 @@ const About = () => {
                     href="https://abrakadabra.studio/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:opacity-50 transition-opacity"
-                  >
+                    className="hover:opacity-50 transition-opacity">
+                    
                     <em className="font-semibold">Abrakadabra</em>
                   </a>{" "}
                   — photographic services and creative direction. Founded by Jan Khür
@@ -208,8 +208,8 @@ const About = () => {
                     rel="noopener noreferrer"
                     className="hover:opacity-50 transition-opacity"
                     onMouseEnter={() => setJulieHover(true)}
-                    onMouseLeave={() => setJulieHover(false)}
-                  >
+                    onMouseLeave={() => setJulieHover(false)}>
+                    
                     Julie Hrnčířová
                   </a>{" "}
                   in Oslo in 2021. Focus on playfulness, honesty and
@@ -253,8 +253,8 @@ const About = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default About;
