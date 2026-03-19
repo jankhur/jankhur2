@@ -201,7 +201,18 @@ const About = () => {
                     <em className="font-semibold">Abrakadabra</em>
                   </a>{" "}
                   — photographic services and creative direction. Founded by Jan Khür
-                  and Julie Hrnčířová in Oslo in 2021. Focus on playfulness, honesty and
+                  and{" "}
+                  <a
+                    href="https://juliehrncirova.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-50 transition-opacity"
+                    onMouseEnter={() => setJulieHover(true)}
+                    onMouseLeave={() => setJulieHover(false)}
+                  >
+                    Julie Hrnčířová
+                  </a>{" "}
+                  in Oslo in 2021. Focus on playfulness, honesty and
                   originality.
                 </p>
               </div>
