@@ -7,38 +7,134 @@ const fadeIn = {
   visible: { opacity: 1, y: 0 },
 };
 
-const exhibitions = [
+interface ExhibitionEntry {
+  title: string;
+  venue: string;
+}
+
+interface ExhibitionYear {
+  year: string;
+  entries: ExhibitionEntry[];
+}
+
+const soloExhibitions: ExhibitionYear[] = [
   {
-    section: "Solo Exhibitions",
-    items: [
-      { title: "Imagine Being There Right Now", year: "2012", venue: "TOAST Gallery, Zlin (CZ)" },
-    ],
-  },
-  {
-    section: "Group Exhibitions",
-    items: [
-      { title: "Polagraph Gallery — group show of represented photographers", year: "2025", venue: "Polagraph Gallery, Praha (CZ)" },
-      { title: 'Oslo Negative — "Convergence" — photo festival as part of Bjørka group show', year: "2025", venue: "Nasjonalgalleriet i Oslo (NO)" },
-      { title: "Nookart Gallery — Mirror, Mirror — photo exhibition", year: "2024", venue: "Nookart Gallery, Prague (CZ)" },
-      { title: "Oslo Negative — photo festival as part of Bjørka group show", year: "2024", venue: "Oslo Negative, Gamle Veterinar Skole (NO)" },
-      { title: 'Forbundet Frie Fotografer "50-årsjubileum", Salongutstilling', year: "2024", venue: "Fotogalleriet, Oslo (NO)" },
-      { title: "Oslo Open — Bjørka — group show at Bjørka during Oslo Open", year: "2024", venue: "Oslo Open (NO)" },
-      { title: "Polagraph Gallery — photo exhibition duo with Julie Hrncirova", year: "2023", venue: "Polagraph Gallery, Praha (CZ)" },
-      { title: "Oslo Negative — DEMO — photo festival as part of Bjørka group show", year: "2023", venue: "Oslo Negative (NO)" },
-      { title: "Rampen — photo exhibition duo with Julie Hrncirova", year: "2021", venue: "Rampen, Oslo (NO)" },
-      { title: "Vinslottet — photo exhibition duo with Julie Hrncirova", year: "2021", venue: "Vinslottet, Oslo (NO)" },
-      { title: "Group Hug n.3", year: "2019", venue: "Low Standarts, Oslo (NO)" },
-      { title: "Disco — duo exhibition with Marthe Bleu", year: "2017", venue: "CYAN Gallery, Oslo (NO)" },
-      { title: "KRYSS TVERS", year: "2017", venue: "Skippergata, Oslo (NO)" },
-      { title: "Shuffeling Pixels", year: "2013", venue: "Photogether Gallery, Zlin (CZ)" },
-      { title: "Shuffeling Pixels", year: "2013", venue: "Studio Huddle, Toronto (CA)" },
-      { title: "TRANSGENDER ME — during Prague Pride 2013", year: "2013", venue: "NTK Gallery, National Library of Technology, Prague (CZ)" },
-      { title: "XRXR: Photocopy Philadelphia", year: "2013", venue: "Napoleon Gallery, Philadelphia (USA)" },
-      { title: "Czeggs", year: "2013", venue: "Frameless Gallery, London (UK)" },
-      { title: "UTB Graduation Show BcA.", year: "2012", venue: "Factory Gallery, Zlin (CZ)" },
+    year: "2012",
+    entries: [
+      { title: "Imagine Being There Right Now", venue: "TOAST Gallery, Zlin (CZ)" },
     ],
   },
 ];
+
+const groupExhibitions: ExhibitionYear[] = [
+  {
+    year: "2025",
+    entries: [
+      { title: "Polagraph Gallery", venue: "group show of represented photographers, Polagraph Gallery, Praha (CZ)" },
+      { title: 'Oslo Negative — "Convergence"', venue: "photo festival as part of Bjørka group show, Nasjonalgalleriet i Oslo (NO)" },
+    ],
+  },
+  {
+    year: "2024",
+    entries: [
+      { title: "Nookart Gallery — Mirror, Mirror", venue: "photo exhibition, Nookart Gallery, Prague (CZ)" },
+      { title: "Oslo Negative", venue: "photo festival as part of Bjørka group show, Gamle Veterinar Skole (NO)" },
+      { title: 'Forbundet Frie Fotografer "50-årsjubileum"', venue: "Salongutstilling, Fotogalleriet, Oslo (NO)" },
+      { title: "Oslo Open — Bjørka", venue: "group show at Bjørka during Oslo Open (NO)" },
+    ],
+  },
+  {
+    year: "2023",
+    entries: [
+      { title: "Polagraph Gallery", venue: "photo exhibition duo with Julie Hrncirova, Polagraph Gallery, Praha (CZ)" },
+      { title: "Oslo Negative — DEMO", venue: "photo festival as part of Bjørka group show, Oslo Negative (NO)" },
+    ],
+  },
+  {
+    year: "2021",
+    entries: [
+      { title: "Rampen", venue: "photo exhibition duo with Julie Hrncirova, Rampen, Oslo (NO)" },
+      { title: "Vinslottet", venue: "photo exhibition duo with Julie Hrncirova, Vinslottet, Oslo (NO)" },
+    ],
+  },
+  {
+    year: "2019",
+    entries: [
+      { title: "Group Hug n.3", venue: "Low Standarts, Oslo (NO)" },
+    ],
+  },
+  {
+    year: "2017",
+    entries: [
+      { title: "Disco", venue: "duo exhibition with Marthe Bleu, CYAN Gallery, Oslo (NO)" },
+      { title: "KRYSS TVERS", venue: "Skippergata, Oslo (NO)" },
+    ],
+  },
+  {
+    year: "2013",
+    entries: [
+      { title: "Shuffeling Pixels", venue: "Photogether Gallery, Zlin (CZ)" },
+      { title: "Shuffeling Pixels", venue: "Studio Huddle, Toronto (CA)" },
+      { title: "TRANSGENDER ME", venue: "during Prague Pride 2013, NTK Gallery, National Library of Technology, Prague (CZ)" },
+      { title: "XRXR: Photocopy Philadelphia", venue: "Napoleon Gallery, Philadelphia (USA)" },
+      { title: "Czeggs", venue: "Frameless Gallery, London (UK)" },
+    ],
+  },
+  {
+    year: "2012",
+    entries: [
+      { title: "UTB Graduation Show BcA.", venue: "Factory Gallery, Zlin (CZ)" },
+    ],
+  },
+];
+
+const memberships: ExhibitionYear[] = [
+  {
+    year: "2022",
+    entries: [
+      { title: "Bjørka", venue: "Member of Bjørka Foundation, photographic collective and studio for analogue camera based artists, Oslo (NO)" },
+    ],
+  },
+  {
+    year: "2019",
+    entries: [
+      { title: "Forbundet Frie Fotografer (FFF)", venue: "Member of The Norwegian Association for Fine Art Photographers, Oslo (NO)" },
+    ],
+  },
+];
+
+function ExhibitionSection({ heading, years }: { heading: string; years: ExhibitionYear[] }) {
+  return (
+    <motion.section
+      variants={fadeIn}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      transition={{ duration: 0.7 }}
+      className="mb-16 md:mb-20"
+    >
+      <h2 className="font-serif text-base text-foreground mb-3">{heading}</h2>
+      <div className="border-t border-foreground mb-6" />
+
+      <div className="flex flex-col">
+        {years.map((yearGroup) => (
+          <div key={yearGroup.year} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6 mb-4">
+            <span className="font-serif text-base font-bold text-foreground pt-0.5">
+              {yearGroup.year}
+            </span>
+            <div className="flex flex-col gap-1">
+              {yearGroup.entries.map((entry, i) => (
+                <p key={i} className="font-serif text-base leading-relaxed text-foreground">
+                  <em>{entry.title}</em>, {entry.venue}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
 
 const About = () => {
   return (
@@ -47,8 +143,8 @@ const About = () => {
       <SketchCursor type="about" />
 
       <div className="pt-28 md:pt-36 pb-24 px-6 md:px-10">
-        <div className="max-w-3xl mx-auto">
-          {/* Header — Name + Contact stacked */}
+        <div className="max-w-4xl mx-auto">
+          {/* Header — Name + Contact */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
@@ -76,50 +172,7 @@ const About = () => {
             </div>
           </motion.div>
 
-          {/* Studio & Agency — first, side by side */}
-          <motion.section
-            variants={fadeIn}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 md:mb-20"
-          >
-            <div>
-              <h2 className="font-serif text-sm uppercase tracking-[0.2em] text-foreground font-semibold mb-4">
-                Studio
-              </h2>
-              <p className="font-serif text-base leading-relaxed text-foreground">
-                <a
-                  href="https://abrakadabra.studio/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold hover:opacity-50 transition-opacity"
-                >
-                  Abrakadabra
-                </a>{" "}
-                provides photographic services and creative direction. Founded by Jan Khür
-                and Julie Hrnčířová in Oslo in 2021. With a focus on playfulness, honesty and
-                originality.
-              </p>
-            </div>
-
-            <div>
-              <h2 className="font-serif text-sm uppercase tracking-[0.2em] text-foreground font-semibold mb-4">
-                Agency
-              </h2>
-              <p className="font-serif text-base leading-relaxed text-foreground">
-                <span className="font-semibold">Connected Archives</span> — From 2023 worldwide
-                representation by licensing agency Connected Archives, working within the
-                realms of portrait, documentary, fashion, and fine-art photography.
-              </p>
-              <p className="font-serif text-xs text-muted-foreground mt-2 tracking-wide">
-                2023 — worldwide
-              </p>
-            </div>
-          </motion.section>
-
-          {/* Memberships */}
+          {/* Studio & Agency */}
           <motion.section
             variants={fadeIn}
             initial="hidden"
@@ -128,75 +181,44 @@ const About = () => {
             transition={{ duration: 0.7 }}
             className="mb-16 md:mb-20"
           >
-            <h2 className="font-serif text-sm uppercase tracking-[0.2em] text-foreground font-semibold mb-4">
-              Memberships
-            </h2>
-            <div>
-              {[
-                {
-                  year: "2022",
-                  name: "Bjørka",
-                  desc: "Member of Bjørka Foundation, photographic collective and studio for analogue camera based artists",
-                  location: "Oslo (NO)",
-                },
-                {
-                  year: "2019",
-                  name: "Forbundet Frie Fotografer (FFF)",
-                  desc: "Member of The Norwegian Association for Fine Art Photographers",
-                  location: "Oslo (NO)",
-                },
-              ].map((m, i) => (
-                <div
-                  key={i}
-                  className="grid grid-cols-[50px_1fr] gap-x-4 py-2.5 border-b border-border/40 first:border-t"
+            <h2 className="font-serif text-base text-foreground mb-3">Studio & Agency</h2>
+            <div className="border-t border-foreground mb-6" />
+
+            <div className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6 mb-4">
+              <span className="font-serif text-base font-bold text-foreground pt-0.5">Studio</span>
+              <p className="font-serif text-base leading-relaxed text-foreground">
+                <a
+                  href="https://abrakadabra.studio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-50 transition-opacity"
                 >
-                   <span className="font-serif text-sm text-muted-foreground tabular-nums">
-                    {m.year}
-                  </span>
-                  <span className="font-serif text-base leading-relaxed text-foreground">
-                    <span className="font-semibold">{m.name}</span> — {m.desc}
-                  </span>
-                </div>
-              ))}
+                  <em>Abrakadabra</em>
+                </a>{" "}
+                — photographic services and creative direction. Founded by Jan Khür
+                and Julie Hrnčířová in Oslo in 2021. Focus on playfulness, honesty and
+                originality.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] gap-x-6">
+              <span className="font-serif text-base font-bold text-foreground pt-0.5">Agency</span>
+              <p className="font-serif text-base leading-relaxed text-foreground">
+                <em>Connected Archives</em> — From 2023, worldwide representation by licensing agency
+                Connected Archives, working within the realms of portrait, documentary, fashion,
+                and fine-art photography.
+              </p>
             </div>
           </motion.section>
 
-          {/* Exhibitions — constrained width, two-column grid */}
-          <motion.section
-            variants={fadeIn}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            {exhibitions.map((group) => (
-              <div key={group.section} className="mb-12 last:mb-0">
-                <h2 className="font-serif text-sm uppercase tracking-[0.2em] text-foreground font-semibold mb-4">
-                  {group.section}
-                </h2>
-                <div>
-                  {group.items.map((item, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-[50px_1fr] gap-x-4 py-2 border-b border-border/40 first:border-t"
-                    >
-                      <span className="font-serif text-sm text-muted-foreground tabular-nums">
-                        {item.year}
-                      </span>
-                      <div>
-                        <span className="font-serif text-base leading-relaxed text-foreground">
-                          {item.title}
-                        </span>
-                        <span className="font-serif text-xs text-muted-foreground ml-2">
-                          {item.venue}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </motion.section>
+          {/* Memberships */}
+          <ExhibitionSection heading="Memberships" years={memberships} />
+
+          {/* Solo Exhibitions */}
+          <ExhibitionSection heading="Solo Exhibitions" years={soloExhibitions} />
+
+          {/* Group Exhibitions */}
+          <ExhibitionSection heading="Group Exhibitions" years={groupExhibitions} />
         </div>
       </div>
 
