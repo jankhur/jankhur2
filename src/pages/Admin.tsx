@@ -142,6 +142,52 @@ function ImageUploader({
   );
 }
 
+// ─── Inline Editable Name ────────────────────────────────────
+
+function InlineName({
+  value,
+  onSave,
+}: {
+  value: string;
+  onSave: (name: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(value);
+
+  useEffect(() => setText(value), [value]);
+
+  const commit = () => {
+    setEditing(false);
+    if (text !== value) onSave(text);
+  };
+
+  if (editing) {
+    return (
+      <input
+        autoFocus
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") { setText(value); setEditing(false); }
+        }}
+        className="border border-neutral-300 px-1 py-0.5 font-serif text-sm w-full focus:outline-none focus:border-black"
+      />
+    );
+  }
+
+  return (
+    <span
+      onClick={() => setEditing(true)}
+      className="font-serif text-sm truncate cursor-text hover:underline"
+      title="Click to rename"
+    >
+      {value || "Untitled"}
+    </span>
+  );
+}
+
 // ─── Draggable List ──────────────────────────────────────────
 
 function DraggableList<T extends { id: number }>({
