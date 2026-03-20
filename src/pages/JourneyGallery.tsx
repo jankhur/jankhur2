@@ -1,22 +1,15 @@
-import { useRef, useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import SketchCursor from "@/components/SketchCursor";
-import { japanImages, southAfricaImages, type JourneyImage } from "@/data/journeyData";
-
-const galleryMap: Record<string, { images: JourneyImage[]; title: string }> = {
-  japan: { images: japanImages, title: "Japan" },
-  "south-africa": { images: southAfricaImages, title: "South Africa" },
-};
+import { fetchJourneyImages, fetchJourneyProjects } from "@/lib/queries";
 
 type LayoutType = "wide" | "center" | "left" | "right";
-
-// Organic rhythm: landscape images go wide, portraits alternate positions
 const portraitSequence: LayoutType[] = ["center", "right", "left", "center", "left", "right"];
 
-function assignLayout(img: JourneyImage, portraitIndex: number): LayoutType {
-  if (img.aspectRatio > 1.1) return "wide";
+function assignLayout(aspectRatio: number, portraitIndex: number): LayoutType {
+  if (aspectRatio > 1.1) return "wide";
   return portraitSequence[portraitIndex % portraitSequence.length];
 }
 
@@ -42,9 +35,22 @@ const fadeIn = {
 
 const JourneyGallery = () => {
   const { slug } = useParams<{ slug: string }>();
-  const gallery = galleryMap[slug || ""];
 
-  if (!gallery) {
+  const { data: projects } = useQuery({
+    queryKey: ["journey-projects"],
+    queryFn: fetchJourneyProjects,
+  });
+
+  const { data: images, isLoading } = useQuery({
+    queryKey: ["journey-images", slug],
+    queryFn: () => fetchJourneyImages(slug || ""),
+    enabled: !!slug,
+  });
+
+  const project = projects?.find((p) => p.slug === slug);
+  const title = project?.title || slug || "";
+
+  if (!slug || (!isLoading && (!images || images.length === 0))) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Header showName />
@@ -62,8 +68,9 @@ const JourneyGallery = () => {
 
       <main className="pt-24 pb-32">
         <div className="flex flex-col gap-16 md:gap-24">
-          {gallery.images.map((img, i) => {
-            const layout = assignLayout(img, portraitIndex);
+          {(images || []).map((img, i) => {
+            const ar = Number(img.aspect_ratio);
+            const layout = assignLayout(ar, portraitIndex);
             if (layout !== "wide") portraitIndex++;
 
             return (
@@ -78,7 +85,7 @@ const JourneyGallery = () => {
               >
                 <img
                   src={img.src}
-                  alt={`${gallery.title} — ${i + 1}`}
+                  alt={`${title} — ${i + 1}`}
                   className="block h-auto w-full object-contain"
                   style={{ maxHeight: "88vh" }}
                   loading={i < 3 ? "eager" : "lazy"}
@@ -91,7 +98,7 @@ const JourneyGallery = () => {
 
       <div className="fixed bottom-12 left-6 md:left-10 z-30 pointer-events-none">
         <span className="font-serif text-sm text-foreground">
-          <span className="font-bold">{gallery.title}</span>
+          <span className="font-bold">{title}</span>
         </span>
       </div>
     </div>

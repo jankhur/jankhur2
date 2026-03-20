@@ -1,24 +1,54 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import SketchCursor from "@/components/SketchCursor";
-import { notesImages, years, type NoteImage } from "@/data/notesData";
+import { fetchNotesImages } from "@/lib/queries";
+
+interface NoteImage {
+  id: number;
+  src: string;
+  src_large: string;
+  aspect_ratio: number;
+  year: string;
+}
 
 const Notes = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [currentYear, setCurrentYear] = useState(years[0]);
+  const [currentYear, setCurrentYear] = useState("");
   const [lightboxImage, setLightboxImage] = useState<NoteImage | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
 
-  // Convert vertical wheel to horizontal scroll
+  const { data: dbImages } = useQuery({
+    queryKey: ["notes-images"],
+    queryFn: fetchNotesImages,
+  });
+
+  const notesImages: NoteImage[] = useMemo(
+    () =>
+      (dbImages || []).map((img) => ({
+        id: img.id,
+        src: img.src,
+        src_large: img.src_large,
+        aspect_ratio: Number(img.aspect_ratio),
+        year: img.year,
+      })),
+    [dbImages]
+  );
+
+  const years = useMemo(() => [...new Set(notesImages.map((img) => img.year))], [notesImages]);
+
+  useEffect(() => {
+    if (years.length > 0 && !currentYear) setCurrentYear(years[0]);
+  }, [years, currentYear]);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const onWheel = (e: WheelEvent) => {
-      // If mostly horizontal scroll (trackpad), let it through
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       e.preventDefault();
       el.scrollLeft += e.deltaY;
@@ -29,7 +59,6 @@ const Notes = () => {
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
-
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       el.removeEventListener("wheel", onWheel);
@@ -37,16 +66,13 @@ const Notes = () => {
     };
   }, []);
 
-  // Track scroll to update year
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || years.length === 0) return;
 
     const onScroll = () => {
       const containerRect = el.getBoundingClientRect();
       const centerX = containerRect.left + containerRect.width / 2;
-
-      // Find the image element closest to center
       const images = el.querySelectorAll<HTMLElement>("[data-year]");
       let closestDist = Infinity;
       let closestYear = years[0];
@@ -66,18 +92,12 @@ const Notes = () => {
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [years]);
 
-  // Drag to scroll
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
-    dragState.current = {
-      isDown: true,
-      startX: e.pageX - el.offsetLeft,
-      scrollLeft: el.scrollLeft,
-      moved: false,
-    };
+    dragState.current = { isDown: true, startX: e.pageX - el.offsetLeft, scrollLeft: el.scrollLeft, moved: false };
     setIsDragging(true);
   }, []);
 
@@ -97,30 +117,22 @@ const Notes = () => {
     setTimeout(() => setIsDragging(false), 50);
   }, []);
 
-  // Jump to year
   const jumpToYear = useCallback((year: string) => {
     const el = scrollRef.current;
     if (!el) return;
     const target = el.querySelector<HTMLElement>(`[data-year="${year}"]`);
     if (target) {
-      el.scrollTo({
-        left: target.offsetLeft - 100,
-        behavior: "smooth",
-      });
+      el.scrollTo({ left: target.offsetLeft - 100, behavior: "smooth" });
     }
   }, []);
 
-  const handleImageClick = useCallback(
-    (img: NoteImage) => {
-      if (dragState.current.moved) return;
-      setLightboxImage(img);
-    },
-    []
-  );
+  const handleImageClick = useCallback((img: NoteImage) => {
+    if (dragState.current.moved) return;
+    setLightboxImage(img);
+  }, []);
 
   const handleAreaClick = useCallback((e: React.MouseEvent) => {
     if (dragState.current.moved) return;
-    // Don't scroll if clicking an image (let lightbox handle it)
     if ((e.target as HTMLElement).tagName === "IMG") return;
     const el = scrollRef.current;
     if (!el) return;
@@ -138,7 +150,6 @@ const Notes = () => {
       <Header showName />
       <SketchCursor type="notes" />
 
-      {/* Horizontal scroll container */}
       <div
         ref={scrollRef}
         className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center justify-start"
@@ -154,37 +165,25 @@ const Notes = () => {
         onMouseLeave={onMouseUp}
         onClick={handleAreaClick}
       >
-        {/* Leading spacer */}
         <div className="shrink-0 w-[15vw]" />
 
-        {/* Images */}
         {notesImages.map((img, i) => (
-            <div
-              key={img.id}
-              data-year={img.year}
-              className="shrink-0 px-3 md:px-5 flex items-center justify-center"
-            >
-              <img
-                src={img.src}
-                alt={`Notes — ${img.year}`}
-                draggable={false}
-                loading={i < 5 ? "eager" : "lazy"}
-                onClick={() => handleImageClick(img)}
-                className="w-auto object-contain select-none transition-opacity duration-500"
-                style={{
-                  maxHeight: "75vh",
-                  maxWidth: "90vw",
-                  cursor: isDragging ? "grabbing" : "pointer",
-                }}
-              />
-            </div>
+          <div key={img.id} data-year={img.year} className="shrink-0 px-3 md:px-5 flex items-center justify-center">
+            <img
+              src={img.src}
+              alt={`Notes — ${img.year}`}
+              draggable={false}
+              loading={i < 5 ? "eager" : "lazy"}
+              onClick={() => handleImageClick(img)}
+              className="w-auto object-contain select-none transition-opacity duration-500"
+              style={{ maxHeight: "75vh", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
+            />
+          </div>
         ))}
 
-        {/* Trailing spacer */}
         <div className="shrink-0 w-[30vw]" />
       </div>
 
-      {/* Year indicator — fixed bottom-left */}
       <div className="fixed bottom-12 left-6 md:left-10 z-30 pointer-events-none">
         <AnimatePresence mode="wait">
           <motion.span
@@ -200,16 +199,13 @@ const Notes = () => {
         </AnimatePresence>
       </div>
 
-      {/* Year jump dots — fixed bottom-right */}
       <div className="fixed bottom-8 right-6 md:right-10 z-30 flex gap-4 items-center">
         {years.map((year) => (
           <button
             key={year}
             onClick={() => jumpToYear(year)}
             className={`font-serif text-xs tracking-[0.1em] transition-opacity duration-300 ${
-              currentYear === year
-                ? "text-foreground opacity-100"
-                : "text-foreground opacity-30 hover:opacity-60"
+              currentYear === year ? "text-foreground opacity-100" : "text-foreground opacity-30 hover:opacity-60"
             }`}
           >
             {year}
@@ -217,7 +213,6 @@ const Notes = () => {
         ))}
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lightboxImage && (
           <motion.div
@@ -237,27 +232,20 @@ const Notes = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={lightboxImage.srcLarge}
+                src={lightboxImage.src_large}
                 alt={`Notes — ${lightboxImage.year}`}
                 className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
               />
-              <span className="mt-4 font-serif text-sm text-muted-foreground italic">
-                {lightboxImage.year}
-              </span>
+              <span className="mt-4 font-serif text-sm text-muted-foreground italic">{lightboxImage.year}</span>
             </motion.div>
 
-            {/* Close button */}
-            <button
-              onClick={() => setLightboxImage(null)}
-              className="fixed top-6 right-6 md:right-10 z-50 nav-link"
-            >
+            <button onClick={() => setLightboxImage(null)} className="fixed top-6 right-6 md:right-10 z-50 nav-link">
               Close
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Scroll hint arrow — mobile only */}
       <AnimatePresence>
         {!hasScrolled && (
           <motion.div
@@ -296,10 +284,7 @@ const Notes = () => {
         )}
       </AnimatePresence>
 
-      {/* Hide scrollbar */}
-      <style>{`
-        div::-webkit-scrollbar { display: none; }
-      `}</style>
+      <style>{`div::-webkit-scrollbar { display: none; }`}</style>
     </div>
   );
 };

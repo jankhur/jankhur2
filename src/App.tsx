@@ -11,6 +11,7 @@ import Journey from "./pages/Journey.tsx";
 import JourneyGallery from "./pages/JourneyGallery.tsx";
 import Notes from "./pages/Notes.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/journey" element={<Journey />} />
           <Route path="/journey/:slug" element={<JourneyGallery />} />
           <Route path="/notes" element={<Notes />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
