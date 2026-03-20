@@ -466,31 +466,39 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
                 <ImageUploader
                   onUpload={(files) => handleImageUpload(project.slug, files)}
                 />
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                  {images.map((img) => (
-                    <div key={img.id} className="relative group">
-                      <img
-                        src={img.src}
-                        alt=""
-                        className="w-full aspect-square object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                <DraggableList
+                  items={images}
+                  onReorder={reorderImages}
+                  renderItem={(img) => (
+                    <div className="flex items-center gap-3">
+                      <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <InlineName
+                          value={img.name || ""}
+                          onSave={(name) => {
+                            adminApi({ action: "update", table: "editorial_images", id: img.id, data: { name } });
+                            qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
+                            toast("Renamed");
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => setThumbnail(project.id, img.src)}
-                          className="text-white text-[10px] font-serif px-1 py-0.5 border border-white/50 hover:bg-white/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-neutral-300 hover:border-black"
                         >
                           Thumb
                         </button>
                         <button
                           onClick={() => deleteImage(img.id)}
-                          className="text-red-300 text-[10px] font-serif px-1 py-0.5 border border-red-300/50 hover:bg-red-500/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
                         >
                           ✕
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  )}
+                />
               </div>
             )}
           </div>
