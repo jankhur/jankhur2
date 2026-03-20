@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           aspect_ratio: number
           id: number
+          name: string | null
           project_slug: string
           sort_order: number | null
           src: string
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           aspect_ratio: number
           id?: number
+          name?: string | null
           project_slug: string
           sort_order?: number | null
           src: string
@@ -34,6 +36,7 @@ export type Database = {
         Update: {
           aspect_ratio?: number
           id?: number
+          name?: string | null
           project_slug?: string
           sort_order?: number | null
           src?: string
@@ -86,6 +89,7 @@ export type Database = {
         Row: {
           aspect_ratio: number
           id: number
+          name: string | null
           project_slug: string
           sort_order: number | null
           src: string
@@ -94,6 +98,7 @@ export type Database = {
         Insert: {
           aspect_ratio: number
           id?: number
+          name?: string | null
           project_slug: string
           sort_order?: number | null
           src: string
@@ -102,6 +107,7 @@ export type Database = {
         Update: {
           aspect_ratio?: number
           id?: number
+          name?: string | null
           project_slug?: string
           sort_order?: number | null
           src?: string
@@ -181,6 +187,7 @@ export type Database = {
         Row: {
           aspect_ratio: number
           id: number
+          name: string | null
           sort_order: number | null
           src: string
           src_large: string
@@ -189,6 +196,7 @@ export type Database = {
         Insert: {
           aspect_ratio: number
           id?: number
+          name?: string | null
           sort_order?: number | null
           src: string
           src_large: string
@@ -197,6 +205,7 @@ export type Database = {
         Update: {
           aspect_ratio?: number
           id?: number
+          name?: string | null
           sort_order?: number | null
           src?: string
           src_large?: string
