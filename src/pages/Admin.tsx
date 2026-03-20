@@ -142,6 +142,52 @@ function ImageUploader({
   );
 }
 
+// ─── Inline Editable Name ────────────────────────────────────
+
+function InlineName({
+  value,
+  onSave,
+}: {
+  value: string;
+  onSave: (name: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(value);
+
+  useEffect(() => setText(value), [value]);
+
+  const commit = () => {
+    setEditing(false);
+    if (text !== value) onSave(text);
+  };
+
+  if (editing) {
+    return (
+      <input
+        autoFocus
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") { setText(value); setEditing(false); }
+        }}
+        className="border border-neutral-300 px-1 py-0.5 font-serif text-sm w-full focus:outline-none focus:border-black"
+      />
+    );
+  }
+
+  return (
+    <span
+      onClick={() => setEditing(true)}
+      className="font-serif text-sm truncate cursor-text hover:underline"
+      title="Click to rename"
+    >
+      {value || "Untitled"}
+    </span>
+  );
+}
+
 // ─── Draggable List ──────────────────────────────────────────
 
 function DraggableList<T extends { id: number }>({
@@ -420,31 +466,39 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
                 <ImageUploader
                   onUpload={(files) => handleImageUpload(project.slug, files)}
                 />
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                  {images.map((img) => (
-                    <div key={img.id} className="relative group">
-                      <img
-                        src={img.src}
-                        alt=""
-                        className="w-full aspect-square object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                <DraggableList
+                  items={images}
+                  onReorder={reorderImages}
+                  renderItem={(img) => (
+                    <div className="flex items-center gap-3">
+                      <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <InlineName
+                          value={img.name || ""}
+                          onSave={(name) => {
+                            adminApi({ action: "update", table: "editorial_images", id: img.id, data: { name } });
+                            qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
+                            toast("Renamed");
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => setThumbnail(project.id, img.src)}
-                          className="text-white text-[10px] font-serif px-1 py-0.5 border border-white/50 hover:bg-white/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-neutral-300 hover:border-black"
                         >
                           Thumb
                         </button>
                         <button
                           onClick={() => deleteImage(img.id)}
-                          className="text-red-300 text-[10px] font-serif px-1 py-0.5 border border-red-300/50 hover:bg-red-500/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
                         >
                           ✕
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  )}
+                />
               </div>
             )}
           </div>
@@ -648,27 +702,39 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
             {expandedSlug === project.slug && (
               <div className="mt-4 space-y-3">
                 <ImageUploader onUpload={(files) => handleImageUpload(project.slug, files)} />
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                  {images.map((img) => (
-                    <div key={img.id} className="relative group">
-                      <img src={img.src} alt="" className="w-full aspect-square object-cover" />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                <DraggableList
+                  items={images}
+                  onReorder={reorderImages}
+                  renderItem={(img) => (
+                    <div className="flex items-center gap-3">
+                      <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <InlineName
+                          value={img.name || ""}
+                          onSave={(name) => {
+                            adminApi({ action: "update", table: "journey_images", id: img.id, data: { name } });
+                            qc.invalidateQueries({ queryKey: ["admin-journey-images"] });
+                            toast("Renamed");
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => setThumbnail(project.id, img.src)}
-                          className="text-white text-[10px] font-serif px-1 py-0.5 border border-white/50 hover:bg-white/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-neutral-300 hover:border-black"
                         >
                           Thumb
                         </button>
                         <button
                           onClick={() => deleteImage(img.id)}
-                          className="text-red-300 text-[10px] font-serif px-1 py-0.5 border border-red-300/50 hover:bg-red-500/20"
+                          className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
                         >
                           ✕
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  )}
+                />
               </div>
             )}
           </div>
@@ -748,21 +814,34 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
         return (
           <div key={year} className="space-y-2">
             <h3 className="font-serif text-sm font-bold">{year}</h3>
-            <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-              {yearImages.map((img) => (
-                <div key={img.id} className="relative group">
-                  <img src={img.src} alt="" className="w-full aspect-square object-cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button
-                      onClick={() => deleteImage(img.id)}
-                      className="text-red-300 text-xs font-serif px-2 py-1 border border-red-300/50 hover:bg-red-500/20"
-                    >
-                      ✕
-                    </button>
+            <DraggableList
+              items={yearImages}
+              onReorder={async (ids) => {
+                await adminApi({ action: "reorder", table: "notes_images", ids });
+                qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
+              }}
+              renderItem={(img) => (
+                <div className="flex items-center gap-3">
+                  <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <InlineName
+                      value={img.name || ""}
+                      onSave={(name) => {
+                        adminApi({ action: "update", table: "notes_images", id: img.id, data: { name } });
+                        qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
+                        toast("Renamed");
+                      }}
+                    />
                   </div>
+                  <button
+                    onClick={() => deleteImage(img.id)}
+                    className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50 shrink-0"
+                  >
+                    ✕
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
         );
       })}
@@ -875,9 +954,14 @@ function LandingTab({ toast }: { toast: (m: string) => void }) {
           <div className="flex items-center gap-3">
             <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="font-serif text-sm font-bold truncate">
-                {img.name || "Untitled"}
-              </div>
+              <InlineName
+                value={img.name || ""}
+                onSave={(name) => {
+                  adminApi({ action: "update", table: "landing_images", id: img.id, data: { name } });
+                  qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+                  toast("Renamed");
+                }}
+              />
               <div className="font-serif text-xs text-neutral-400">
                 {img.layout} · {img.year || "—"}
               </div>
