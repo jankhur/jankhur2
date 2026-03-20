@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { adminApi, uploadImage, getAspectRatio } from "@/lib/adminApi";
@@ -14,7 +14,6 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
     e.preventDefault();
     sessionStorage.setItem("admin_password", pw);
     try {
-      // Test the password by making a dummy call
       const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const res = await fetch(
         `https://${PROJECT_ID}.supabase.co/functions/v1/admin`,
@@ -27,8 +26,6 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
           body: JSON.stringify({ action: "ping" }),
         }
       );
-      // 400 = unknown action = password was correct
-      // 401 = bad password
       if (res.status === 401) {
         setError("Wrong password");
         sessionStorage.removeItem("admin_password");
@@ -82,6 +79,64 @@ function useToastMessage() {
   return { msg, show };
 }
 
+// ─── Confirm Dialog ──────────────────────────────────────────
+
+function ConfirmDialog({
+  open,
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white p-6 max-w-sm w-full shadow-lg">
+        <p className="font-serif text-sm mb-4">{message}</p>
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="font-serif text-sm px-3 py-1 border border-neutral-300 hover:border-black"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="font-serif text-sm px-3 py-1 bg-red-600 text-white hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function useConfirm() {
+  const [state, setState] = useState<{ message: string; resolve: (v: boolean) => void } | null>(null);
+
+  const confirm = useCallback((message: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setState({ message, resolve });
+    });
+  }, []);
+
+  const dialog = state ? (
+    <ConfirmDialog
+      open
+      message={state.message}
+      onConfirm={() => { state.resolve(true); setState(null); }}
+      onCancel={() => { state.resolve(false); setState(null); }}
+    />
+  ) : null;
+
+  return { confirm, dialog };
+}
+
 // ─── Image Upload Component ─────────────────────────────────
 
 function ImageUploader({
@@ -120,10 +175,7 @@ function ImageUploader({
         <div className="font-serif text-sm">
           Uploading... {progress}%
           <div className="w-full bg-neutral-100 h-1 mt-2">
-            <div
-              className="bg-black h-1 transition-all"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="bg-black h-1 transition-all" style={{ width: `${progress}%` }} />
           </div>
         </div>
       ) : (
@@ -142,19 +194,25 @@ function ImageUploader({
   );
 }
 
-// ─── Inline Editable Name ────────────────────────────────────
+// ─── Inline Editable Field ───────────────────────────────────
 
-function InlineName({
+function InlineField({
   value,
   onSave,
+  placeholder,
+  className: extraClass,
 }: {
   value: string;
-  onSave: (name: string) => void;
+  onSave: (v: string) => void;
+  placeholder?: string;
+  className?: string;
 }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => setText(value), [value]);
+  useEffect(() => { if (editing) inputRef.current?.focus(); }, [editing]);
 
   const commit = () => {
     setEditing(false);
@@ -164,7 +222,7 @@ function InlineName({
   if (editing) {
     return (
       <input
-        autoFocus
+        ref={inputRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onBlur={commit}
@@ -172,7 +230,8 @@ function InlineName({
           if (e.key === "Enter") commit();
           if (e.key === "Escape") { setText(value); setEditing(false); }
         }}
-        className="border border-neutral-300 px-1 py-0.5 font-serif text-sm w-full focus:outline-none focus:border-black"
+        placeholder={placeholder}
+        className={`border border-neutral-300 px-1 py-0.5 font-serif text-sm focus:outline-none focus:border-black ${extraClass || ""}`}
       />
     );
   }
@@ -180,11 +239,28 @@ function InlineName({
   return (
     <span
       onClick={() => setEditing(true)}
-      className="font-serif text-sm truncate cursor-text hover:underline"
-      title="Click to rename"
+      className={`font-serif text-sm cursor-text hover:underline decoration-neutral-300 ${extraClass || ""}`}
+      title="Click to edit"
     >
-      {value || "Untitled"}
+      {value || <span className="text-neutral-300">{placeholder || "—"}</span>}
     </span>
+  );
+}
+
+// ─── Layout Dropdown ─────────────────────────────────────────
+
+function LayoutDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="border border-neutral-300 px-1 py-0.5 font-serif text-xs focus:outline-none focus:border-black bg-white"
+    >
+      <option value="left">Left</option>
+      <option value="center">Center</option>
+      <option value="right">Right</option>
+      <option value="full">Full</option>
+    </select>
   );
 }
 
@@ -201,7 +277,10 @@ function DraggableList<T extends { id: number }>({
 }) {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
 
-  const handleDragStart = (idx: number) => setDragIdx(idx);
+  const handleDragStart = (e: React.DragEvent, idx: number) => {
+    setDragIdx(idx);
+    e.dataTransfer.effectAllowed = "move";
+  };
 
   const handleDragOver = (e: React.DragEvent, idx: number) => {
     e.preventDefault();
@@ -214,21 +293,128 @@ function DraggableList<T extends { id: number }>({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       {items.map((item, idx) => (
         <div
           key={item.id}
-          draggable
-          onDragStart={() => handleDragStart(idx)}
           onDragOver={(e) => handleDragOver(e, idx)}
           onDragEnd={() => setDragIdx(null)}
-          className={`border border-neutral-200 p-3 bg-white cursor-grab active:cursor-grabbing ${
+          className={`border border-neutral-200 bg-white flex items-center ${
             dragIdx === idx ? "opacity-50" : ""
           }`}
         >
-          {renderItem(item, idx)}
+          <div
+            draggable
+            onDragStart={(e) => handleDragStart(e, idx)}
+            className="px-2 py-3 cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 select-none shrink-0"
+            title="Drag to reorder"
+          >
+            ⠿
+          </div>
+          <div className="flex-1 min-w-0 py-2 pr-3">
+            {renderItem(item, idx)}
+          </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+// ─── Delete Button ───────────────────────────────────────────
+
+function DeleteBtn({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50 shrink-0"
+    >
+      ✕
+    </button>
+  );
+}
+
+// ─── Toggle Button ───────────────────────────────────────────
+
+function ToggleBtn({ active, labelOn, labelOff, onClick }: { active: boolean; labelOn: string; labelOff: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`font-serif text-xs px-2 py-1 border shrink-0 ${
+        active ? "border-green-500 text-green-700" : "border-neutral-300 text-neutral-400"
+      }`}
+    >
+      {active ? labelOn : labelOff}
+    </button>
+  );
+}
+
+// ─── Landing Tab ─────────────────────────────────────────────
+
+function LandingTab({ toast }: { toast: (m: string) => void }) {
+  const qc = useQueryClient();
+  const { confirm, dialog } = useConfirm();
+
+  const { data: images = [] } = useQuery({
+    queryKey: ["admin-landing-images"],
+    queryFn: async () => {
+      const { data } = await supabase.from("landing_images").select("*").order("sort_order");
+      return data || [];
+    },
+  });
+
+  const handleUpload = async (files: { url: string; aspectRatio: number }[]) => {
+    const startOrder = images.length;
+    const rows = files.map((f, i) => ({
+      src: f.url,
+      aspect_ratio: f.aspectRatio,
+      layout: "center",
+      sort_order: startOrder + i,
+    }));
+    await adminApi({ action: "insert", table: "landing_images", data: rows });
+    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+    toast(`${files.length} image(s) uploaded`);
+  };
+
+  const update = async (id: number, data: Record<string, unknown>) => {
+    await adminApi({ action: "update", table: "landing_images", id, data });
+    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+    toast("Saved");
+  };
+
+  const handleDelete = async (id: number) => {
+    if (await confirm("Are you sure you want to delete this image?")) {
+      await adminApi({ action: "delete", table: "landing_images", id });
+      qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+      toast("Deleted");
+    }
+  };
+
+  const reorder = async (ids: number[]) => {
+    await adminApi({ action: "reorder", table: "landing_images", ids });
+    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+  };
+
+  return (
+    <div className="space-y-6">
+      {dialog}
+      <h2 className="font-serif text-lg">Landing Images</h2>
+      <ImageUploader onUpload={handleUpload} />
+      <DraggableList
+        items={images}
+        onReorder={reorder}
+        renderItem={(img) => (
+          <div className="flex items-center gap-3">
+            <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
+            <div className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
+              <InlineField value={img.name || ""} placeholder="Name" onSave={(v) => update(img.id, { name: v })} className="w-28" />
+              <InlineField value={img.year || ""} placeholder="Year" onSave={(v) => update(img.id, { year: v })} className="w-20" />
+              <LayoutDropdown value={img.layout} onChange={(v) => update(img.id, { layout: v })} />
+            </div>
+            <ToggleBtn active={img.published ?? true} labelOn="Visible" labelOff="Hidden" onClick={() => update(img.id, { published: !(img.published ?? true) })} />
+            <DeleteBtn onClick={() => handleDelete(img.id)} />
+          </div>
+        )}
+      />
     </div>
   );
 }
@@ -237,6 +423,7 @@ function DraggableList<T extends { id: number }>({
 
 function EditorialTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
+  const { confirm, dialog } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -247,10 +434,7 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
   const { data: projects = [] } = useQuery({
     queryKey: ["admin-editorial-projects"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("editorial_projects")
-        .select("*")
-        .order("sort_order");
+      const { data } = await supabase.from("editorial_projects").select("*").order("sort_order");
       return data || [];
     },
   });
@@ -259,11 +443,7 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
     queryKey: ["admin-editorial-images", expandedSlug],
     queryFn: async () => {
       if (!expandedSlug) return [];
-      const { data } = await supabase
-        .from("editorial_images")
-        .select("*")
-        .eq("project_slug", expandedSlug)
-        .order("sort_order");
+      const { data } = await supabase.from("editorial_images").select("*").eq("project_slug", expandedSlug).order("sort_order");
       return data || [];
     },
     enabled: !!expandedSlug,
@@ -275,38 +455,29 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
       action: "insert",
       table: "editorial_projects",
       data: {
-        title,
-        subtitle: subtitle || null,
+        title, subtitle: subtitle || null,
         slug: slug || title.toLowerCase().replace(/\s+/g, "-"),
-        year: year || null,
-        thumbnail: "https://placehold.co/400x600",
+        year: year || null, thumbnail: "https://placehold.co/400x600",
         sort_order: projects.length,
       },
     });
-    setShowForm(false);
-    setTitle("");
-    setSubtitle("");
-    setSlug("");
-    setYear("");
+    setShowForm(false); setTitle(""); setSubtitle(""); setSlug(""); setYear("");
     qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
     toast("Project added");
   };
 
-  const deleteProject = async (id: number) => {
-    await adminApi({ action: "delete", table: "editorial_projects", id });
+  const updateProject = async (id: number, data: Record<string, unknown>) => {
+    await adminApi({ action: "update", table: "editorial_projects", id, data });
     qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
-    toast("Project deleted");
+    toast("Saved");
   };
 
-  const togglePublished = async (id: number, current: boolean) => {
-    await adminApi({
-      action: "update",
-      table: "editorial_projects",
-      id,
-      data: { published: !current },
-    });
-    qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
-    toast(current ? "Unpublished" : "Published");
+  const deleteProject = async (id: number) => {
+    if (await confirm("Delete this project and all its images?")) {
+      await adminApi({ action: "delete", table: "editorial_projects", id });
+      qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
+      toast("Deleted");
+    }
   };
 
   const reorderProjects = async (ids: number[]) => {
@@ -314,17 +485,11 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
     qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
   };
 
-  const handleImageUpload = async (
-    slug: string,
-    files: { url: string; aspectRatio: number }[]
-  ) => {
+  const handleImageUpload = async (projectSlug: string, files: { url: string; aspectRatio: number }[]) => {
     const startOrder = images.length;
     const rows = files.map((f, i) => ({
-      project_slug: slug,
-      src: f.url,
-      src_large: f.url,
-      aspect_ratio: f.aspectRatio,
-      sort_order: startOrder + i,
+      project_slug: projectSlug, src: f.url, src_large: f.url,
+      aspect_ratio: f.aspectRatio, sort_order: startOrder + i,
     }));
     await adminApi({ action: "insert", table: "editorial_images", data: rows });
     qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
@@ -332,20 +497,17 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
   };
 
   const deleteImage = async (id: number) => {
-    await adminApi({ action: "delete", table: "editorial_images", id });
-    qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
-    toast("Image deleted");
+    if (await confirm("Are you sure?")) {
+      await adminApi({ action: "delete", table: "editorial_images", id });
+      qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
+      toast("Deleted");
+    }
   };
 
   const setThumbnail = async (projectId: number, url: string) => {
-    await adminApi({
-      action: "update",
-      table: "editorial_projects",
-      id: projectId,
-      data: { thumbnail: url },
-    });
+    await adminApi({ action: "update", table: "editorial_projects", id: projectId, data: { thumbnail: url } });
     qc.invalidateQueries({ queryKey: ["admin-editorial-projects"] });
-    toast("Thumbnail set");
+    toast("Cover set");
   };
 
   const reorderImages = async (ids: number[]) => {
@@ -355,53 +517,21 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <div className="flex justify-between items-center">
         <h2 className="font-serif text-lg">Editorial Projects</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="font-serif text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors"
-        >
+        <button onClick={() => setShowForm(!showForm)} className="font-serif text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors">
           {showForm ? "Cancel" : "+ Add Project"}
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={addProject} className="border border-neutral-200 p-4 space-y-3">
-          <input
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              if (!slug) setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
-            }}
-            placeholder="Title"
-            required
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <input
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            placeholder="Subtitle (optional)"
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <input
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            placeholder="Slug"
-            required
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <input
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            placeholder="Year (optional)"
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <button
-            type="submit"
-            className="bg-black text-white font-serif text-sm px-4 py-2 hover:bg-neutral-800"
-          >
-            Create
-          </button>
+          <input value={title} onChange={(e) => { setTitle(e.target.value); if (!slug) setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-")); }} placeholder="Title" required className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Subtitle (optional)" className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="Slug" required className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year (optional)" className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <button type="submit" className="bg-black text-white font-serif text-sm px-4 py-2 hover:bg-neutral-800">Create</button>
         </form>
       )}
 
@@ -410,92 +540,41 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
         onReorder={reorderProjects}
         renderItem={(project) => (
           <div>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src={project.thumbnail}
-                  alt=""
-                  className="w-12 h-12 object-cover"
-                />
-                <div>
-                  <span className="font-serif text-sm font-bold">{project.title}</span>
-                  {project.subtitle && (
-                    <span className="font-serif text-sm text-neutral-500">
-                      {" "}— {project.subtitle}
-                    </span>
-                  )}
-                  <div className="font-serif text-xs text-neutral-400">
-                    /{project.slug} {project.year && `· ${project.year}`}
-                  </div>
-                </div>
+            <div className="flex items-center gap-3">
+              <img src={project.thumbnail} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
+              <div className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
+                <InlineField value={project.title} placeholder="Title" onSave={(v) => updateProject(project.id, { title: v })} className="font-bold" />
+                <InlineField value={project.subtitle || ""} placeholder="Subtitle" onSave={(v) => updateProject(project.id, { subtitle: v || null })} className="text-neutral-500" />
+                <InlineField value={project.year || ""} placeholder="Year" onSave={(v) => updateProject(project.id, { year: v || null })} className="w-16" />
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() =>
-                    togglePublished(project.id, project.published ?? true)
-                  }
-                  className={`font-serif text-xs px-2 py-1 border ${
-                    project.published
-                      ? "border-green-500 text-green-700"
-                      : "border-neutral-300 text-neutral-400"
-                  }`}
-                >
-                  {project.published ? "Published" : "Draft"}
-                </button>
-                <button
-                  onClick={() =>
-                    setExpandedSlug(
-                      expandedSlug === project.slug ? null : project.slug
-                    )
-                  }
-                  className="font-serif text-xs px-2 py-1 border border-neutral-300 hover:border-black"
-                >
+              <div className="flex items-center gap-1 shrink-0">
+                <ToggleBtn active={project.published ?? true} labelOn="Published" labelOff="Draft" onClick={() => updateProject(project.id, { published: !(project.published ?? true) })} />
+                <button onClick={() => setExpandedSlug(expandedSlug === project.slug ? null : project.slug)} className="font-serif text-xs px-2 py-1 border border-neutral-300 hover:border-black">
                   {expandedSlug === project.slug ? "Close" : "Images"}
                 </button>
-                <button
-                  onClick={() => deleteProject(project.id)}
-                  className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  Delete
-                </button>
+                <DeleteBtn onClick={() => deleteProject(project.id)} />
               </div>
             </div>
 
             {expandedSlug === project.slug && (
-              <div className="mt-4 space-y-3">
-                <ImageUploader
-                  onUpload={(files) => handleImageUpload(project.slug, files)}
-                />
+              <div className="mt-4 ml-6 space-y-3">
+                <ImageUploader onUpload={(files) => handleImageUpload(project.slug, files)} />
                 <DraggableList
                   items={images}
                   onReorder={reorderImages}
                   renderItem={(img) => (
                     <div className="flex items-center gap-3">
-                      <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                      <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
                       <div className="flex-1 min-w-0">
-                        <InlineName
-                          value={img.name || ""}
-                          onSave={(name) => {
-                            adminApi({ action: "update", table: "editorial_images", id: img.id, data: { name } });
-                            qc.invalidateQueries({ queryKey: ["admin-editorial-images"] });
-                            toast("Renamed");
-                          }}
-                        />
+                        <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => { adminApi({ action: "update", table: "editorial_images", id: img.id, data: { name } }); qc.invalidateQueries({ queryKey: ["admin-editorial-images"] }); toast("Saved"); }} />
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={() => setThumbnail(project.id, img.src)}
-                          className="font-serif text-[10px] px-2 py-1 border border-neutral-300 hover:border-black"
-                        >
-                          Thumb
-                        </button>
-                        <button
-                          onClick={() => deleteImage(img.id)}
-                          className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
-                        >
-                          ✕
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => setThumbnail(project.id, img.src)}
+                        className={`font-serif text-[10px] px-2 py-1 border shrink-0 ${project.thumbnail === img.src ? "border-yellow-500 text-yellow-700 bg-yellow-50" : "border-neutral-300 hover:border-black"}`}
+                      >
+                        {project.thumbnail === img.src ? "★ Cover" : "Set cover"}
+                      </button>
+                      <DeleteBtn onClick={() => deleteImage(img.id)} />
                     </div>
                   )}
                 />
@@ -512,6 +591,7 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
 
 function JourneyTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
+  const { confirm, dialog } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -520,10 +600,7 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
   const { data: projects = [] } = useQuery({
     queryKey: ["admin-journey-projects"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("journey_projects")
-        .select("*")
-        .order("sort_order");
+      const { data } = await supabase.from("journey_projects").select("*").order("sort_order");
       return data || [];
     },
   });
@@ -532,11 +609,7 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
     queryKey: ["admin-journey-images", expandedSlug],
     queryFn: async () => {
       if (!expandedSlug) return [];
-      const { data } = await supabase
-        .from("journey_images")
-        .select("*")
-        .eq("project_slug", expandedSlug)
-        .order("sort_order");
+      const { data } = await supabase.from("journey_images").select("*").eq("project_slug", expandedSlug).order("sort_order");
       return data || [];
     },
     enabled: !!expandedSlug,
@@ -545,37 +618,26 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
   const addProject = async (e: React.FormEvent) => {
     e.preventDefault();
     await adminApi({
-      action: "insert",
-      table: "journey_projects",
-      data: {
-        title,
-        slug: slug || title.toLowerCase().replace(/\s+/g, "-"),
-        thumbnail: "https://placehold.co/400x600",
-        sort_order: projects.length,
-      },
+      action: "insert", table: "journey_projects",
+      data: { title, slug: slug || title.toLowerCase().replace(/\s+/g, "-"), thumbnail: "https://placehold.co/400x600", sort_order: projects.length },
     });
-    setShowForm(false);
-    setTitle("");
-    setSlug("");
+    setShowForm(false); setTitle(""); setSlug("");
     qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
     toast("Project added");
   };
 
-  const deleteProject = async (id: number) => {
-    await adminApi({ action: "delete", table: "journey_projects", id });
+  const updateProject = async (id: number, data: Record<string, unknown>) => {
+    await adminApi({ action: "update", table: "journey_projects", id, data });
     qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
-    toast("Project deleted");
+    toast("Saved");
   };
 
-  const togglePublished = async (id: number, current: boolean) => {
-    await adminApi({
-      action: "update",
-      table: "journey_projects",
-      id,
-      data: { published: !current },
-    });
-    qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
-    toast(current ? "Unpublished" : "Published");
+  const deleteProject = async (id: number) => {
+    if (await confirm("Delete this project and all its images?")) {
+      await adminApi({ action: "delete", table: "journey_projects", id });
+      qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
+      toast("Deleted");
+    }
   };
 
   const reorderProjects = async (ids: number[]) => {
@@ -583,17 +645,11 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
     qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
   };
 
-  const handleImageUpload = async (
-    projectSlug: string,
-    files: { url: string; aspectRatio: number }[]
-  ) => {
+  const handleImageUpload = async (projectSlug: string, files: { url: string; aspectRatio: number }[]) => {
     const startOrder = images.length;
     const rows = files.map((f, i) => ({
-      project_slug: projectSlug,
-      src: f.url,
-      src_large: f.url,
-      aspect_ratio: f.aspectRatio,
-      sort_order: startOrder + i,
+      project_slug: projectSlug, src: f.url, src_large: f.url,
+      aspect_ratio: f.aspectRatio, sort_order: startOrder + i,
     }));
     await adminApi({ action: "insert", table: "journey_images", data: rows });
     qc.invalidateQueries({ queryKey: ["admin-journey-images"] });
@@ -601,20 +657,17 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
   };
 
   const deleteImage = async (id: number) => {
-    await adminApi({ action: "delete", table: "journey_images", id });
-    qc.invalidateQueries({ queryKey: ["admin-journey-images"] });
-    toast("Image deleted");
+    if (await confirm("Are you sure?")) {
+      await adminApi({ action: "delete", table: "journey_images", id });
+      qc.invalidateQueries({ queryKey: ["admin-journey-images"] });
+      toast("Deleted");
+    }
   };
 
   const setThumbnail = async (projectId: number, url: string) => {
-    await adminApi({
-      action: "update",
-      table: "journey_projects",
-      id: projectId,
-      data: { thumbnail: url },
-    });
+    await adminApi({ action: "update", table: "journey_projects", id: projectId, data: { thumbnail: url } });
     qc.invalidateQueries({ queryKey: ["admin-journey-projects"] });
-    toast("Thumbnail set");
+    toast("Cover set");
   };
 
   const reorderImages = async (ids: number[]) => {
@@ -624,41 +677,19 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <div className="flex justify-between items-center">
         <h2 className="font-serif text-lg">Journey Projects</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="font-serif text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors"
-        >
+        <button onClick={() => setShowForm(!showForm)} className="font-serif text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors">
           {showForm ? "Cancel" : "+ Add Project"}
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={addProject} className="border border-neutral-200 p-4 space-y-3">
-          <input
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              if (!slug) setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
-            }}
-            placeholder="Title"
-            required
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <input
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            placeholder="Slug"
-            required
-            className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          />
-          <button
-            type="submit"
-            className="bg-black text-white font-serif text-sm px-4 py-2 hover:bg-neutral-800"
-          >
-            Create
-          </button>
+          <input value={title} onChange={(e) => { setTitle(e.target.value); if (!slug) setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-")); }} placeholder="Title" required className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="Slug" required className="w-full border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black" />
+          <button type="submit" className="bg-black text-white font-serif text-sm px-4 py-2 hover:bg-neutral-800">Create</button>
         </form>
       )}
 
@@ -667,71 +698,39 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
         onReorder={reorderProjects}
         renderItem={(project) => (
           <div>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <img src={project.thumbnail} alt="" className="w-12 h-12 object-cover" />
-                <div>
-                  <span className="font-serif text-sm font-bold">{project.title}</span>
-                  <div className="font-serif text-xs text-neutral-400">/{project.slug}</div>
-                </div>
+            <div className="flex items-center gap-3">
+              <img src={project.thumbnail} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
+              <div className="flex-1 min-w-0">
+                <InlineField value={project.title} placeholder="Title" onSave={(v) => updateProject(project.id, { title: v })} className="font-bold" />
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => togglePublished(project.id, project.published ?? true)}
-                  className={`font-serif text-xs px-2 py-1 border ${
-                    project.published ? "border-green-500 text-green-700" : "border-neutral-300 text-neutral-400"
-                  }`}
-                >
-                  {project.published ? "Published" : "Draft"}
-                </button>
-                <button
-                  onClick={() => setExpandedSlug(expandedSlug === project.slug ? null : project.slug)}
-                  className="font-serif text-xs px-2 py-1 border border-neutral-300 hover:border-black"
-                >
+              <div className="flex items-center gap-1 shrink-0">
+                <ToggleBtn active={project.published ?? true} labelOn="Published" labelOff="Draft" onClick={() => updateProject(project.id, { published: !(project.published ?? true) })} />
+                <button onClick={() => setExpandedSlug(expandedSlug === project.slug ? null : project.slug)} className="font-serif text-xs px-2 py-1 border border-neutral-300 hover:border-black">
                   {expandedSlug === project.slug ? "Close" : "Images"}
                 </button>
-                <button
-                  onClick={() => deleteProject(project.id)}
-                  className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  Delete
-                </button>
+                <DeleteBtn onClick={() => deleteProject(project.id)} />
               </div>
             </div>
 
             {expandedSlug === project.slug && (
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 ml-6 space-y-3">
                 <ImageUploader onUpload={(files) => handleImageUpload(project.slug, files)} />
                 <DraggableList
                   items={images}
                   onReorder={reorderImages}
                   renderItem={(img) => (
                     <div className="flex items-center gap-3">
-                      <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                      <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
                       <div className="flex-1 min-w-0">
-                        <InlineName
-                          value={img.name || ""}
-                          onSave={(name) => {
-                            adminApi({ action: "update", table: "journey_images", id: img.id, data: { name } });
-                            qc.invalidateQueries({ queryKey: ["admin-journey-images"] });
-                            toast("Renamed");
-                          }}
-                        />
+                        <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => { adminApi({ action: "update", table: "journey_images", id: img.id, data: { name } }); qc.invalidateQueries({ queryKey: ["admin-journey-images"] }); toast("Saved"); }} />
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={() => setThumbnail(project.id, img.src)}
-                          className="font-serif text-[10px] px-2 py-1 border border-neutral-300 hover:border-black"
-                        >
-                          Thumb
-                        </button>
-                        <button
-                          onClick={() => deleteImage(img.id)}
-                          className="font-serif text-[10px] px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
-                        >
-                          ✕
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => setThumbnail(project.id, img.src)}
+                        className={`font-serif text-[10px] px-2 py-1 border shrink-0 ${project.thumbnail === img.src ? "border-yellow-500 text-yellow-700 bg-yellow-50" : "border-neutral-300 hover:border-black"}`}
+                      >
+                        {project.thumbnail === img.src ? "★ Cover" : "Set cover"}
+                      </button>
+                      <DeleteBtn onClick={() => deleteImage(img.id)} />
                     </div>
                   )}
                 />
@@ -748,72 +747,62 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
 
 function NotesTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
+  const { confirm, dialog } = useConfirm();
   const [yearInput, setYearInput] = useState("");
 
   const { data: images = [] } = useQuery({
     queryKey: ["admin-notes-images"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("notes_images")
-        .select("*")
-        .order("year")
-        .order("sort_order");
+      const { data } = await supabase.from("notes_images").select("*").order("year").order("sort_order");
       return data || [];
     },
   });
 
   const years = [...new Set(images.map((img) => img.year))];
 
-  const handleUpload = async (
-    files: { url: string; aspectRatio: number }[]
-  ) => {
-    if (!yearInput.trim()) {
-      toast("Please enter a year first");
-      return;
-    }
-    const sameYearImages = images.filter((img) => img.year === yearInput);
-    const startOrder = sameYearImages.length;
+  const handleUpload = async (files: { url: string; aspectRatio: number }[]) => {
+    if (!yearInput.trim()) { toast("Please enter a year first"); return; }
+    const sameYear = images.filter((img) => img.year === yearInput);
     const rows = files.map((f, i) => ({
-      src: f.url,
-      src_large: f.url,
-      aspect_ratio: f.aspectRatio,
-      year: yearInput,
-      sort_order: startOrder + i,
+      src: f.url, src_large: f.url, aspect_ratio: f.aspectRatio,
+      year: yearInput, sort_order: sameYear.length + i,
     }));
     await adminApi({ action: "insert", table: "notes_images", data: rows });
     qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
     toast(`${files.length} image(s) uploaded`);
   };
 
-  const deleteImage = async (id: number) => {
-    await adminApi({ action: "delete", table: "notes_images", id });
+  const handleDelete = async (id: number) => {
+    if (await confirm("Are you sure?")) {
+      await adminApi({ action: "delete", table: "notes_images", id });
+      qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
+      toast("Deleted");
+    }
+  };
+
+  const update = async (id: number, data: Record<string, unknown>) => {
+    await adminApi({ action: "update", table: "notes_images", id, data });
     qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
-    toast("Image deleted");
+    toast("Saved");
   };
 
   return (
     <div className="space-y-6">
+      {dialog}
       <h2 className="font-serif text-lg">Notes Images</h2>
-
       <div className="flex gap-3 items-end">
         <div>
-          <label className="font-serif text-xs text-neutral-500 block mb-1">Year</label>
-          <input
-            value={yearInput}
-            onChange={(e) => setYearInput(e.target.value)}
-            placeholder="e.g. 2024"
-            className="border border-neutral-300 px-3 py-2 font-serif text-sm w-40 focus:outline-none focus:border-black"
-          />
+          <label className="font-serif text-xs text-neutral-500 block mb-1">Year for new uploads</label>
+          <input value={yearInput} onChange={(e) => setYearInput(e.target.value)} placeholder="e.g. 2024" className="border border-neutral-300 px-3 py-2 font-serif text-sm w-40 focus:outline-none focus:border-black" />
         </div>
       </div>
-
       <ImageUploader onUpload={handleUpload} />
 
       {years.map((year) => {
         const yearImages = images.filter((img) => img.year === year);
         return (
           <div key={year} className="space-y-2">
-            <h3 className="font-serif text-sm font-bold">{year}</h3>
+            <h3 className="font-serif text-sm font-bold border-b border-neutral-200 pb-1">{year}</h3>
             <DraggableList
               items={yearImages}
               onReorder={async (ids) => {
@@ -822,23 +811,12 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
               }}
               renderItem={(img) => (
                 <div className="flex items-center gap-3">
-                  <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <InlineName
-                      value={img.name || ""}
-                      onSave={(name) => {
-                        adminApi({ action: "update", table: "notes_images", id: img.id, data: { name } });
-                        qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
-                        toast("Renamed");
-                      }}
-                    />
+                  <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
+                  <div className="flex-1 min-w-0 flex items-center gap-3">
+                    <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => update(img.id, { name })} />
+                    <InlineField value={img.year} placeholder="Year" onSave={(y) => update(img.id, { year: y })} className="w-24" />
                   </div>
-                  <button
-                    onClick={() => deleteImage(img.id)}
-                    className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50 shrink-0"
-                  >
-                    ✕
-                  </button>
+                  <DeleteBtn onClick={() => handleDelete(img.id)} />
                 </div>
               )}
             />
@@ -849,152 +827,10 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
   );
 }
 
-// ─── Landing Tab ─────────────────────────────────────────────
-
-function LandingTab({ toast }: { toast: (m: string) => void }) {
-  const qc = useQueryClient();
-  const [nameInput, setNameInput] = useState("");
-  const [yearInput, setYearInput] = useState("");
-  const [layoutInput, setLayoutInput] = useState<string>("center");
-
-  const { data: images = [] } = useQuery({
-    queryKey: ["admin-landing-images"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("landing_images")
-        .select("*")
-        .order("sort_order");
-      return data || [];
-    },
-  });
-
-  const handleUpload = async (
-    files: { url: string; aspectRatio: number }[]
-  ) => {
-    const startOrder = images.length;
-    const rows = files.map((f, i) => ({
-      src: f.url,
-      aspect_ratio: f.aspectRatio,
-      layout: layoutInput,
-      name: nameInput || null,
-      year: yearInput || null,
-      sort_order: startOrder + i,
-    }));
-    await adminApi({ action: "insert", table: "landing_images", data: rows });
-    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
-    toast(`${files.length} image(s) uploaded`);
-  };
-
-  const deleteImage = async (id: number) => {
-    await adminApi({ action: "delete", table: "landing_images", id });
-    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
-    toast("Image deleted");
-  };
-
-  const togglePublished = async (id: number, current: boolean) => {
-    await adminApi({
-      action: "update",
-      table: "landing_images",
-      id,
-      data: { published: !current },
-    });
-    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
-    toast(current ? "Hidden" : "Shown");
-  };
-
-  const reorderImages = async (ids: number[]) => {
-    await adminApi({ action: "reorder", table: "landing_images", ids });
-    qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
-  };
-
-  return (
-    <div className="space-y-6">
-      <h2 className="font-serif text-lg">Landing Images</h2>
-
-      <div className="flex gap-3 items-end flex-wrap">
-        <div>
-          <label className="font-serif text-xs text-neutral-500 block mb-1">Name</label>
-          <input
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
-            placeholder="Image name"
-            className="border border-neutral-300 px-3 py-2 font-serif text-sm w-40 focus:outline-none focus:border-black"
-          />
-        </div>
-        <div>
-          <label className="font-serif text-xs text-neutral-500 block mb-1">Year</label>
-          <input
-            value={yearInput}
-            onChange={(e) => setYearInput(e.target.value)}
-            placeholder="e.g. 2024"
-            className="border border-neutral-300 px-3 py-2 font-serif text-sm w-24 focus:outline-none focus:border-black"
-          />
-        </div>
-        <div>
-          <label className="font-serif text-xs text-neutral-500 block mb-1">Layout</label>
-          <select
-            value={layoutInput}
-            onChange={(e) => setLayoutInput(e.target.value)}
-            className="border border-neutral-300 px-3 py-2 font-serif text-sm focus:outline-none focus:border-black"
-          >
-            <option value="full">Full</option>
-            <option value="center">Center</option>
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
-      </div>
-
-      <ImageUploader onUpload={handleUpload} />
-
-      <DraggableList
-        items={images}
-        onReorder={reorderImages}
-        renderItem={(img) => (
-          <div className="flex items-center gap-3">
-            <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
-            <div className="flex-1 min-w-0">
-              <InlineName
-                value={img.name || ""}
-                onSave={(name) => {
-                  adminApi({ action: "update", table: "landing_images", id: img.id, data: { name } });
-                  qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
-                  toast("Renamed");
-                }}
-              />
-              <div className="font-serif text-xs text-neutral-400">
-                {img.layout} · {img.year || "—"}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => togglePublished(img.id, img.published ?? true)}
-                className={`font-serif text-xs px-2 py-1 border ${
-                  img.published ? "border-green-500 text-green-700" : "border-neutral-300 text-neutral-400"
-                }`}
-              >
-                {img.published ? "Visible" : "Hidden"}
-              </button>
-              <button
-                onClick={() => deleteImage(img.id)}
-                className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-      />
-    </div>
-  );
-}
-
 // ─── Main Admin Page ─────────────────────────────────────────
 
 const Admin = () => {
-  const [authed, setAuthed] = useState(
-    () => !!sessionStorage.getItem("admin_password")
-  );
+  const [authed, setAuthed] = useState(() => !!sessionStorage.getItem("admin_password"));
   const { msg, show } = useToastMessage();
 
   if (!authed) return <AdminLogin onAuth={() => setAuthed(true)} />;
@@ -1004,13 +840,7 @@ const Admin = () => {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="flex justify-between items-center mb-8">
           <h1 className="font-serif text-2xl">Admin</h1>
-          <button
-            onClick={() => {
-              sessionStorage.removeItem("admin_password");
-              setAuthed(false);
-            }}
-            className="font-serif text-sm text-neutral-400 hover:text-black"
-          >
+          <button onClick={() => { sessionStorage.removeItem("admin_password"); setAuthed(false); }} className="font-serif text-sm text-neutral-400 hover:text-black">
             Logout
           </button>
         </div>
@@ -1018,33 +848,19 @@ const Admin = () => {
         <Tabs defaultValue="editorial">
           <TabsList className="bg-transparent border-b border-neutral-200 rounded-none w-full justify-start gap-0 h-auto p-0">
             {["editorial", "journey", "notes", "landing"].map((tab) => (
-              <TabsTrigger
-                key={tab}
-                value={tab}
-                className="font-serif text-sm capitalize rounded-none border-b-2 border-transparent data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
-              >
+              <TabsTrigger key={tab} value={tab} className="font-serif text-sm capitalize rounded-none border-b-2 border-transparent data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2">
                 {tab}
               </TabsTrigger>
             ))}
           </TabsList>
-
           <div className="mt-8">
-            <TabsContent value="editorial">
-              <EditorialTab toast={show} />
-            </TabsContent>
-            <TabsContent value="journey">
-              <JourneyTab toast={show} />
-            </TabsContent>
-            <TabsContent value="notes">
-              <NotesTab toast={show} />
-            </TabsContent>
-            <TabsContent value="landing">
-              <LandingTab toast={show} />
-            </TabsContent>
+            <TabsContent value="editorial"><EditorialTab toast={show} /></TabsContent>
+            <TabsContent value="journey"><JourneyTab toast={show} /></TabsContent>
+            <TabsContent value="notes"><NotesTab toast={show} /></TabsContent>
+            <TabsContent value="landing"><LandingTab toast={show} /></TabsContent>
           </div>
         </Tabs>
       </div>
-
       {msg && <Toast message={msg} />}
     </div>
   );
