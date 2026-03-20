@@ -11,6 +11,7 @@ import Journey from "./pages/Journey.tsx";
 import JourneyGallery from "./pages/JourneyGallery.tsx";
 import Notes from "./pages/Notes.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
