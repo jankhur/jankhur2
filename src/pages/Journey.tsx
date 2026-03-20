@@ -67,7 +67,7 @@ const Journey = () => {
                       loading="lazy"
                     />
                   </div>
-                  <div className="mt-3 font-serif text-sm">
+                  <div className="mt-3 font-serif text-sm image-caption">
                     <span className="font-bold text-foreground">{project.title}</span>
                   </div>
                 </Link>

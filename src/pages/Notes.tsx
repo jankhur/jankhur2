@@ -236,7 +236,7 @@ const Notes = () => {
                 alt={`Notes — ${lightboxImage.year}`}
                 className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
               />
-              <span className="mt-4 font-serif text-sm text-muted-foreground italic">{lightboxImage.year}</span>
+              <span className="mt-4 font-serif text-sm text-muted-foreground italic image-caption">{lightboxImage.year}</span>
             </motion.div>
 
             <button onClick={() => setLightboxImage(null)} className="fixed top-6 right-6 md:right-10 z-50 nav-link">

@@ -67,7 +67,7 @@ const Editorial = () => {
                       loading="lazy"
                     />
                   </div>
-                  <div className="mt-3 font-serif text-sm">
+                  <div className="mt-3 font-serif text-sm image-caption">
                     <span className="font-bold text-foreground">{project.title}</span>
                     {project.subtitle && (
                       <span className="font-normal text-muted-foreground">, {project.subtitle}</span>

@@ -98,4 +98,16 @@
     @apply text-base italic;
     color: hsl(var(--muted-foreground));
   }
+
+  .image-caption {
+    font-size: 0.875rem; /* text-sm default */
+  }
+}
+
+@media (min-resolution: 192dpi) and (min-width: 2560px) {
+  .caption-text,
+  .caption-meta,
+  .image-caption {
+    font-size: 1.3125rem;
+  }
 }
