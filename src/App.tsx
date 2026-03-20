@@ -29,6 +29,7 @@ const App = () => (
           <Route path="/journey" element={<Journey />} />
           <Route path="/journey/:slug" element={<JourneyGallery />} />
           <Route path="/notes" element={<Notes />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
