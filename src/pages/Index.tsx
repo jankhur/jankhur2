@@ -4,16 +4,6 @@ import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
-const nameLetters = [
-{ char: "J", line: 0 },
-{ char: "A", line: 0 },
-{ char: "N", line: 0 },
-{ char: "K", line: 1 },
-{ char: "H", line: 1 },
-{ char: "Ü", line: 1 },
-{ char: "R", line: 1 }];
-
-
 const Index = () => {
   const [scrolled, setScrolled] = useState(false);
 
@@ -30,60 +20,18 @@ const Index = () => {
       <Header showName={scrolled} />
       <SketchCursor type="lov" />
 
-      {/* Hero: Name + Bio side by side */}
+      {/* Hero: Contact links */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: scrolled ? 0 : 1 }}
         transition={{ duration: 0.4 }}
         className="pt-24 pb-12 md:pt-28 md:pb-16 px-6 md:px-10">
         
-        <div className="max-w-[90vw] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-10 md:gap-16">
-          <h1 className="text-foreground text-[13vw] md:text-[10vw] leading-[1.05] tracking-tight uppercase" style={{ fontFamily: 'var(--font-logo)' }}>
-            <span className="inline-flex">
-              {nameLetters.filter((l) => l.line === 0).map((l, i) =>
-              <motion.span
-                key={`line0-${i}`}
-                className="inline-block"
-                animate={{ y: [0, -8, 0, 6, 0] }}
-                transition={{
-                  duration: 0.6,
-                  delay: i * 0.12,
-                  repeat: 5,
-                  repeatType: "loop",
-                  ease: "easeInOut"
-                }}>
-                
-                  {l.char}
-                </motion.span>
-              )}
-            </span>
-            <br />
-            <span className="inline-flex">
-              {nameLetters.filter((l) => l.line === 1).map((l, i) =>
-              <motion.span
-                key={`line1-${i}`}
-                className="inline-block"
-                animate={{ y: [0, -8, 0, 6, 0] }}
-                transition={{
-                  duration: 0.6,
-                  delay: (i + 3) * 0.12,
-                  repeat: 5,
-                  repeatType: "loop",
-                  ease: "easeInOut"
-                }}>
-                
-                  {l.char}
-                </motion.span>
-              )}
-            </span>
-          </h1>
-
-          {/* Contact links */}
+        <div className="max-w-[90vw] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="md:pb-[1.5vw] md:flex-1 shrink-0">
+            transition={{ duration: 0.8, delay: 0.3 }}>
             
             <div className="flex gap-4">
               <motion.a
@@ -135,8 +83,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;
