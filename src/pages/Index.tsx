@@ -78,23 +78,13 @@ const Index = () => {
             </span>
           </h1>
 
-          {/* Bio & Contact */}
+          {/* Contact links */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="md:pb-[1.5vw] md:flex-1 shrink-0">
             
-            <motion.p
-              className="font-serif text-base md:text-lg leading-relaxed text-foreground mb-6"
-              whileHover={{
-                rotate: [0, -0.5, 0.5, -0.3, 0],
-                y: [0, -2, 0],
-                transition: { duration: 0.5, ease: "easeInOut" }
-              }}
-            >
-              Oslo-based Czech photographer working across editorial, commercial, and independent art projects. Focused on portraiture, social documentary, and analogue photography.
-            </motion.p>
             <div className="flex gap-4">
               <motion.a
                 href="https://www.instagram.com/jankhur"
