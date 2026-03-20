@@ -954,9 +954,14 @@ function LandingTab({ toast }: { toast: (m: string) => void }) {
           <div className="flex items-center gap-3">
             <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="font-serif text-sm font-bold truncate">
-                {img.name || "Untitled"}
-              </div>
+              <InlineName
+                value={img.name || ""}
+                onSave={(name) => {
+                  adminApi({ action: "update", table: "landing_images", id: img.id, data: { name } });
+                  qc.invalidateQueries({ queryKey: ["admin-landing-images"] });
+                  toast("Renamed");
+                }}
+              />
               <div className="font-serif text-xs text-neutral-400">
                 {img.layout} · {img.year || "—"}
               </div>
