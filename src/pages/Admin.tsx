@@ -814,21 +814,34 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
         return (
           <div key={year} className="space-y-2">
             <h3 className="font-serif text-sm font-bold">{year}</h3>
-            <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-              {yearImages.map((img) => (
-                <div key={img.id} className="relative group">
-                  <img src={img.src} alt="" className="w-full aspect-square object-cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button
-                      onClick={() => deleteImage(img.id)}
-                      className="text-red-300 text-xs font-serif px-2 py-1 border border-red-300/50 hover:bg-red-500/20"
-                    >
-                      ✕
-                    </button>
+            <DraggableList
+              items={yearImages}
+              onReorder={async (ids) => {
+                await adminApi({ action: "reorder", table: "notes_images", ids });
+                qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
+              }}
+              renderItem={(img) => (
+                <div className="flex items-center gap-3">
+                  <img src={img.src} alt="" className="w-16 h-16 object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <InlineName
+                      value={img.name || ""}
+                      onSave={(name) => {
+                        adminApi({ action: "update", table: "notes_images", id: img.id, data: { name } });
+                        qc.invalidateQueries({ queryKey: ["admin-notes-images"] });
+                        toast("Renamed");
+                      }}
+                    />
                   </div>
+                  <button
+                    onClick={() => deleteImage(img.id)}
+                    className="font-serif text-xs px-2 py-1 border border-red-300 text-red-600 hover:bg-red-50 shrink-0"
+                  >
+                    ✕
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
         );
       })}
