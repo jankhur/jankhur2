@@ -165,8 +165,42 @@ const About = () => {
             transition={{ duration: 0.7 }}
             className="mb-16 md:mb-20">
             
-            <h1 className="font-serif font-semibold text-4xl text-foreground tracking-tight mb-6 md:text-lg">
-              Jan Khür
+            <h1 className="text-foreground text-[8vw] md:text-[4vw] leading-[1.1] tracking-tight uppercase mb-6" style={{ fontFamily: 'var(--font-logo)' }}>
+              <span className="inline-flex">
+                {nameLetters.filter((l) => l.line === 0).map((l, i) =>
+                  <motion.span
+                    key={`line0-${i}`}
+                    className="inline-block"
+                    animate={{ y: [0, -4, 0, 3, 0] }}
+                    transition={{
+                      duration: 0.6,
+                      delay: i * 0.12,
+                      repeat: 5,
+                      repeatType: "loop",
+                      ease: "easeInOut"
+                    }}>
+                    {l.char}
+                  </motion.span>
+                )}
+              </span>
+              <br />
+              <span className="inline-flex">
+                {nameLetters.filter((l) => l.line === 1).map((l, i) =>
+                  <motion.span
+                    key={`line1-${i}`}
+                    className="inline-block"
+                    animate={{ y: [0, -4, 0, 3, 0] }}
+                    transition={{
+                      duration: 0.6,
+                      delay: (i + 3) * 0.12,
+                      repeat: 5,
+                      repeatType: "loop",
+                      ease: "easeInOut"
+                    }}>
+                    {l.char}
+                  </motion.span>
+                )}
+              </span>
             </h1>
             <div className="flex flex-col gap-1 font-serif text-base text-foreground">
               <a
