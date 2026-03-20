@@ -14,7 +14,196 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      editorial_images: {
+        Row: {
+          aspect_ratio: number
+          id: number
+          project_slug: string
+          sort_order: number | null
+          src: string
+          src_large: string
+        }
+        Insert: {
+          aspect_ratio: number
+          id?: number
+          project_slug: string
+          sort_order?: number | null
+          src: string
+          src_large: string
+        }
+        Update: {
+          aspect_ratio?: number
+          id?: number
+          project_slug?: string
+          sort_order?: number | null
+          src?: string
+          src_large?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "editorial_images_project_slug_fkey"
+            columns: ["project_slug"]
+            isOneToOne: false
+            referencedRelation: "editorial_projects"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      editorial_projects: {
+        Row: {
+          id: number
+          published: boolean | null
+          slug: string
+          sort_order: number | null
+          subtitle: string | null
+          thumbnail: string
+          title: string
+          year: string | null
+        }
+        Insert: {
+          id?: number
+          published?: boolean | null
+          slug: string
+          sort_order?: number | null
+          subtitle?: string | null
+          thumbnail: string
+          title: string
+          year?: string | null
+        }
+        Update: {
+          id?: number
+          published?: boolean | null
+          slug?: string
+          sort_order?: number | null
+          subtitle?: string | null
+          thumbnail?: string
+          title?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      journey_images: {
+        Row: {
+          aspect_ratio: number
+          id: number
+          project_slug: string
+          sort_order: number | null
+          src: string
+          src_large: string
+        }
+        Insert: {
+          aspect_ratio: number
+          id?: number
+          project_slug: string
+          sort_order?: number | null
+          src: string
+          src_large: string
+        }
+        Update: {
+          aspect_ratio?: number
+          id?: number
+          project_slug?: string
+          sort_order?: number | null
+          src?: string
+          src_large?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_images_project_slug_fkey"
+            columns: ["project_slug"]
+            isOneToOne: false
+            referencedRelation: "journey_projects"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      journey_projects: {
+        Row: {
+          id: number
+          published: boolean | null
+          slug: string
+          sort_order: number | null
+          thumbnail: string
+          title: string
+        }
+        Insert: {
+          id?: number
+          published?: boolean | null
+          slug: string
+          sort_order?: number | null
+          thumbnail: string
+          title: string
+        }
+        Update: {
+          id?: number
+          published?: boolean | null
+          slug?: string
+          sort_order?: number | null
+          thumbnail?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      landing_images: {
+        Row: {
+          aspect_ratio: number
+          id: number
+          layout: string
+          name: string | null
+          published: boolean | null
+          sort_order: number | null
+          src: string
+          year: string | null
+        }
+        Insert: {
+          aspect_ratio?: number
+          id?: number
+          layout?: string
+          name?: string | null
+          published?: boolean | null
+          sort_order?: number | null
+          src: string
+          year?: string | null
+        }
+        Update: {
+          aspect_ratio?: number
+          id?: number
+          layout?: string
+          name?: string | null
+          published?: boolean | null
+          sort_order?: number | null
+          src?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      notes_images: {
+        Row: {
+          aspect_ratio: number
+          id: number
+          sort_order: number | null
+          src: string
+          src_large: string
+          year: string
+        }
+        Insert: {
+          aspect_ratio: number
+          id?: number
+          sort_order?: number | null
+          src: string
+          src_large: string
+          year: string
+        }
+        Update: {
+          aspect_ratio?: number
+          id?: number
+          sort_order?: number | null
+          src?: string
+          src_large?: string
+          year?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
