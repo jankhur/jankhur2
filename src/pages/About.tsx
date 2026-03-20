@@ -173,6 +173,9 @@ const About = () => {
               </a>
               <span>Oslo, Norway</span>
             </div>
+            <p className="font-serif text-base leading-relaxed text-foreground mt-6">
+              Oslo-based Czech photographer working across editorial, commercial, and independent art projects. Focused on portraiture, social documentary, and analogue photography.
+            </p>
           </motion.div>
 
           {/* Two-column layout: left half for sections */}
