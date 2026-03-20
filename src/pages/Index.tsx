@@ -10,7 +10,7 @@ const Index = () => {
       <SketchCursor type="lov" />
 
       {/* Image Feed */}
-      <main className="pb-32">
+      <main className="pt-24 pb-32">
         <ImageFeed />
       </main>
 
