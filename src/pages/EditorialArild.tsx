@@ -1,14 +1,20 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import SketchCursor from "@/components/SketchCursor";
-import { arildImages } from "@/data/editorialData";
+import { fetchEditorialImages } from "@/lib/queries";
 
 const EditorialArild = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+
+  const { data: images } = useQuery({
+    queryKey: ["editorial-images", "arild"],
+    queryFn: () => fetchEditorialImages("arild"),
+  });
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -89,7 +95,7 @@ const EditorialArild = () => {
       >
         <div className="shrink-0 w-[15vw]" />
 
-        {arildImages.map((img, i) => (
+        {(images || []).map((img, i) => (
           <div key={img.id} className="shrink-0 px-3 md:px-5 flex items-center justify-center">
             <img
               src={img.src}
@@ -112,7 +118,6 @@ const EditorialArild = () => {
         </span>
       </div>
 
-      {/* Scroll hint arrow — mobile only, fades out after scrolling */}
       <AnimatePresence>
         {!hasScrolled && (
           <motion.div

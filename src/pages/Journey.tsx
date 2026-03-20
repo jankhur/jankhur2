@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import SketchCursor from "@/components/SketchCursor";
-import { journeyProjects } from "@/data/journeyData";
+import { fetchJourneyProjects } from "@/lib/queries";
 
 type LayoutType = "full" | "center" | "left" | "right";
 const layoutSequence: LayoutType[] = ["center", "right", "left", "center", "left", "right"];
@@ -28,6 +29,13 @@ const fadeInVariants = {
 };
 
 const Journey = () => {
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ["journey-projects"],
+    queryFn: fetchJourneyProjects,
+  });
+
+  if (isLoading) return <div className="min-h-screen bg-background"><Header showName /></div>;
+
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
@@ -35,7 +43,7 @@ const Journey = () => {
 
       <main className="pt-28 pb-32">
         <div className="flex flex-col gap-24 md:gap-32">
-          {journeyProjects.map((project, i) => {
+          {(projects || []).map((project, i) => {
             const layout = layoutSequence[i % layoutSequence.length];
             return (
               <motion.div
