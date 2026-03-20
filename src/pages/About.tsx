@@ -8,6 +8,16 @@ const fadeIn = {
   visible: { opacity: 1, y: 0 }
 };
 
+const nameLetters = [
+  { char: "J", line: 0 },
+  { char: "A", line: 0 },
+  { char: "N", line: 0 },
+  { char: "K", line: 1 },
+  { char: "H", line: 1 },
+  { char: "Ü", line: 1 },
+  { char: "R", line: 1 },
+];
+
 interface ExhibitionEntry {
   title: string;
   venue: string;
