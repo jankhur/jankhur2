@@ -126,14 +126,8 @@ const Notes = () => {
     }
   }, []);
 
-  const handleImageClick = useCallback((img: NoteImage) => {
-    if (dragState.current.moved) return;
-    setLightboxImage(img);
-  }, []);
-
   const handleAreaClick = useCallback((e: React.MouseEvent) => {
     if (dragState.current.moved) return;
-    if ((e.target as HTMLElement).tagName === "IMG") return;
     const el = scrollRef.current;
     if (!el) return;
     const clickX = e.clientX;
