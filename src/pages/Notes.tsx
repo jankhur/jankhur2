@@ -16,7 +16,7 @@ interface NoteImage {
 const Notes = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentYear, setCurrentYear] = useState("");
-  const [lightboxImage, setLightboxImage] = useState<NoteImage | null>(null);
+  
   const [isDragging, setIsDragging] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
