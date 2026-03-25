@@ -152,7 +152,7 @@ const Notes = () => {
 
       <div
         ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center justify-start"
+        className="absolute inset-0 top-16 bottom-20 overflow-x-auto overflow-y-hidden flex items-center justify-start"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
           scrollbarWidth: "none",
@@ -176,7 +176,7 @@ const Notes = () => {
               loading={i < 5 ? "eager" : "lazy"}
               onClick={() => handleImageClick(img)}
               className="w-auto object-contain select-none transition-opacity duration-500"
-              style={{ maxHeight: "75vh", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
+              style={{ maxHeight: "100%", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
             />
           </div>
         ))}
