@@ -215,7 +215,7 @@ const Breadcrumbs = () => {
   );
 };
 
-
+const FlashBurst = () => (
   <motion.svg
     width="40"
     height="40"
