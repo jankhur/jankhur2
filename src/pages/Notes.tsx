@@ -174,7 +174,7 @@ const Notes = () => {
               alt={`Notes — ${img.year}`}
               draggable={false}
               loading={i < 5 ? "eager" : "lazy"}
-              onClick={() => handleImageClick(img)}
+              
               className="h-full w-auto object-contain select-none transition-opacity duration-500"
               style={{ maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
             />
