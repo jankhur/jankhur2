@@ -152,7 +152,7 @@ const Notes = () => {
 
       <div
         ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden flex items-center justify-start"
+        className="absolute inset-0 top-16 bottom-20 overflow-x-auto overflow-y-hidden flex items-center justify-start"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
           scrollbarWidth: "none",
