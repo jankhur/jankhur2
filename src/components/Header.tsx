@@ -126,7 +126,96 @@ const SketchFace = () => (
 
 const menuIllustrations = [SketchMagazine, SketchMoney, SketchTracks, SketchDiary, SketchFace];
 
-const FlashBurst = () => (
+const breadcrumbStyle = {
+  fontFamily: 'var(--font-logo)',
+} as const;
+
+const breadcrumbClass = "text-sm tracking-[0.2em] text-foreground uppercase";
+
+const Breadcrumbs = () => {
+  const location = useLocation();
+  const parts = location.pathname.split("/").filter(Boolean);
+
+  const section = parts[0]; // editorial, journey, notes, about
+  const slug = parts[1];
+
+  const sectionLabels: Record<string, string> = {
+    editorial: "Editorial",
+    journey: "Journey",
+    notes: "Notes",
+    about: "About",
+  };
+
+  const sectionLabel = sectionLabels[section];
+
+  const { data: projectTitle } = useQuery({
+    queryKey: ["breadcrumb-title", section, slug],
+    queryFn: async () => {
+      if (!slug || (section !== "editorial" && section !== "journey")) return null;
+      const table = section === "editorial" ? "editorial_projects" : "journey_projects";
+      const { data } = await supabase.from(table).select("title").eq("slug", slug).maybeSingle();
+      return data?.title || slug;
+    },
+    enabled: !!slug && (section === "editorial" || section === "journey"),
+  });
+
+  if (!sectionLabel) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.span
+        key={`sep-${section}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className={breadcrumbClass}
+        style={breadcrumbStyle}
+      >
+        {" · "}
+      </motion.span>
+      <motion.span
+        key={`section-${section}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Link to={`/${section}`} className={breadcrumbClass} style={breadcrumbStyle}>
+          {sectionLabel}
+        </Link>
+      </motion.span>
+      {slug && projectTitle && (
+        <>
+          <motion.span
+            key={`sep-${slug}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className={breadcrumbClass}
+            style={breadcrumbStyle}
+          >
+            {" · "}
+          </motion.span>
+          <motion.span
+            key={`slug-${slug}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className={breadcrumbClass}
+            style={breadcrumbStyle}
+          >
+            {projectTitle}
+          </motion.span>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+
   <motion.svg
     width="40"
     height="40"
