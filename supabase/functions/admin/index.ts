@@ -42,10 +42,11 @@ Deno.serve(async (req) => {
       }
 
       case "update": {
+        const pkCol = table === "site_settings" ? "key" : "id";
         const { data: result, error } = await supabase
           .from(table)
           .update(data)
-          .eq("id", id)
+          .eq(pkCol, id)
           .select();
         if (error) throw error;
         return json(result);
