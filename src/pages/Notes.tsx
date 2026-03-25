@@ -192,7 +192,7 @@ const Notes = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3 }}
-            className="font-serif text-2xl md:text-3xl text-red-600 tracking-wide"
+            className="font-serif text-2xl md:text-3xl text-foreground tracking-wide"
           >
             {currentYear}
           </motion.span>
