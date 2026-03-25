@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import About from "./pages/About.tsx";
 import Editorial from "./pages/Editorial.tsx";
-import EditorialArild from "./pages/EditorialArild.tsx";
+import EditorialGallery from "./pages/EditorialGallery.tsx";
 import Journey from "./pages/Journey.tsx";
 import JourneyGallery from "./pages/JourneyGallery.tsx";
 import Notes from "./pages/Notes.tsx";
