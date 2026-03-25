@@ -168,15 +168,15 @@ const Notes = () => {
         <div className="shrink-0 w-[15vw]" />
 
         {notesImages.map((img, i) => (
-          <div key={img.id} data-year={img.year} className="shrink-0 px-3 md:px-5 flex items-center justify-center">
+          <div key={img.id} data-year={img.year} className="shrink-0 h-full px-3 md:px-5 flex items-center justify-center py-4">
             <img
               src={img.src}
               alt={`Notes — ${img.year}`}
               draggable={false}
               loading={i < 5 ? "eager" : "lazy"}
               onClick={() => handleImageClick(img)}
-              className="w-auto object-contain select-none transition-opacity duration-500"
-              style={{ maxHeight: "100%", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
+              className="h-full w-auto object-contain select-none transition-opacity duration-500"
+              style={{ maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
             />
           </div>
         ))}
