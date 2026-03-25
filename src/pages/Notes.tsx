@@ -199,13 +199,13 @@ const Notes = () => {
         </AnimatePresence>
       </div>
 
-      <div className="fixed bottom-8 right-6 md:right-10 z-30 flex gap-5 items-center">
+      <div className="fixed bottom-8 right-6 md:right-10 z-30 flex gap-6 items-center">
         {years.map((year) => (
           <button
             key={year}
             onClick={() => jumpToYear(year)}
             className={`font-serif tracking-[0.1em] transition-all duration-300 ${
-              currentYear === year ? "text-base md:text-lg text-red-600 opacity-100" : "text-sm md:text-base text-foreground opacity-30 hover:opacity-60"
+              currentYear === year ? "text-lg md:text-xl text-red-600 opacity-100" : "text-base md:text-lg text-foreground opacity-100 hover:opacity-60"
             }`}
           >
             {year}
