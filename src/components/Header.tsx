@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Editorial", href: "/editorial" },
@@ -124,6 +126,95 @@ const SketchFace = () => (
 
 const menuIllustrations = [SketchMagazine, SketchMoney, SketchTracks, SketchDiary, SketchFace];
 
+const breadcrumbStyle = {
+  fontFamily: 'var(--font-logo)',
+} as const;
+
+const breadcrumbClass = "text-sm tracking-[0.2em] text-foreground uppercase";
+
+const Breadcrumbs = () => {
+  const location = useLocation();
+  const parts = location.pathname.split("/").filter(Boolean);
+
+  const section = parts[0]; // editorial, journey, notes, about
+  const slug = parts[1];
+
+  const sectionLabels: Record<string, string> = {
+    editorial: "Editorial",
+    journey: "Journey",
+    notes: "Notes",
+    about: "About",
+  };
+
+  const sectionLabel = sectionLabels[section];
+
+  const { data: projectTitle } = useQuery({
+    queryKey: ["breadcrumb-title", section, slug],
+    queryFn: async () => {
+      if (!slug || (section !== "editorial" && section !== "journey")) return null;
+      const table = section === "editorial" ? "editorial_projects" : "journey_projects";
+      const { data } = await supabase.from(table).select("title").eq("slug", slug).maybeSingle();
+      return data?.title || slug;
+    },
+    enabled: !!slug && (section === "editorial" || section === "journey"),
+  });
+
+  if (!sectionLabel) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.span
+        key={`sep-${section}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className={breadcrumbClass}
+        style={breadcrumbStyle}
+      >
+        {" · "}
+      </motion.span>
+      <motion.span
+        key={`section-${section}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Link to={`/${section}`} className={breadcrumbClass} style={breadcrumbStyle}>
+          {sectionLabel}
+        </Link>
+      </motion.span>
+      {slug && projectTitle && (
+        <>
+          <motion.span
+            key={`sep-${slug}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className={breadcrumbClass}
+            style={breadcrumbStyle}
+          >
+            {" · "}
+          </motion.span>
+          <motion.span
+            key={`slug-${slug}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className={breadcrumbClass}
+            style={breadcrumbStyle}
+          >
+            {projectTitle}
+          </motion.span>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const FlashBurst = () => (
   <motion.svg
     width="40"
@@ -172,23 +263,26 @@ const Header = ({ showName = false }: HeaderProps) => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
-        <Link to="/" onClick={handleNameClick} className="relative h-6 flex items-center cursor-pointer">
-          <AnimatePresence mode="wait">
-            {showName && (
-              <motion.span
-                key="name"
-                initial={{ opacity: 0, y: 20, scale: 0.5 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.8 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-sm tracking-[0.2em] text-foreground uppercase"
-                style={{ fontFamily: 'var(--font-logo)' }}
-              >
-                JAN KHÜR
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </Link>
+        <div className="relative h-6 flex items-center">
+          <Link to="/" onClick={handleNameClick} className="cursor-pointer">
+            <AnimatePresence mode="wait">
+              {showName && (
+                <motion.span
+                  key="name"
+                  initial={{ opacity: 0, y: 20, scale: 0.5 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.8 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-sm tracking-[0.2em] text-foreground uppercase"
+                  style={{ fontFamily: 'var(--font-logo)' }}
+                >
+                  JAN KHÜR
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
+          {showName && <Breadcrumbs />}
+        </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex flex-col gap-[5px] z-50 relative"
