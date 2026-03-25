@@ -137,6 +137,23 @@ function useConfirm() {
   return { confirm, dialog };
 }
 
+// ─── Global Copyright Hook ───────────────────────────────────
+
+function useGlobalCopyright() {
+  const { data: globalCopyright = "" } = useQuery({
+    queryKey: ["site-settings-copyright"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("site_settings" as any)
+        .select("value")
+        .eq("key", "copyright")
+        .single();
+      return (data as any)?.value || "© Jan Khür";
+    },
+  });
+  return globalCopyright;
+}
+
 // ─── Image Upload Component ─────────────────────────────────
 
 function ImageUploader({
@@ -353,6 +370,7 @@ function ToggleBtn({ active, labelOn, labelOff, onClick }: { active: boolean; la
 function LandingTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
   const { confirm, dialog } = useConfirm();
+  const globalCopyright = useGlobalCopyright();
 
   const { data: images = [] } = useQuery({
     queryKey: ["admin-landing-images"],
@@ -407,6 +425,7 @@ function LandingTab({ toast }: { toast: (m: string) => void }) {
             <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
             <div className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
               <InlineField value={img.name || ""} placeholder="Name" onSave={(v) => update(img.id, { name: v })} className="w-28" />
+              <InlineField value={(img as any).copyright || ""} placeholder={`© ${globalCopyright}`} onSave={(v) => update(img.id, { copyright: v })} className="w-28 text-neutral-500" />
               <InlineField value={img.year || ""} placeholder="Year" onSave={(v) => update(img.id, { year: v })} className="w-20" />
               <LayoutDropdown value={img.layout} onChange={(v) => update(img.id, { layout: v })} />
             </div>
@@ -424,6 +443,7 @@ function LandingTab({ toast }: { toast: (m: string) => void }) {
 function EditorialTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
   const { confirm, dialog } = useConfirm();
+  const globalCopyright = useGlobalCopyright();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -565,8 +585,9 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
                   renderItem={(img) => (
                     <div className="flex items-center gap-3">
                       <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 flex items-center gap-3">
                         <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => { adminApi({ action: "update", table: "editorial_images", id: img.id, data: { name } }); qc.invalidateQueries({ queryKey: ["admin-editorial-images"] }); toast("Saved"); }} />
+                        <InlineField value={(img as any).copyright || ""} placeholder={`© ${globalCopyright}`} onSave={(v) => { adminApi({ action: "update", table: "editorial_images", id: img.id, data: { copyright: v } }); qc.invalidateQueries({ queryKey: ["admin-editorial-images"] }); toast("Saved"); }} className="w-28 text-neutral-500" />
                       </div>
                       <button
                         onClick={() => setThumbnail(project.id, img.src)}
@@ -592,6 +613,7 @@ function EditorialTab({ toast }: { toast: (m: string) => void }) {
 function JourneyTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
   const { confirm, dialog } = useConfirm();
+  const globalCopyright = useGlobalCopyright();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -721,8 +743,9 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
                   renderItem={(img) => (
                     <div className="flex items-center gap-3">
                       <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 flex items-center gap-3">
                         <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => { adminApi({ action: "update", table: "journey_images", id: img.id, data: { name } }); qc.invalidateQueries({ queryKey: ["admin-journey-images"] }); toast("Saved"); }} />
+                        <InlineField value={(img as any).copyright || ""} placeholder={`© ${globalCopyright}`} onSave={(v) => { adminApi({ action: "update", table: "journey_images", id: img.id, data: { copyright: v } }); qc.invalidateQueries({ queryKey: ["admin-journey-images"] }); toast("Saved"); }} className="w-28 text-neutral-500" />
                       </div>
                       <button
                         onClick={() => setThumbnail(project.id, img.src)}
@@ -748,6 +771,7 @@ function JourneyTab({ toast }: { toast: (m: string) => void }) {
 function NotesTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
   const { confirm, dialog } = useConfirm();
+  const globalCopyright = useGlobalCopyright();
   const [yearInput, setYearInput] = useState("");
 
   const { data: images = [] } = useQuery({
@@ -814,6 +838,7 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
                   <img src={img.src} alt="" className="w-12 h-12 object-cover shrink-0 rounded-sm" />
                   <div className="flex-1 min-w-0 flex items-center gap-3">
                     <InlineField value={img.name || ""} placeholder="Name" onSave={(name) => update(img.id, { name })} />
+                    <InlineField value={(img as any).copyright || ""} placeholder={`© ${globalCopyright}`} onSave={(v) => update(img.id, { copyright: v })} className="w-28 text-neutral-500" />
                     <InlineField value={img.year} placeholder="Year" onSave={(y) => update(img.id, { year: y })} className="w-24" />
                   </div>
                   <DeleteBtn onClick={() => handleDelete(img.id)} />
@@ -823,6 +848,50 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// ─── Settings Tab ────────────────────────────────────────────
+
+function SettingsTab({ toast }: { toast: (m: string) => void }) {
+  const qc = useQueryClient();
+
+  const { data: copyright = "© Jan Khür" } = useQuery({
+    queryKey: ["site-settings-copyright"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("site_settings" as any)
+        .select("value")
+        .eq("key", "copyright")
+        .single();
+      return (data as any)?.value || "© Jan Khür";
+    },
+  });
+
+  const saveCopyright = async (value: string) => {
+    await adminApi({
+      action: "update",
+      table: "site_settings",
+      id: "copyright",
+      data: { value },
+    });
+    qc.invalidateQueries({ queryKey: ["site-settings-copyright"] });
+    toast("Saved");
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="font-serif text-lg">Settings</h2>
+      <div>
+        <label className="font-serif text-xs text-neutral-500 block mb-2">
+          Default copyright applied to all new image uploads
+        </label>
+        <div className="flex items-center gap-2">
+          <span className="font-serif text-sm text-neutral-500">Copyright</span>
+          <InlineField value={copyright} placeholder="© Jan Khür" onSave={saveCopyright} className="w-64" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -847,7 +916,7 @@ const Admin = () => {
 
         <Tabs defaultValue="editorial">
           <TabsList className="bg-transparent border-b border-neutral-200 rounded-none w-full justify-start gap-0 h-auto p-0">
-            {["editorial", "journey", "notes", "landing"].map((tab) => (
+            {["editorial", "journey", "notes", "landing", "settings"].map((tab) => (
               <TabsTrigger key={tab} value={tab} className="font-serif text-sm capitalize rounded-none border-b-2 border-transparent data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2">
                 {tab}
               </TabsTrigger>
@@ -858,6 +927,7 @@ const Admin = () => {
             <TabsContent value="journey"><JourneyTab toast={show} /></TabsContent>
             <TabsContent value="notes"><NotesTab toast={show} /></TabsContent>
             <TabsContent value="landing"><LandingTab toast={show} /></TabsContent>
+            <TabsContent value="settings"><SettingsTab toast={show} /></TabsContent>
           </div>
         </Tabs>
       </div>

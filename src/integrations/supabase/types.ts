@@ -17,6 +17,7 @@ export type Database = {
       editorial_images: {
         Row: {
           aspect_ratio: number
+          copyright: string | null
           id: number
           name: string | null
           project_slug: string
@@ -26,6 +27,7 @@ export type Database = {
         }
         Insert: {
           aspect_ratio: number
+          copyright?: string | null
           id?: number
           name?: string | null
           project_slug: string
@@ -35,6 +37,7 @@ export type Database = {
         }
         Update: {
           aspect_ratio?: number
+          copyright?: string | null
           id?: number
           name?: string | null
           project_slug?: string
@@ -88,6 +91,7 @@ export type Database = {
       journey_images: {
         Row: {
           aspect_ratio: number
+          copyright: string | null
           id: number
           name: string | null
           project_slug: string
@@ -97,6 +101,7 @@ export type Database = {
         }
         Insert: {
           aspect_ratio: number
+          copyright?: string | null
           id?: number
           name?: string | null
           project_slug: string
@@ -106,6 +111,7 @@ export type Database = {
         }
         Update: {
           aspect_ratio?: number
+          copyright?: string | null
           id?: number
           name?: string | null
           project_slug?: string
@@ -153,6 +159,7 @@ export type Database = {
       landing_images: {
         Row: {
           aspect_ratio: number
+          copyright: string | null
           id: number
           layout: string
           name: string | null
@@ -163,6 +170,7 @@ export type Database = {
         }
         Insert: {
           aspect_ratio?: number
+          copyright?: string | null
           id?: number
           layout?: string
           name?: string | null
@@ -173,6 +181,7 @@ export type Database = {
         }
         Update: {
           aspect_ratio?: number
+          copyright?: string | null
           id?: number
           layout?: string
           name?: string | null
@@ -186,6 +195,7 @@ export type Database = {
       notes_images: {
         Row: {
           aspect_ratio: number
+          copyright: string | null
           id: number
           name: string | null
           sort_order: number | null
@@ -195,6 +205,7 @@ export type Database = {
         }
         Insert: {
           aspect_ratio: number
+          copyright?: string | null
           id?: number
           name?: string | null
           sort_order?: number | null
@@ -204,12 +215,28 @@ export type Database = {
         }
         Update: {
           aspect_ratio?: number
+          copyright?: string | null
           id?: number
           name?: string | null
           sort_order?: number | null
           src?: string
           src_large?: string
           year?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          value?: string | null
         }
         Relationships: []
       }
