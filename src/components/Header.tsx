@@ -174,23 +174,26 @@ const Header = ({ showName = false }: HeaderProps) => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
-        <Link to="/" onClick={handleNameClick} className="relative h-6 flex items-center cursor-pointer">
-          <AnimatePresence mode="wait">
-            {showName && (
-              <motion.span
-                key="name"
-                initial={{ opacity: 0, y: 20, scale: 0.5 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.8 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-sm tracking-[0.2em] text-foreground uppercase"
-                style={{ fontFamily: 'var(--font-logo)' }}
-              >
-                JAN KHÜR
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </Link>
+        <div className="relative h-6 flex items-center">
+          <Link to="/" onClick={handleNameClick} className="cursor-pointer">
+            <AnimatePresence mode="wait">
+              {showName && (
+                <motion.span
+                  key="name"
+                  initial={{ opacity: 0, y: 20, scale: 0.5 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.8 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-sm tracking-[0.2em] text-foreground uppercase"
+                  style={{ fontFamily: 'var(--font-logo)' }}
+                >
+                  JAN KHÜR
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
+          {showName && <Breadcrumbs />}
+        </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex flex-col gap-[5px] z-50 relative"
