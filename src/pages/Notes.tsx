@@ -213,38 +213,8 @@ const Notes = () => {
         ))}
       </div>
 
-      <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center cursor-pointer"
-            onClick={() => setLightboxImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative max-w-[90vw] max-h-[85vh] flex flex-col items-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={lightboxImage.src_large}
-                alt={`Notes — ${lightboxImage.year}`}
-                className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
-              />
-              <span className="mt-4 font-serif text-sm text-muted-foreground italic image-caption">{lightboxImage.year}</span>
-            </motion.div>
 
-            <button onClick={() => setLightboxImage(null)} className="fixed top-6 right-6 md:right-10 z-50 nav-link">
-              Close
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       <AnimatePresence>
         {!hasScrolled && (
