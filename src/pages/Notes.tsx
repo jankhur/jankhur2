@@ -16,7 +16,7 @@ interface NoteImage {
 const Notes = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentYear, setCurrentYear] = useState("");
-  const [lightboxImage, setLightboxImage] = useState<NoteImage | null>(null);
+  
   const [isDragging, setIsDragging] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
@@ -126,14 +126,8 @@ const Notes = () => {
     }
   }, []);
 
-  const handleImageClick = useCallback((img: NoteImage) => {
-    if (dragState.current.moved) return;
-    setLightboxImage(img);
-  }, []);
-
   const handleAreaClick = useCallback((e: React.MouseEvent) => {
     if (dragState.current.moved) return;
-    if ((e.target as HTMLElement).tagName === "IMG") return;
     const el = scrollRef.current;
     if (!el) return;
     const clickX = e.clientX;
@@ -174,7 +168,7 @@ const Notes = () => {
               alt={`Notes — ${img.year}`}
               draggable={false}
               loading={i < 5 ? "eager" : "lazy"}
-              onClick={() => handleImageClick(img)}
+              
               className="h-full w-auto object-contain select-none transition-opacity duration-500"
               style={{ maxWidth: "90vw", cursor: isDragging ? "grabbing" : "pointer" }}
             />
@@ -213,38 +207,8 @@ const Notes = () => {
         ))}
       </div>
 
-      <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center cursor-pointer"
-            onClick={() => setLightboxImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative max-w-[90vw] max-h-[85vh] flex flex-col items-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={lightboxImage.src_large}
-                alt={`Notes — ${lightboxImage.year}`}
-                className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
-              />
-              <span className="mt-4 font-serif text-sm text-muted-foreground italic image-caption">{lightboxImage.year}</span>
-            </motion.div>
 
-            <button onClick={() => setLightboxImage(null)} className="fixed top-6 right-6 md:right-10 z-50 nav-link">
-              Close
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       <AnimatePresence>
         {!hasScrolled && (
