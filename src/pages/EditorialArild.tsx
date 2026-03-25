@@ -96,14 +96,14 @@ const EditorialArild = () => {
         <div className="shrink-0 w-[15vw]" />
 
         {(images || []).map((img, i) => (
-          <div key={img.id} className="shrink-0 px-3 md:px-5 flex items-center justify-center">
+          <div key={img.id} className="shrink-0 h-full px-3 md:px-5 flex items-center justify-center py-4">
             <img
               src={img.src}
               alt={`Arild Eriksen — ${i + 1}`}
               draggable={false}
               loading={i < 5 ? "eager" : "lazy"}
-              className="w-auto object-contain select-none transition-opacity duration-500"
-              style={{ maxHeight: "75vh", maxWidth: "90vw", cursor: isDragging ? "grabbing" : "default" }}
+              className="h-full w-auto object-contain select-none transition-opacity duration-500"
+              style={{ maxWidth: "90vw", cursor: isDragging ? "grabbing" : "default" }}
             />
           </div>
         ))}
