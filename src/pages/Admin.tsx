@@ -3,6 +3,23 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { adminApi, uploadImage, getAspectRatio } from "@/lib/adminApi";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // ─── Auth Gate ───────────────────────────────────────────────
 
@@ -281,6 +298,56 @@ function LayoutDropdown({ value, onChange }: { value: string; onChange: (v: stri
   );
 }
 
+
+
+// ─── Sortable Item ───────────────────────────────────────────
+
+function SortableItem<T extends { id: number }>({
+  item,
+  index,
+  renderItem,
+}: {
+  item: T;
+  index: number;
+  renderItem: (item: T, index: number) => React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="border border-neutral-200 bg-white flex items-center"
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="px-2 py-3 cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 select-none shrink-0 text-lg touch-none"
+        title="Drag to reorder"
+      >
+        ⠿
+      </div>
+      <div className="flex-1 min-w-0 py-2 pr-3">
+        {renderItem(item, index)}
+      </div>
+    </div>
+  );
+}
+
 // ─── Draggable List ──────────────────────────────────────────
 
 function DraggableList<T extends { id: number }>({
@@ -293,95 +360,49 @@ function DraggableList<T extends { id: number }>({
   onReorder: (ids: number[]) => void;
 }) {
   const [localItems, setLocalItems] = useState(items);
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [overIdx, setOverIdx] = useState<number | null>(null);
-  const isDragging = useRef(false);
 
-  // Sync local items with props when not dragging
   useEffect(() => {
-    if (!isDragging.current) setLocalItems(items);
+    setLocalItems(items);
   }, [items]);
 
-  const handleDragStart = (e: React.DragEvent, idx: number) => {
-    isDragging.current = true;
-    setDragIdx(idx);
-    setOverIdx(idx);
-    e.dataTransfer.effectAllowed = "move";
-    // Make drag image semi-transparent
-    const el = e.currentTarget.closest('[data-drag-row]') as HTMLElement;
-    if (el) {
-      e.dataTransfer.setDragImage(el, 20, 20);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = localItems.findIndex((i) => i.id === active.id);
+      const newIndex = localItems.findIndex((i) => i.id === over.id);
+      const newItems = arrayMove(localItems, oldIndex, newIndex);
+      setLocalItems(newItems);
+      onReorder(newItems.map((i) => i.id));
     }
   };
-
-  const handleDragOver = (e: React.DragEvent, idx: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (dragIdx === null || overIdx === idx) return;
-    // Reorder locally for instant visual feedback
-    setLocalItems((prev) => {
-      const next = [...prev];
-      const fromIdx = next.findIndex((i) => i.id === items[dragIdx].id);
-      if (fromIdx === -1 || fromIdx === idx) return prev;
-      const [moved] = next.splice(fromIdx, 1);
-      next.splice(idx, 0, moved);
-      return next;
-    });
-    setOverIdx(idx);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    // Save new order to database
-    onReorder(localItems.map((i) => i.id));
-    setDragIdx(null);
-    setOverIdx(null);
-    isDragging.current = false;
-  };
-
-  const handleDragEnd = () => {
-    if (isDragging.current) {
-      // If dropped outside, revert
-      setLocalItems(items);
-    }
-    setDragIdx(null);
-    setOverIdx(null);
-    isDragging.current = false;
-  };
-
-  const draggedId = dragIdx !== null ? items[dragIdx]?.id : null;
 
   return (
-    <div className="flex flex-col gap-1">
-      {localItems.map((item, idx) => (
-        <div
-          key={item.id}
-          data-drag-row
-          onDragOver={(e) => handleDragOver(e, idx)}
-          onDrop={handleDrop}
-          className={`border bg-white flex items-center transition-all duration-150 ${
-            draggedId === item.id
-              ? "opacity-40 border-black scale-[0.98]"
-              : overIdx !== null && draggedId !== item.id
-              ? "border-neutral-200"
-              : "border-neutral-200"
-          }`}
-        >
-          <div
-            draggable
-            onDragStart={(e) => handleDragStart(e, idx)}
-            onDragEnd={handleDragEnd}
-            className="px-2 py-3 cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 select-none shrink-0 text-lg"
-            title="Drag to reorder"
-          >
-            ⠿
-          </div>
-          <div className="flex-1 min-w-0 py-2 pr-3">
-            {renderItem(item, idx)}
-          </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={localItems.map((i) => i.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="flex flex-col gap-1">
+          {localItems.map((item, idx) => (
+            <SortableItem
+              key={item.id}
+              item={item}
+              index={idx}
+              renderItem={renderItem}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 }
 
