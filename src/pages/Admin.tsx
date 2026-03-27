@@ -292,38 +292,86 @@ function DraggableList<T extends { id: number }>({
   renderItem: (item: T, index: number) => React.ReactNode;
   onReorder: (ids: number[]) => void;
 }) {
+  const [localItems, setLocalItems] = useState(items);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
+  const isDragging = useRef(false);
+
+  // Sync local items with props when not dragging
+  useEffect(() => {
+    if (!isDragging.current) setLocalItems(items);
+  }, [items]);
 
   const handleDragStart = (e: React.DragEvent, idx: number) => {
+    isDragging.current = true;
     setDragIdx(idx);
+    setOverIdx(idx);
     e.dataTransfer.effectAllowed = "move";
+    // Make drag image semi-transparent
+    const el = e.currentTarget.closest('[data-drag-row]') as HTMLElement;
+    if (el) {
+      e.dataTransfer.setDragImage(el, 20, 20);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent, idx: number) => {
     e.preventDefault();
-    if (dragIdx === null || dragIdx === idx) return;
-    const newItems = [...items];
-    const [moved] = newItems.splice(dragIdx, 1);
-    newItems.splice(idx, 0, moved);
-    setDragIdx(idx);
-    onReorder(newItems.map((i) => i.id));
+    e.dataTransfer.dropEffect = "move";
+    if (dragIdx === null || overIdx === idx) return;
+    // Reorder locally for instant visual feedback
+    setLocalItems((prev) => {
+      const next = [...prev];
+      const fromIdx = next.findIndex((i) => i.id === items[dragIdx].id);
+      if (fromIdx === -1 || fromIdx === idx) return prev;
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(idx, 0, moved);
+      return next;
+    });
+    setOverIdx(idx);
   };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    // Save new order to database
+    onReorder(localItems.map((i) => i.id));
+    setDragIdx(null);
+    setOverIdx(null);
+    isDragging.current = false;
+  };
+
+  const handleDragEnd = () => {
+    if (isDragging.current) {
+      // If dropped outside, revert
+      setLocalItems(items);
+    }
+    setDragIdx(null);
+    setOverIdx(null);
+    isDragging.current = false;
+  };
+
+  const draggedId = dragIdx !== null ? items[dragIdx]?.id : null;
 
   return (
     <div className="flex flex-col gap-1">
-      {items.map((item, idx) => (
+      {localItems.map((item, idx) => (
         <div
           key={item.id}
+          data-drag-row
           onDragOver={(e) => handleDragOver(e, idx)}
-          onDragEnd={() => setDragIdx(null)}
-          className={`border border-neutral-200 bg-white flex items-center ${
-            dragIdx === idx ? "opacity-50" : ""
+          onDrop={handleDrop}
+          className={`border bg-white flex items-center transition-all duration-150 ${
+            draggedId === item.id
+              ? "opacity-40 border-black scale-[0.98]"
+              : overIdx !== null && draggedId !== item.id
+              ? "border-neutral-200"
+              : "border-neutral-200"
           }`}
         >
           <div
             draggable
             onDragStart={(e) => handleDragStart(e, idx)}
-            className="px-2 py-3 cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 select-none shrink-0"
+            onDragEnd={handleDragEnd}
+            className="px-2 py-3 cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 select-none shrink-0 text-lg"
             title="Drag to reorder"
           >
             ⠿
