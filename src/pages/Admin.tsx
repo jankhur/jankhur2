@@ -298,17 +298,8 @@ function LayoutDropdown({ value, onChange }: { value: string; onChange: (v: stri
   );
 }
 
-// ─── Draggable List ──────────────────────────────────────────
 
-function DraggableList<T extends { id: number }>({
-  items,
-  renderItem,
-  onReorder,
-}: {
-  items: T[];
-  renderItem: (item: T, index: number) => React.ReactNode;
-  onReorder: (ids: number[]) => void;
-}) {
+
 // ─── Sortable Item ───────────────────────────────────────────
 
 function SortableItem<T extends { id: number }>({
