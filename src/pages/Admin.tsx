@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { adminApi, uploadImage, getAspectRatio } from "@/lib/adminApi";
@@ -10,9 +10,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragStartEvent,
-  DragOverlay,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
