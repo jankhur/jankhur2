@@ -1,9 +1,45 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import Lenis from "lenis";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
 const Index = () => {
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let lenis: Lenis | undefined;
+    let frame = 0;
+
+    const start = () => {
+      if (reducedMotion.matches || lenis) return;
+      lenis = new Lenis({ duration: 1.1, wheelMultiplier: 0.85, smoothWheel: true, syncTouch: false });
+      const animate = (time: number) => {
+        lenis?.raf(time);
+        frame = requestAnimationFrame(animate);
+      };
+      frame = requestAnimationFrame(animate);
+    };
+
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      lenis?.destroy();
+      lenis = undefined;
+    };
+
+    const onMotionChange = () => {
+      if (reducedMotion.matches) stop();
+      else start();
+    };
+
+    start();
+    reducedMotion.addEventListener("change", onMotionChange);
+    return () => {
+      reducedMotion.removeEventListener("change", onMotionChange);
+      stop();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header showName />
