@@ -9,6 +9,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Hedvig Letters Serif';
+  src: url('/fonts/HedvigLettersSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -48,6 +56,14 @@
     --font-serif: 'EB Garamond', Georgia, serif;
     --font-sans: 'Inter', -apple-system, sans-serif;
     --font-logo: 'KristallLL', 'Inter', sans-serif;
+  }
+
+  :root[data-logo-font='hedvig'] {
+    --font-logo: 'Hedvig Letters Serif', Georgia, serif;
+  }
+
+  :root[data-serif-font='hedvig'] {
+    --font-serif: 'Hedvig Letters Serif', Georgia, serif;
   }
 }
 
