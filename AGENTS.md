@@ -1,1 +1,2 @@
 Site typography choices are stored as `logo_font` and `serif_font` in public site settings and applied through root CSS variables; this keeps font choices independent across pages without changing their layout.
+Landing-page wheel scrolling uses Lenis in the Index lifecycle only, with native touch and reduced-motion behavior preserved; this adds glide without affecting other pages or image placement.
