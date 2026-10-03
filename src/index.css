@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.cdnfonts.com/css/tex-gyre-termes');
 
 @font-face {
   font-family: 'KristallLL';
@@ -73,6 +74,22 @@
 
   :root[data-serif-font='times'] {
     --font-serif: 'Times LT Pro', 'Times', 'Tinos', 'Times New Roman', serif;
+  }
+
+  :root[data-logo-font='texgyre'] {
+    --font-logo: 'TeX Gyre Termes', 'Tinos', 'Times New Roman', serif;
+  }
+
+  :root[data-serif-font='texgyre'] {
+    --font-serif: 'TeX Gyre Termes', 'Tinos', 'Times New Roman', serif;
+  }
+
+  :root[data-logo-font='tinos'] {
+    --font-logo: 'Tinos', 'Times New Roman', serif;
+  }
+
+  :root[data-serif-font='tinos'] {
+    --font-serif: 'Tinos', 'Times New Roman', serif;
   }
 }
 
