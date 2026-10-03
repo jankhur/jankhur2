@@ -20,6 +20,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { fontOptions, isFontChoice, type FontChoice } from "@/lib/siteFonts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // ─── Auth Gate ───────────────────────────────────────────────
 
@@ -926,6 +928,30 @@ function NotesTab({ toast }: { toast: (m: string) => void }) {
 function SettingsTab({ toast }: { toast: (m: string) => void }) {
   const qc = useQueryClient();
 
+  const { data: fonts = { logo: "current" as FontChoice, serif: "current" as FontChoice } } = useQuery({
+    queryKey: ["site-fonts"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("site_settings")
+        .select("key, value").in("key", ["logo_font", "serif_font"]);
+      if (error) throw error;
+      const values = Object.fromEntries((data ?? []).map(({ key, value }) => [key, value]));
+      return {
+        logo: isFontChoice(values.logo_font ?? "") ? values.logo_font as FontChoice : "current" as FontChoice,
+        serif: isFontChoice(values.serif_font ?? "") ? values.serif_font as FontChoice : "current" as FontChoice,
+      };
+    },
+  });
+
+  const saveFont = async (key: "logo_font" | "serif_font", value: FontChoice) => {
+    try {
+      await adminApi({ action: "update", table: "site_settings", id: key, data: { value } });
+      qc.setQueryData(["site-fonts"], { ...fonts, [key === "logo_font" ? "logo" : "serif"]: value });
+      toast("Saved");
+    } catch {
+      toast("Could not save font");
+    }
+  };
+
   const { data: copyright = "© Jan Khür" } = useQuery({
     queryKey: ["site-settings-copyright"],
     queryFn: async () => {
@@ -960,6 +986,29 @@ function SettingsTab({ toast }: { toast: (m: string) => void }) {
           <span className="font-serif text-sm text-neutral-500">Copyright</span>
           <InlineField value={copyright} placeholder="© Jan Khür" onSave={saveCopyright} className="w-64" />
         </div>
+      </div>
+      <div className="space-y-4 border-t border-border pt-6">
+        <h3 className="font-serif text-base">Typography</h3>
+        {([
+          { key: "logo_font" as const, label: "Logo", value: fonts.logo },
+          { key: "serif_font" as const, label: "Serif text", value: fonts.serif },
+        ]).map(({ key, label, value }) => (
+          <div key={key} className="flex flex-wrap items-center justify-between gap-3 max-w-md">
+            <label className="font-serif text-sm" htmlFor={key}>{label}</label>
+            <Select value={value} onValueChange={(next) => {
+              if (isFontChoice(next)) void saveFont(key, next);
+            }}>
+              <SelectTrigger id={key} aria-label={`${label} font`} className="w-56 rounded-none font-serif">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {fontOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
       </div>
     </div>
   );

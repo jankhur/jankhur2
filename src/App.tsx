@@ -12,11 +12,13 @@ import JourneyGallery from "./pages/JourneyGallery.tsx";
 import Notes from "./pages/Notes.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
+import { SiteFontSettings } from "./components/SiteFontSettings.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <SiteFontSettings />
     <TooltipProvider>
       <Toaster />
       <Sonner />
