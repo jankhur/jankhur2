@@ -28,7 +28,7 @@ const Index = () => {
       const r = el.getBoundingClientRect();
       const area = window.innerHeight - HEADER - BOTTOM_ROOM;
       const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
-      return Math.max(0, window.scrollY + r.top - offset);
+      return Math.max(0, window.scrollY + r.top - offset + LIFT);
     };
     const allTargets = () => Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
