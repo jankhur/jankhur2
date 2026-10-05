@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public read images" ON storage.objects;
