@@ -320,19 +320,19 @@ const Header = ({ showName = false }: HeaderProps) => {
           aria-label="Toggle menu"
         >
           <motion.span
-            animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+            animate={logo.menuAnimations && menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
             className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: 0.3 }}
+            transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
           />
           <motion.span
-            animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+            animate={logo.menuAnimations && menuOpen ? { opacity: 0 } : { opacity: 1 }}
             className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: 0.2 }}
+            transition={{ duration: logo.menuAnimations ? 0.2 : 0 }}
           />
           <motion.span
-            animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+            animate={logo.menuAnimations && menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
             className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: 0.3 }}
+            transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
           />
         </button>
       </header>
@@ -340,10 +340,10 @@ const Header = ({ showName = false }: HeaderProps) => {
       <AnimatePresence>
         {menuOpen && (
           <motion.nav
-            initial={{ opacity: 0 }}
+            initial={logo.menuAnimations ? { opacity: 0 } : false}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            exit={logo.menuAnimations ? { opacity: 0 } : undefined}
+            transition={{ duration: logo.menuAnimations ? 0.4 : 0 }}
             className="fixed inset-0 z-40 bg-background flex items-center justify-center"
           >
             <div className="relative">
@@ -351,11 +351,11 @@ const Header = ({ showName = false }: HeaderProps) => {
                 {navItems.map((item, i) => (
                   <motion.li
                     key={item.label}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={logo.menuAnimations ? { opacity: 0, y: 20 } : false}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ delay: i * 0.06, duration: 0.4 }}
-                    onMouseEnter={() => handleHover(i)}
+                    exit={logo.menuAnimations ? { opacity: 0, y: -10 } : undefined}
+                    transition={{ delay: logo.menuAnimations ? i * 0.06 : 0, duration: logo.menuAnimations ? 0.4 : 0 }}
+                    onMouseEnter={() => { if (logo.menuAnimations) handleHover(i); }}
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
                     {item.external ? (
@@ -368,13 +368,13 @@ const Header = ({ showName = false }: HeaderProps) => {
                       >
                         <motion.span
                           className="inline-block"
-                          whileHover={{
+                          whileHover={logo.menuAnimations ? {
                             scaleY: 1.3,
                             y: 8,
                             filter: "blur(2px)",
                             opacity: 0.6,
                             transition: { duration: 0.6, ease: "easeOut" }
-                          }}
+                          } : undefined}
                         >
                           {item.label}
                         </motion.span>
@@ -387,13 +387,13 @@ const Header = ({ showName = false }: HeaderProps) => {
                       >
                         <motion.span
                           className="inline-block"
-                          whileHover={{
+                          whileHover={logo.menuAnimations ? {
                             scaleY: 1.3,
                             y: 8,
                             filter: "blur(2px)",
                             opacity: 0.6,
                             transition: { duration: 0.6, ease: "easeOut" }
-                          }}
+                          } : undefined}
                         >
                           {item.label}
                         </motion.span>
@@ -405,7 +405,7 @@ const Header = ({ showName = false }: HeaderProps) => {
 
               {/* Floating hand-drawn camera */}
               <AnimatePresence>
-                {hoveredIndex !== null && (
+                {logo.menuAnimations && hoveredIndex !== null && (
                   <motion.div
                     key={`camera-${hoveredIndex}`}
                     className="absolute pointer-events-none hidden md:block"

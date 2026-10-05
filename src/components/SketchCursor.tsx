@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DEFAULT_LOGO, useLogoSettings } from "@/lib/siteSettings";
 
 // Editorial — magazine
 const SketchMagazine = () => (
@@ -169,6 +170,7 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: settings = DEFAULT_LOGO } = useLogoSettings();
 
   useEffect(() => {
     // Only on desktop
@@ -197,7 +199,7 @@ const SketchCursor = ({ type }: SketchCursorProps) => {
   }, [visible]);
 
   const Illustration = illustrationMap[type];
-  if (!Illustration) return null;
+  if (!Illustration || !settings.customCursor) return null;
 
   return (
     <AnimatePresence>

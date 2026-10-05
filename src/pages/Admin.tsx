@@ -1075,6 +1075,32 @@ function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
           className="h-4 w-4 accent-black"
         />
       </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="custom_cursor">Custom animated cursor</label>
+        <input
+          id="custom_cursor"
+          type="checkbox"
+          checked={s.customCursor}
+          onChange={(event) => {
+            const checked = event.target.checked;
+            void save("custom_cursor", String(checked), { customCursor: checked });
+          }}
+          className="h-4 w-4 accent-black"
+        />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="menu_animations">Menu animations & illustrations</label>
+        <input
+          id="menu_animations"
+          type="checkbox"
+          checked={s.menuAnimations}
+          onChange={(event) => {
+            const checked = event.target.checked;
+            void save("menu_animations", String(checked), { menuAnimations: checked });
+          }}
+          className="h-4 w-4 accent-black"
+        />
+      </div>
       <label className="block space-y-1">
         <span className="font-serif text-sm flex justify-between"><span>Logo size</span><span>{size}px</span></span>
         <input type="range" min={10} max={40} step={1} value={size}
