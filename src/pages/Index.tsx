@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import Lenis from "lenis";
+import Snap from "lenis/snap";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
@@ -9,11 +10,27 @@ const Index = () => {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let lenis: Lenis | undefined;
+    let snap: Snap | undefined;
+    let observer: MutationObserver | undefined;
+    const registered = new Set<Element>();
     let frame = 0;
+
+    const registerItems = () => {
+      if (!snap) return;
+      document.querySelectorAll("[data-feed-item]").forEach((el) => {
+        if (registered.has(el)) return;
+        registered.add(el);
+        snap!.addElement(el as HTMLElement, { align: "center" });
+      });
+    };
 
     const start = () => {
       if (reducedMotion.matches || lenis) return;
       lenis = new Lenis({ duration: 1.1, wheelMultiplier: 0.85, smoothWheel: true, syncTouch: false });
+      snap = new Snap(lenis, { type: "lock", duration: 0.9, debounce: 300 });
+      registerItems();
+      observer = new MutationObserver(registerItems);
+      observer.observe(document.body, { childList: true, subtree: true });
       const animate = (time: number) => {
         lenis?.raf(time);
         frame = requestAnimationFrame(animate);
@@ -23,7 +40,11 @@ const Index = () => {
 
     const stop = () => {
       cancelAnimationFrame(frame);
+      observer?.disconnect();
+      snap?.destroy();
       lenis?.destroy();
+      registered.clear();
+      snap = undefined;
       lenis = undefined;
     };
 

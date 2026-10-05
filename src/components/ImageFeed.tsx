@@ -42,6 +42,7 @@ const ImageFeed = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className={getLayoutClasses(item.layout)}
+          data-feed-item
         >
           <img
             src={item.src}
