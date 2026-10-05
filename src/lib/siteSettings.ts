@@ -16,6 +16,8 @@ export type LogoSettings = {
   logoSpacing: number;
   logoUppercase: boolean;
   showScrollControls: boolean;
+  customCursor: boolean;
+  menuAnimations: boolean;
 };
 
 export const DEFAULT_LOGO: LogoSettings = {
@@ -25,9 +27,11 @@ export const DEFAULT_LOGO: LogoSettings = {
   logoSpacing: 0.2,
   logoUppercase: true,
   showScrollControls: false,
+  customCursor: true,
+  menuAnimations: true,
 };
 
-export const LOGO_KEYS = ["header_mode", "logo_text", "logo_size", "logo_spacing", "logo_uppercase", "show_scroll_controls"];
+export const LOGO_KEYS = ["header_mode", "logo_text", "logo_size", "logo_spacing", "logo_uppercase", "show_scroll_controls", "custom_cursor", "menu_animations"];
 
 export function useLogoSettings() {
   return useQuery({
@@ -43,6 +47,8 @@ export function useLogoSettings() {
         logoSpacing: v.logo_spacing != null && v.logo_spacing !== "" ? Number(v.logo_spacing) : DEFAULT_LOGO.logoSpacing,
         logoUppercase: v.logo_uppercase == null ? DEFAULT_LOGO.logoUppercase : v.logo_uppercase === "true",
         showScrollControls: v.show_scroll_controls === "true",
+        customCursor: v.custom_cursor == null ? DEFAULT_LOGO.customCursor : v.custom_cursor === "true",
+        menuAnimations: v.menu_animations == null ? DEFAULT_LOGO.menuAnimations : v.menu_animations === "true",
       };
     },
   });
