@@ -65,12 +65,61 @@ const Index = () => {
       });
     };
 
+    void trySnap;
+    // Top settle: after scrolling up near the top, rest at the very top.
     const onScroll = () => {
       clearTimeout(idleTimer);
-      if (snapping) return;
-      idleTimer = window.setTimeout(trySnap, 220);
+      if (snapping || freeUntil > performance.now()) return;
+      idleTimer = window.setTimeout(() => {
+        if (!lenis || snapping || lastDir !== -1) return;
+        const y = window.scrollY;
+        if (y > 0 && y < 160) lenis.scrollTo(0, { duration: tuningRef.current.duration, easing: ease });
+      }, 260);
     };
-    const onWheel = () => { snapping = false; };
+
+    // One downward flick = glide straight to the next photo, fully framed.
+    // A second flick during the glide = free fast scroll. Up = free scroll.
+    let lastWheel = 0;
+    let glideStart = 0;
+    let freeUntil = 0;
+    let lastDir: 1 | -1 | 0 = 0;
+    const onWheel = (e: WheelEvent) => {
+      if (!lenis || e.ctrlKey) return;
+      const now = performance.now();
+      const gap = now - lastWheel;
+      lastWheel = now;
+      if (Math.abs(e.deltaY) < 1) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      lastDir = dir;
+      if (dir === -1) { snapping = false; freeUntil = 0; return; } // free scroll up
+      if (freeUntil > now) { freeUntil = now + 700; return; } // fast mode: let Lenis scroll
+      if (snapping) {
+        // Trailing trackpad momentum: swallow. New flick during glide: go free.
+        if (gap > 140 && now - glideStart > 120) {
+          snapping = false;
+          freeUntil = now + 700;
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+      if (Math.abs(e.deltaY) < tuningRef.current.threshold / 20) return;
+      const y = window.scrollY;
+      const targets = Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
+      const target = targets.find((t) => t > y + 8);
+      if (target === undefined) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      snapping = true;
+      glideStart = now;
+      lenis.scrollTo(target, {
+        duration: tuningRef.current.duration,
+        easing: ease,
+        lock: true,
+        onComplete: () => { snapping = false; },
+      });
+    };
 
     // Arrow keys: glide to previous / next photograph.
     const stepTo = (dir: 1 | -1) => {
