@@ -89,8 +89,6 @@ const Index = () => {
             </div>
             {([
               ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
-              ["threshold", "Flick sensitivity (sensitive ← → firm)", 10, 200, 1, ""],
-              ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
             ] as const).map(([key, label, min, max, step, unit]) => (
               <label key={key} className="block space-y-1">
                 <span className="flex justify-between"><span>{label}</span><span>{tuning[key]}{unit}</span></span>
