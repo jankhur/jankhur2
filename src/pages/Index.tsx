@@ -12,6 +12,7 @@ const Index = () => {
     let frame = 0;
     const HEADER = 96;
     const BOTTOM_ROOM = 48; // extra breathing space under captions
+    const LIFT = 45; // shift the resting frame up so captions clear the bottom
     const PAGE_THRESHOLD = 40; // px of wheel travel before flipping to the next photo
     const FREE_THRESHOLD = 900; // total travel in one gesture that switches to free glide
     let accumulated = 0;
