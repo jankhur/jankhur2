@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import Lenis from "lenis";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
@@ -26,168 +25,49 @@ const Index = () => {
     localStorage.setItem(TUNING_KEY, JSON.stringify(tuning));
   }, [tuning]);
 
+  // Native CSS scroll snap: the browser handles trackpad physics, so one flick
+  // settles on the next photo with no stutter; scrolling up stays natural.
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let lenis: Lenis | undefined;
-    let frame = 0;
     const HEADER = 96;
     const BOTTOM_ROOM = 48;
-    let idleTimer = 0;
-    let snapping = false;
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const html = document.documentElement;
+    const prevSnap = html.style.scrollSnapType;
+    html.style.scrollSnapType = "y mandatory";
 
-    const targetFor = (el: Element) => {
-      const r = el.getBoundingClientRect();
-      const area = window.innerHeight - HEADER - BOTTOM_ROOM;
-      const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
-      return Math.max(0, window.scrollY + r.top - offset + tuningRef.current.lift);
-    };
-
-    // Soft proximity snap: only settle a photo that is already almost fully in view.
-    const trySnap = () => {
-      if (!lenis || snapping) return;
-      const vh = window.innerHeight;
-      const need = tuningRef.current.threshold / 100;
-      let best: { target: number; frac: number } | null = null;
-      for (const el of Array.from(document.querySelectorAll("[data-feed-item]"))) {
-        const r = el.getBoundingClientRect();
-        if (r.height === 0) continue;
-        const visible = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
-        const frac = visible / Math.min(r.height, vh);
-        if (frac >= need && (!best || frac > best.frac)) best = { target: targetFor(el), frac };
-      }
-      if (!best || Math.abs(best.target - window.scrollY) < 3) return;
-      snapping = true;
-      lenis.scrollTo(best.target, {
-        duration: tuningRef.current.duration,
-        easing: ease,
-        onComplete: () => { snapping = false; },
+    const apply = () => {
+      const lift = tuningRef.current.lift;
+      document.querySelectorAll<HTMLElement>("[data-feed-item]").forEach((el) => {
+        el.style.scrollSnapAlign = "center";
+        el.style.scrollSnapStop = "normal";
+        el.style.scrollMarginTop = `${HEADER - lift}px`;
+        el.style.scrollMarginBottom = `${BOTTOM_ROOM + lift}px`;
       });
     };
+    apply();
+    const mo = new MutationObserver(apply);
+    mo.observe(document.body, { childList: true, subtree: true });
 
-    void trySnap;
-    // Top settle: after scrolling up near the top, rest at the very top.
-    const onScroll = () => {
-      clearTimeout(idleTimer);
-      if (snapping || freeUntil > performance.now()) return;
-      idleTimer = window.setTimeout(() => {
-        if (!lenis || snapping || lastDir !== -1) return;
-        const y = window.scrollY;
-        if (y > 0 && y < 160) lenis.scrollTo(0, { duration: tuningRef.current.duration, easing: ease });
-      }, 260);
-    };
-
-    // One downward flick = glide straight to the next photo, fully framed.
-    // A second flick during the glide = free fast scroll. Up = free scroll.
-    let lastWheel = 0;
-    let glideStart = 0;
-    let freeUntil = 0;
-    let lastDir: 1 | -1 | 0 = 0;
-    const onWheel = (e: WheelEvent) => {
-      if (!lenis || e.ctrlKey) return;
-      const now = performance.now();
-      const gap = now - lastWheel;
-      lastWheel = now;
-      if (Math.abs(e.deltaY) < 1) return;
-      const dir = e.deltaY > 0 ? 1 : -1;
-      lastDir = dir;
-      if (dir === -1) { snapping = false; freeUntil = 0; return; } // free scroll up
-      if (freeUntil > now) { freeUntil = now + 700; return; } // fast mode: let Lenis scroll
-      if (snapping) {
-        // Trailing trackpad momentum: swallow. New flick during glide: go free.
-        if (gap > 140 && now - glideStart > 120) {
-          snapping = false;
-          freeUntil = now + 700;
-          return;
-        }
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
-      if (Math.abs(e.deltaY) < tuningRef.current.threshold / 20) return;
-      const y = window.scrollY;
-      const targets = Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
-      const target = targets.find((t) => t > y + 8);
-      if (target === undefined) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      snapping = true;
-      glideStart = now;
-      lenis.scrollTo(target, {
-        duration: tuningRef.current.duration,
-        easing: ease,
-        lock: true,
-        onComplete: () => { snapping = false; },
-      });
-    };
-
-    // Arrow keys: glide to previous / next photograph.
-    const stepTo = (dir: 1 | -1) => {
-      if (!lenis || snapping) return;
-      const items = Array.from(document.querySelectorAll("[data-feed-item]"));
-      if (items.length === 0) return;
-      const y = window.scrollY;
-      const targets = items.map((el) => targetFor(el));
-      let idx = targets.findIndex((t) => Math.abs(t - y) < 8);
-      if (idx === -1) {
-        idx = dir === 1
-          ? targets.findIndex((t) => t > y + 8)
-          : targets.length - 1 - [...targets].reverse().findIndex((t) => t < y - 8);
-      } else {
-        idx += dir;
-      }
-      idx = Math.max(0, Math.min(items.length - 1, idx));
-      const target = targets[idx];
-      if (Math.abs(target - y) < 3) return;
-      snapping = true;
-      lenis.scrollTo(target, {
-        duration: tuningRef.current.duration,
-        easing: ease,
-        onComplete: () => { snapping = false; },
-      });
-    };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       e.preventDefault();
-      stepTo(e.key === "ArrowRight" ? 1 : -1);
+      const items = Array.from(document.querySelectorAll<HTMLElement>("[data-feed-item]"));
+      const mid = HEADER + (window.innerHeight - HEADER - BOTTOM_ROOM) / 2;
+      const centers = items.map((el) => { const r = el.getBoundingClientRect(); return r.top + r.height / 2 - mid; });
+      let cur = 0;
+      centers.forEach((c, i) => { if (Math.abs(c) < Math.abs(centers[cur])) cur = i; });
+      const next = items[Math.max(0, Math.min(items.length - 1, cur + (e.key === "ArrowRight" ? 1 : -1)))];
+      next?.scrollIntoView({ behavior: "smooth", block: "center" });
     };
+    window.addEventListener("keydown", onKeyDown);
 
-    const start = () => {
-      if (reducedMotion.matches || lenis) return;
-      lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
-      lenis.on("scroll", onScroll);
-      window.addEventListener("wheel", onWheel, { passive: false, capture: true });
-      window.addEventListener("keydown", onKeyDown);
-      const animate = (time: number) => {
-        lenis?.raf(time);
-        frame = requestAnimationFrame(animate);
-      };
-      frame = requestAnimationFrame(animate);
-    };
-
-    const stop = () => {
-      cancelAnimationFrame(frame);
-      clearTimeout(idleTimer);
-      window.removeEventListener("wheel", onWheel, { capture: true });
-      window.removeEventListener("keydown", onKeyDown);
-      lenis?.destroy();
-      lenis = undefined;
-    };
-
-    const onMotionChange = () => {
-      if (reducedMotion.matches) stop();
-      else start();
-    };
-
-    start();
-    reducedMotion.addEventListener("change", onMotionChange);
     return () => {
-      reducedMotion.removeEventListener("change", onMotionChange);
-      stop();
+      mo.disconnect();
+      window.removeEventListener("keydown", onKeyDown);
+      html.style.scrollSnapType = prevSnap;
     };
-  }, []);
+  }, [tuning.lift]);
 
   return (
     <div className="min-h-screen bg-background">
