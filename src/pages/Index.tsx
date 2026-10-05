@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
+import { DEFAULT_LOGO, useLogoSettings } from "@/lib/siteSettings";
 
 type Tuning = { lift: number; threshold: number; duration: number };
 const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 40, duration: 0.8 };
@@ -19,6 +20,7 @@ const loadTuning = (): Tuning => {
 const Index = () => {
   const [tuning, setTuning] = useState<Tuning>(loadTuning);
   const [panelOpen, setPanelOpen] = useState(false);
+  const { data: logo = DEFAULT_LOGO } = useLogoSettings();
   const tuningRef = useRef(tuning);
   useEffect(() => {
     tuningRef.current = tuning;
@@ -79,8 +81,8 @@ const Index = () => {
         <ImageFeed />
       </main>
 
-      {/* Temporary scroll tuning panel */}
-      <div data-tuning-panel className="fixed bottom-4 left-4 z-[60] font-serif text-xs text-foreground">
+      {/* Optional scroll tuning panel */}
+      {logo.showScrollControls && <div data-tuning-panel className="fixed bottom-4 left-4 z-[60] font-serif text-xs text-foreground">
         {panelOpen ? (
           <div className="w-64 space-y-3 border border-border bg-background p-4 shadow-sm">
             <div className="flex items-center justify-between">
@@ -106,7 +108,7 @@ const Index = () => {
             Tune scroll
           </button>
         )}
-      </div>
+      </div>}
 
       {/* Footer */}
       <footer className="px-6 md:px-10 py-12 border-t border-border">

@@ -1049,6 +1049,32 @@ function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
         <span className="font-serif text-sm">Logo text</span>
         <InlineField value={s.logoText} placeholder="JAN KHÜR" onSave={(v: string) => save("logo_text", v, { logoText: v || DEFAULT_LOGO.logoText })} className="w-64" />
       </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="logo_uppercase">Force logo to uppercase</label>
+        <input
+          id="logo_uppercase"
+          type="checkbox"
+          checked={s.logoUppercase}
+          onChange={(event) => {
+            const checked = event.target.checked;
+            void save("logo_uppercase", String(checked), { logoUppercase: checked });
+          }}
+          className="h-4 w-4 accent-black"
+        />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="show_scroll_controls">Show scroll controls</label>
+        <input
+          id="show_scroll_controls"
+          type="checkbox"
+          checked={s.showScrollControls}
+          onChange={(event) => {
+            const checked = event.target.checked;
+            void save("show_scroll_controls", String(checked), { showScrollControls: checked });
+          }}
+          className="h-4 w-4 accent-black"
+        />
+      </div>
       <label className="block space-y-1">
         <span className="font-serif text-sm flex justify-between"><span>Logo size</span><span>{size}px</span></span>
         <input type="range" min={10} max={40} step={1} value={size}
