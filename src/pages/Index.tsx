@@ -10,27 +10,52 @@ const Index = () => {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let lenis: Lenis | undefined;
-    let snap: Snap | undefined;
-    let observer: MutationObserver | undefined;
-    const registered = new Set<Element>();
     let frame = 0;
+    const HEADER = 96;
+    const PAGE_THRESHOLD = 60; // px of wheel travel before flipping to the next photo
+    let accumulated = 0;
+    let locked = false;
+    let gestureTimer = 0;
 
-    const registerItems = () => {
-      if (!snap) return;
-      document.querySelectorAll("[data-feed-item]").forEach((el) => {
-        if (registered.has(el)) return;
-        registered.add(el);
-        snap!.addElement(el as HTMLElement, { align: "center" });
-      });
+    // Scroll position that frames an item fully below the header.
+    const targetFor = (el: Element) => {
+      const r = el.getBoundingClientRect();
+      const area = window.innerHeight - HEADER;
+      const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
+      return Math.max(0, window.scrollY + r.top - offset);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!lenis || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      clearTimeout(gestureTimer);
+      // A gesture ends after a short pause; trackpad inertia stays in the same gesture.
+      gestureTimer = window.setTimeout(() => {
+        if (!locked && accumulated !== 0) lenis?.scrollTo(window.scrollY + accumulated, { duration: 0.4 });
+        accumulated = 0;
+        locked = false;
+      }, 160);
+      if (locked) return;
+      accumulated += e.deltaY;
+      if (Math.abs(accumulated) < PAGE_THRESHOLD) return;
+
+      const dir = Math.sign(accumulated);
+      locked = true;
+      accumulated = 0;
+      const items = Array.from(document.querySelectorAll("[data-feed-item]"));
+      const targets = items.map(targetFor);
+      const y = window.scrollY;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      let next: number | undefined;
+      if (dir > 0) next = targets.find((t) => t > y + 4) ?? maxY;
+      else next = [...targets].reverse().find((t) => t < y - 4) ?? 0;
+      lenis.scrollTo(next, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
     };
 
     const start = () => {
       if (reducedMotion.matches || lenis) return;
-      lenis = new Lenis({ duration: 1.1, wheelMultiplier: 0.85, smoothWheel: true, syncTouch: false });
-      snap = new Snap(lenis, { type: "lock", duration: 0.9, debounce: 300 });
-      registerItems();
-      observer = new MutationObserver(registerItems);
-      observer.observe(document.body, { childList: true, subtree: true });
+      lenis = new Lenis({ smoothWheel: false, syncTouch: false });
+      window.addEventListener("wheel", onWheel, { passive: false });
       const animate = (time: number) => {
         lenis?.raf(time);
         frame = requestAnimationFrame(animate);
@@ -40,11 +65,9 @@ const Index = () => {
 
     const stop = () => {
       cancelAnimationFrame(frame);
-      observer?.disconnect();
-      snap?.destroy();
+      clearTimeout(gestureTimer);
+      window.removeEventListener("wheel", onWheel);
       lenis?.destroy();
-      registered.clear();
-      snap = undefined;
       lenis = undefined;
     };
 
