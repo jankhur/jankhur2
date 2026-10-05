@@ -6,8 +6,8 @@ import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
 type Tuning = { lift: number; threshold: number; duration: number };
-const DEFAULT_TUNING: Tuning = { lift: 15, threshold: 40, duration: 0.9 };
-const TUNING_KEY = "landing-scroll-tuning";
+const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 80, duration: 0.7 };
+const TUNING_KEY = "landing-scroll-tuning-v2";
 
 const loadTuning = (): Tuning => {
   try {
@@ -125,7 +125,7 @@ const Index = () => {
             </div>
             {([
               ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
-              ["threshold", "Sensitivity (light ← → firm)", 5, 150, 1, "px"],
+              ["threshold", "Snap only when photo is this visible", 50, 100, 1, "%"],
               ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
             ] as const).map(([key, label, min, max, step, unit]) => (
               <label key={key} className="block space-y-1">
