@@ -72,6 +72,39 @@ const Index = () => {
     };
     const onWheel = () => { snapping = false; };
 
+    // Arrow keys: glide to previous / next photograph.
+    const stepTo = (dir: 1 | -1) => {
+      if (!lenis || snapping) return;
+      const items = Array.from(document.querySelectorAll("[data-feed-item]"));
+      if (items.length === 0) return;
+      const y = window.scrollY;
+      const targets = items.map((el) => targetFor(el));
+      let idx = targets.findIndex((t) => Math.abs(t - y) < 8);
+      if (idx === -1) {
+        idx = dir === 1
+          ? targets.findIndex((t) => t > y + 8)
+          : targets.length - 1 - [...targets].reverse().findIndex((t) => t < y - 8);
+      } else {
+        idx += dir;
+      }
+      idx = Math.max(0, Math.min(items.length - 1, idx));
+      const target = targets[idx];
+      if (Math.abs(target - y) < 3) return;
+      snapping = true;
+      lenis.scrollTo(target, {
+        duration: tuningRef.current.duration,
+        easing: ease,
+        onComplete: () => { snapping = false; },
+      });
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      e.preventDefault();
+      stepTo(e.key === "ArrowRight" ? 1 : -1);
+    };
+
     const start = () => {
       if (reducedMotion.matches || lenis) return;
       lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
