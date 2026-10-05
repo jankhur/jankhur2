@@ -10,10 +10,51 @@ const Index = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let lenis: Lenis | undefined;
     let frame = 0;
+    const HEADER = 96;
+    const PAGE_THRESHOLD = 60; // px of wheel travel before flipping to the next photo
+    let accumulated = 0;
+    let locked = false;
+    let gestureTimer = 0;
+
+    // Scroll position that frames an item fully below the header.
+    const targetFor = (el: Element) => {
+      const r = el.getBoundingClientRect();
+      const area = window.innerHeight - HEADER;
+      const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
+      return Math.max(0, window.scrollY + r.top - offset);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!lenis || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      clearTimeout(gestureTimer);
+      // A gesture ends after a short pause; trackpad inertia stays in the same gesture.
+      gestureTimer = window.setTimeout(() => {
+        if (!locked && accumulated !== 0) lenis?.scrollTo(window.scrollY + accumulated, { duration: 0.4 });
+        accumulated = 0;
+        locked = false;
+      }, 160);
+      if (locked) return;
+      accumulated += e.deltaY;
+      if (Math.abs(accumulated) < PAGE_THRESHOLD) return;
+
+      const dir = Math.sign(accumulated);
+      locked = true;
+      accumulated = 0;
+      const items = Array.from(document.querySelectorAll("[data-feed-item]"));
+      const targets = items.map(targetFor);
+      const y = window.scrollY;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      let next: number | undefined;
+      if (dir > 0) next = targets.find((t) => t > y + 4) ?? maxY;
+      else next = [...targets].reverse().find((t) => t < y - 4) ?? 0;
+      lenis.scrollTo(next, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    };
 
     const start = () => {
       if (reducedMotion.matches || lenis) return;
-      lenis = new Lenis({ duration: 1.1, wheelMultiplier: 0.85, smoothWheel: true, syncTouch: false });
+      lenis = new Lenis({ smoothWheel: true, syncTouch: false, virtualScroll: (data) => !(data.event instanceof WheelEvent) });
+      window.addEventListener("wheel", onWheel, { passive: false });
       const animate = (time: number) => {
         lenis?.raf(time);
         frame = requestAnimationFrame(animate);
@@ -23,6 +64,8 @@ const Index = () => {
 
     const stop = () => {
       cancelAnimationFrame(frame);
+      clearTimeout(gestureTimer);
+      window.removeEventListener("wheel", onWheel);
       lenis?.destroy();
       lenis = undefined;
     };
