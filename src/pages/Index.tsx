@@ -6,8 +6,8 @@ import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
 type Tuning = { lift: number; threshold: number; duration: number };
-const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 80, duration: 0.7 };
-const TUNING_KEY = "landing-scroll-tuning-v2";
+const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 40, duration: 0.8 };
+const TUNING_KEY = "landing-scroll-tuning-v3";
 
 const loadTuning = (): Tuning => {
   try {
@@ -158,7 +158,7 @@ const Index = () => {
       if (reducedMotion.matches || lenis) return;
       lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
       lenis.on("scroll", onScroll);
-      window.addEventListener("wheel", onWheel, { passive: true });
+      window.addEventListener("wheel", onWheel, { passive: false, capture: true });
       window.addEventListener("keydown", onKeyDown);
       const animate = (time: number) => {
         lenis?.raf(time);
@@ -170,7 +170,7 @@ const Index = () => {
     const stop = () => {
       cancelAnimationFrame(frame);
       clearTimeout(idleTimer);
-      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("keydown", onKeyDown);
       lenis?.destroy();
       lenis = undefined;
@@ -209,7 +209,7 @@ const Index = () => {
             </div>
             {([
               ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
-              ["threshold", "Snap only when photo is this visible", 50, 100, 1, "%"],
+              ["threshold", "Flick sensitivity (sensitive ← → firm)", 10, 200, 1, ""],
               ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
             ] as const).map(([key, label, min, max, step, unit]) => (
               <label key={key} className="block space-y-1">
