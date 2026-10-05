@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { DEFAULT_LOGO, useLogoSettings } from "@/lib/siteSettings";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -260,9 +261,39 @@ const Header = ({ showName = false }: HeaderProps) => {
     }
   }, [location.pathname]);
 
+  const { data: logo = DEFAULT_LOGO } = useLogoSettings();
+  const isLanding = location.pathname === "/";
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    if (!isLanding || logo.headerMode === "always") {
+      setHidden(false);
+      return;
+    }
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (logo.headerMode === "hide") {
+        if (y < 40) setHidden(false);
+        else if (y > lastY + 4) setHidden(true);
+        else if (y < lastY - 4) setHidden(false);
+      } else {
+        setHidden(y > window.innerHeight * 0.6);
+      }
+      lastY = y;
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isLanding, logo.headerMode]);
+
+  const headerHidden = hidden && !menuOpen;
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 bg-background">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 transition-all duration-500 ${isLanding ? "bg-transparent" : "bg-background"} ${headerHidden ? (logo.headerMode === "hide" ? "-translate-y-full opacity-0 pointer-events-none" : "opacity-0 pointer-events-none") : "translate-y-0 opacity-100"}`}
+      >
         <div className="relative h-6 flex items-center">
           <Link to="/" onClick={handleNameClick} className="cursor-pointer">
             <AnimatePresence mode="wait">
@@ -273,10 +304,10 @@ const Header = ({ showName = false }: HeaderProps) => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.8 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-sm tracking-[0.2em] text-foreground uppercase"
-                  style={{ fontFamily: 'var(--font-logo)' }}
+                  className="text-foreground uppercase"
+                  style={{ fontFamily: 'var(--font-logo)', fontSize: `${logo.logoSize}px`, letterSpacing: `${logo.logoSpacing}em` }}
                 >
-                  JAN KHÜR
+                  {logo.logoText}
                 </motion.span>
               )}
             </AnimatePresence>
