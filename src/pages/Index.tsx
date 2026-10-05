@@ -12,6 +12,7 @@ const Index = () => {
     let frame = 0;
     const HEADER = 96;
     const BOTTOM_ROOM = 48; // extra breathing space under captions
+    const LIFT = 45; // shift the resting frame up so captions clear the bottom
     const PAGE_THRESHOLD = 40; // px of wheel travel before flipping to the next photo
     const FREE_THRESHOLD = 900; // total travel in one gesture that switches to free glide
     let accumulated = 0;
@@ -27,7 +28,7 @@ const Index = () => {
       const r = el.getBoundingClientRect();
       const area = window.innerHeight - HEADER - BOTTOM_ROOM;
       const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
-      return Math.max(0, window.scrollY + r.top - offset);
+      return Math.max(0, window.scrollY + r.top - offset + LIFT);
     };
     const allTargets = () => Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
