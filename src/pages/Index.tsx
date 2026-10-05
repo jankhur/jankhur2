@@ -72,14 +72,15 @@ const Index = () => {
         free = false;
       }, 180);
 
-      // While a page turn glides, ignore leftover momentum so it never stutters.
-      if (animating) return;
-
       gestureTotal += Math.abs(e.deltaY);
-      if (!free && !locked && gestureTotal > FREE_THRESHOLD) {
+      if (!free && gestureTotal > FREE_THRESHOLD) {
+        // A long, hard scroll: switch to free glide.
         free = true;
+        animating = false;
         freeTarget = window.scrollY;
       }
+      // While a page turn glides, ignore leftover momentum so it never stutters.
+      if (!free && animating) return;
       if (free) {
         freeTarget = Math.min(maxScroll(), Math.max(0, freeTarget + e.deltaY * 1.2));
         lenis.scrollTo(freeTarget, { duration: 0.5, easing: ease });
@@ -149,6 +150,37 @@ const Index = () => {
       <main className="pt-24 pb-32">
         <ImageFeed />
       </main>
+
+      {/* Temporary scroll tuning panel */}
+      <div data-tuning-panel className="fixed bottom-4 left-4 z-[60] font-serif text-xs text-foreground">
+        {panelOpen ? (
+          <div className="w-64 space-y-3 border border-border bg-background p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="uppercase tracking-[0.15em]">Scroll tuning</span>
+              <button onClick={() => setPanelOpen(false)} aria-label="Close tuning">✕</button>
+            </div>
+            {([
+              ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
+              ["threshold", "Sensitivity (light ← → firm)", 5, 150, 1, "px"],
+              ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
+            ] as const).map(([key, label, min, max, step, unit]) => (
+              <label key={key} className="block space-y-1">
+                <span className="flex justify-between"><span>{label}</span><span>{tuning[key]}{unit}</span></span>
+                <input
+                  type="range" min={min} max={max} step={step} value={tuning[key]}
+                  onChange={(e) => setTuning((t) => ({ ...t, [key]: Number(e.target.value) }))}
+                  className="w-full accent-foreground"
+                />
+              </label>
+            ))}
+            <button onClick={() => setTuning(DEFAULT_TUNING)} className="underline">Reset</button>
+          </div>
+        ) : (
+          <button onClick={() => setPanelOpen(true)} className="border border-border bg-background px-3 py-1.5 uppercase tracking-[0.15em]">
+            Tune scroll
+          </button>
+        )}
+      </div>
 
       {/* Footer */}
       <footer className="px-6 md:px-10 py-12 border-t border-border">
