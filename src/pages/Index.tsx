@@ -53,7 +53,7 @@ const Index = () => {
 
     const start = () => {
       if (reducedMotion.matches || lenis) return;
-      lenis = new Lenis({ smoothWheel: false, syncTouch: false });
+      lenis = new Lenis({ smoothWheel: true, syncTouch: false, virtualScroll: (data) => !(data.event instanceof WheelEvent) });
       window.addEventListener("wheel", onWheel, { passive: false });
       const animate = (time: number) => {
         lenis?.raf(time);
