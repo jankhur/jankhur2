@@ -22,6 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { fontOptions, isFontChoice, type FontChoice } from "@/lib/siteFonts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DEFAULT_LOGO, headerModeOptions, useLogoSettings, type HeaderMode } from "@/lib/siteSettings";
 
 // ─── Auth Gate ───────────────────────────────────────────────
 
@@ -1010,6 +1011,61 @@ function SettingsTab({ toast }: { toast: (m: string) => void }) {
           </div>
         ))}
       </div>
+      <HeaderLogoSettings toast={toast} />
+    </div>
+  );
+}
+
+function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
+  const qc = useQueryClient();
+  const { data: s = DEFAULT_LOGO } = useLogoSettings();
+  const [size, setSize] = useState(s.logoSize);
+  const [spacing, setSpacing] = useState(s.logoSpacing);
+  useEffect(() => { setSize(s.logoSize); setSpacing(s.logoSpacing); }, [s.logoSize, s.logoSpacing]);
+
+  const save = async (key: string, value: string, patch: Partial<typeof s>) => {
+    try {
+      await adminApi({ action: "update", table: "site_settings", id: key, data: { value } });
+      qc.setQueryData(["site-logo-settings"], { ...s, ...patch });
+      toast("Saved");
+    } catch {
+      toast("Could not save");
+    }
+  };
+
+  return (
+    <div className="space-y-4 border-t border-border pt-6 max-w-md">
+      <h3 className="font-serif text-base">Header & logo</h3>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="header_mode">Header on landing page</label>
+        <Select value={s.headerMode} onValueChange={(v) => save("header_mode", v, { headerMode: v as HeaderMode })}>
+          <SelectTrigger id="header_mode" className="w-64 rounded-none font-serif"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {headerModeOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-serif text-sm">Logo text</span>
+        <InlineField value={s.logoText} placeholder="JAN KHÜR" onSave={(v: string) => save("logo_text", v, { logoText: v || DEFAULT_LOGO.logoText })} className="w-64" />
+      </div>
+      <label className="block space-y-1">
+        <span className="font-serif text-sm flex justify-between"><span>Logo size</span><span>{size}px</span></span>
+        <input type="range" min={10} max={40} step={1} value={size}
+          onChange={(e) => setSize(Number(e.target.value))}
+          onPointerUp={() => save("logo_size", String(size), { logoSize: size })}
+          onKeyUp={() => save("logo_size", String(size), { logoSize: size })}
+          className="w-full accent-black" />
+      </label>
+      <label className="block space-y-1">
+        <span className="font-serif text-sm flex justify-between"><span>Letter spacing</span><span>{spacing.toFixed(2)}em</span></span>
+        <input type="range" min={0} max={0.6} step={0.01} value={spacing}
+          onChange={(e) => setSpacing(Number(e.target.value))}
+          onPointerUp={() => save("logo_spacing", String(spacing), { logoSpacing: spacing })}
+          onKeyUp={() => save("logo_spacing", String(spacing), { logoSpacing: spacing })}
+          className="w-full accent-black" />
+      </label>
+      <p className="font-serif text-xs text-neutral-500">Logo font is chosen under Typography above.</p>
     </div>
   );
 }

@@ -6,8 +6,8 @@ import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
 type Tuning = { lift: number; threshold: number; duration: number };
-const DEFAULT_TUNING: Tuning = { lift: 15, threshold: 40, duration: 0.9 };
-const TUNING_KEY = "landing-scroll-tuning";
+const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 80, duration: 0.7 };
+const TUNING_KEY = "landing-scroll-tuning-v2";
 
 const loadTuning = (): Tuning => {
   try {
@@ -32,14 +32,8 @@ const Index = () => {
     let frame = 0;
     const HEADER = 96;
     const BOTTOM_ROOM = 48;
-    const FREE_THRESHOLD = 900;
-    let accumulated = 0;
-    let gestureTotal = 0;
-    let locked = false;
-    let animating = false;
-    let free = false;
-    let freeTarget = 0;
-    let gestureTimer = 0;
+    let idleTimer = 0;
+    let snapping = false;
     const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 
     const targetFor = (el: Element) => {
@@ -48,71 +42,41 @@ const Index = () => {
       const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
       return Math.max(0, window.scrollY + r.top - offset + tuningRef.current.lift);
     };
-    const allTargets = () => Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
-    const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
-    const onWheel = (e: WheelEvent) => {
-      if (!lenis || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      if ((e.target as Element)?.closest?.("[data-tuning-panel]")) return;
-      e.preventDefault();
-      clearTimeout(gestureTimer);
-      // Gesture ends after a pause; trailing trackpad momentum stays in the same gesture.
-      gestureTimer = window.setTimeout(() => {
-        if (free) {
-          const y = window.scrollY;
-          const t = allTargets();
-          const nearest = t.length ? t.reduce((a, b) => (Math.abs(b - y) < Math.abs(a - y) ? b : a)) : y;
-          lenis?.scrollTo(nearest, { duration: 0.7, easing: ease });
-        } else if (!locked && accumulated !== 0) {
-          lenis?.scrollTo(window.scrollY + accumulated, { duration: 0.4 });
-        }
-        accumulated = 0;
-        gestureTotal = 0;
-        locked = false;
-        free = false;
-      }, 180);
-
-      gestureTotal += Math.abs(e.deltaY);
-      if (!free && gestureTotal > FREE_THRESHOLD) {
-        // A long, hard scroll: switch to free glide.
-        free = true;
-        animating = false;
-        freeTarget = window.scrollY;
+    // Soft proximity snap: only settle a photo that is already almost fully in view.
+    const trySnap = () => {
+      if (!lenis || snapping) return;
+      const vh = window.innerHeight;
+      const need = tuningRef.current.threshold / 100;
+      let best: { target: number; frac: number } | null = null;
+      for (const el of Array.from(document.querySelectorAll("[data-feed-item]"))) {
+        const r = el.getBoundingClientRect();
+        if (r.height === 0) continue;
+        const visible = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+        const frac = visible / Math.min(r.height, vh);
+        if (frac >= need && (!best || frac > best.frac)) best = { target: targetFor(el), frac };
       }
-      // While a page turn glides, ignore leftover momentum so it never stutters.
-      if (!free && animating) return;
-      if (free) {
-        freeTarget = Math.min(maxScroll(), Math.max(0, freeTarget + e.deltaY * 1.2));
-        lenis.scrollTo(freeTarget, { duration: 0.5, easing: ease });
-        return;
-      }
-
-      if (locked) return;
-      accumulated += e.deltaY;
-      if (Math.abs(accumulated) < tuningRef.current.threshold) return;
-
-      const dir = Math.sign(accumulated);
-      locked = true;
-      animating = true;
-      accumulated = 0;
-      const targets = allTargets();
-      const y = window.scrollY;
-      let next: number;
-      if (dir > 0) next = targets.find((t) => t > y + 4) ?? maxScroll();
-      else next = [...targets].reverse().find((t) => t < y - 4) ?? 0;
-      lenis.scrollTo(next, {
+      if (!best || Math.abs(best.target - window.scrollY) < 3) return;
+      snapping = true;
+      lenis.scrollTo(best.target, {
         duration: tuningRef.current.duration,
         easing: ease,
-        onComplete: () => {
-          animating = false;
-        },
+        onComplete: () => { snapping = false; },
       });
     };
 
+    const onScroll = () => {
+      clearTimeout(idleTimer);
+      if (snapping) return;
+      idleTimer = window.setTimeout(trySnap, 220);
+    };
+    const onWheel = () => { snapping = false; };
+
     const start = () => {
       if (reducedMotion.matches || lenis) return;
-      lenis = new Lenis({ smoothWheel: true, syncTouch: false, virtualScroll: (data) => !(data.event instanceof WheelEvent) });
-      window.addEventListener("wheel", onWheel, { passive: false });
+      lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
+      lenis.on("scroll", onScroll);
+      window.addEventListener("wheel", onWheel, { passive: true });
       const animate = (time: number) => {
         lenis?.raf(time);
         frame = requestAnimationFrame(animate);
@@ -122,7 +86,7 @@ const Index = () => {
 
     const stop = () => {
       cancelAnimationFrame(frame);
-      clearTimeout(gestureTimer);
+      clearTimeout(idleTimer);
       window.removeEventListener("wheel", onWheel);
       lenis?.destroy();
       lenis = undefined;
@@ -161,7 +125,7 @@ const Index = () => {
             </div>
             {([
               ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
-              ["threshold", "Sensitivity (light ← → firm)", 5, 150, 1, "px"],
+              ["threshold", "Snap only when photo is this visible", 50, 100, 1, "%"],
               ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
             ] as const).map(([key, label, min, max, step, unit]) => (
               <label key={key} className="block space-y-1">

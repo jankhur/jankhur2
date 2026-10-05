@@ -42,7 +42,15 @@ Deno.serve(async (req) => {
       }
 
       case "update": {
-        const pkCol = table === "site_settings" ? "key" : "id";
+        if (table === "site_settings") {
+          const { data: result, error } = await supabase
+            .from(table)
+            .upsert({ key: id, ...data }, { onConflict: "key" })
+            .select();
+          if (error) throw error;
+          return json(result);
+        }
+        const pkCol = "id";
         const { data: result, error } = await supabase
           .from(table)
           .update(data)
