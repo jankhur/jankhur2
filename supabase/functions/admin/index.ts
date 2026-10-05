@@ -32,6 +32,9 @@ Deno.serve(async (req) => {
     const { action, table, data, id, ids, updates } = await req.json();
 
     switch (action) {
+      case "ping":
+        return json({ ok: true });
+
       case "insert": {
         const { data: result, error } = await supabase
           .from(table)

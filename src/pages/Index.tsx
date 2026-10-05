@@ -6,8 +6,8 @@ import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
 
 type Tuning = { lift: number; threshold: number; duration: number };
-const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 80, duration: 0.7 };
-const TUNING_KEY = "landing-scroll-tuning-v2";
+const DEFAULT_TUNING: Tuning = { lift: 0, threshold: 40, duration: 0.8 };
+const TUNING_KEY = "landing-scroll-tuning-v3";
 
 const loadTuning = (): Tuning => {
   try {
@@ -65,12 +65,61 @@ const Index = () => {
       });
     };
 
+    void trySnap;
+    // Top settle: after scrolling up near the top, rest at the very top.
     const onScroll = () => {
       clearTimeout(idleTimer);
-      if (snapping) return;
-      idleTimer = window.setTimeout(trySnap, 220);
+      if (snapping || freeUntil > performance.now()) return;
+      idleTimer = window.setTimeout(() => {
+        if (!lenis || snapping || lastDir !== -1) return;
+        const y = window.scrollY;
+        if (y > 0 && y < 160) lenis.scrollTo(0, { duration: tuningRef.current.duration, easing: ease });
+      }, 260);
     };
-    const onWheel = () => { snapping = false; };
+
+    // One downward flick = glide straight to the next photo, fully framed.
+    // A second flick during the glide = free fast scroll. Up = free scroll.
+    let lastWheel = 0;
+    let glideStart = 0;
+    let freeUntil = 0;
+    let lastDir: 1 | -1 | 0 = 0;
+    const onWheel = (e: WheelEvent) => {
+      if (!lenis || e.ctrlKey) return;
+      const now = performance.now();
+      const gap = now - lastWheel;
+      lastWheel = now;
+      if (Math.abs(e.deltaY) < 1) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      lastDir = dir;
+      if (dir === -1) { snapping = false; freeUntil = 0; return; } // free scroll up
+      if (freeUntil > now) { freeUntil = now + 700; return; } // fast mode: let Lenis scroll
+      if (snapping) {
+        // Trailing trackpad momentum: swallow. New flick during glide: go free.
+        if (gap > 140 && now - glideStart > 120) {
+          snapping = false;
+          freeUntil = now + 700;
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+      if (Math.abs(e.deltaY) < tuningRef.current.threshold / 20) return;
+      const y = window.scrollY;
+      const targets = Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
+      const target = targets.find((t) => t > y + 8);
+      if (target === undefined) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      snapping = true;
+      glideStart = now;
+      lenis.scrollTo(target, {
+        duration: tuningRef.current.duration,
+        easing: ease,
+        lock: true,
+        onComplete: () => { snapping = false; },
+      });
+    };
 
     // Arrow keys: glide to previous / next photograph.
     const stepTo = (dir: 1 | -1) => {
@@ -109,7 +158,7 @@ const Index = () => {
       if (reducedMotion.matches || lenis) return;
       lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
       lenis.on("scroll", onScroll);
-      window.addEventListener("wheel", onWheel, { passive: true });
+      window.addEventListener("wheel", onWheel, { passive: false, capture: true });
       window.addEventListener("keydown", onKeyDown);
       const animate = (time: number) => {
         lenis?.raf(time);
@@ -121,7 +170,7 @@ const Index = () => {
     const stop = () => {
       cancelAnimationFrame(frame);
       clearTimeout(idleTimer);
-      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("keydown", onKeyDown);
       lenis?.destroy();
       lenis = undefined;
@@ -160,7 +209,7 @@ const Index = () => {
             </div>
             {([
               ["lift", "Photo position (lower ← → higher)", -80, 100, 1, "px"],
-              ["threshold", "Snap only when photo is this visible", 50, 100, 1, "%"],
+              ["threshold", "Flick sensitivity (sensitive ← → firm)", 10, 200, 1, ""],
               ["duration", "Glide speed (fast ← → slow)", 0.3, 1.8, 0.05, "s"],
             ] as const).map(([key, label, min, max, step, unit]) => (
               <label key={key} className="block space-y-1">
