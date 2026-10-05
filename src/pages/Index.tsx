@@ -110,6 +110,7 @@ const Index = () => {
       lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 });
       lenis.on("scroll", onScroll);
       window.addEventListener("wheel", onWheel, { passive: true });
+      window.addEventListener("keydown", onKeyDown);
       const animate = (time: number) => {
         lenis?.raf(time);
         frame = requestAnimationFrame(animate);
@@ -121,6 +122,7 @@ const Index = () => {
       cancelAnimationFrame(frame);
       clearTimeout(idleTimer);
       window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKeyDown);
       lenis?.destroy();
       lenis = undefined;
     };
