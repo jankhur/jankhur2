@@ -11,18 +11,26 @@ const Index = () => {
     let lenis: Lenis | undefined;
     let frame = 0;
     const HEADER = 96;
-    const PAGE_THRESHOLD = 60; // px of wheel travel before flipping to the next photo
+    const BOTTOM_ROOM = 48; // extra breathing space under captions
+    const PAGE_THRESHOLD = 40; // px of wheel travel before flipping to the next photo
+    const FREE_THRESHOLD = 900; // total travel in one gesture that switches to free glide
     let accumulated = 0;
+    let gestureTotal = 0;
     let locked = false;
+    let free = false;
+    let freeTarget = 0;
     let gestureTimer = 0;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 
     // Scroll position that frames an item fully below the header.
     const targetFor = (el: Element) => {
       const r = el.getBoundingClientRect();
-      const area = window.innerHeight - HEADER;
+      const area = window.innerHeight - HEADER - BOTTOM_ROOM;
       const offset = r.height <= area ? HEADER + (area - r.height) / 2 : HEADER;
       return Math.max(0, window.scrollY + r.top - offset);
     };
+    const allTargets = () => Array.from(document.querySelectorAll("[data-feed-item]")).map(targetFor);
+    const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
     const onWheel = (e: WheelEvent) => {
       if (!lenis || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
@@ -30,10 +38,32 @@ const Index = () => {
       clearTimeout(gestureTimer);
       // A gesture ends after a short pause; trackpad inertia stays in the same gesture.
       gestureTimer = window.setTimeout(() => {
-        if (!locked && accumulated !== 0) lenis?.scrollTo(window.scrollY + accumulated, { duration: 0.4 });
+        if (free) {
+          // Glide finished: settle on the nearest photo.
+          const y = window.scrollY;
+          const t = allTargets();
+          const nearest = t.length ? t.reduce((a, b) => (Math.abs(b - y) < Math.abs(a - y) ? b : a)) : y;
+          lenis?.scrollTo(nearest, { duration: 0.7, easing: ease });
+        } else if (!locked && accumulated !== 0) {
+          lenis?.scrollTo(window.scrollY + accumulated, { duration: 0.4 });
+        }
         accumulated = 0;
+        gestureTotal = 0;
         locked = false;
+        free = false;
       }, 160);
+
+      gestureTotal += Math.abs(e.deltaY);
+      if (!free && gestureTotal > FREE_THRESHOLD) {
+        free = true;
+        freeTarget = window.scrollY;
+      }
+      if (free) {
+        freeTarget = Math.min(maxScroll(), Math.max(0, freeTarget + e.deltaY * 1.2));
+        lenis.scrollTo(freeTarget, { duration: 0.5, easing: ease });
+        return;
+      }
+
       if (locked) return;
       accumulated += e.deltaY;
       if (Math.abs(accumulated) < PAGE_THRESHOLD) return;
@@ -41,14 +71,12 @@ const Index = () => {
       const dir = Math.sign(accumulated);
       locked = true;
       accumulated = 0;
-      const items = Array.from(document.querySelectorAll("[data-feed-item]"));
-      const targets = items.map(targetFor);
+      const targets = allTargets();
       const y = window.scrollY;
-      const maxY = document.documentElement.scrollHeight - window.innerHeight;
       let next: number | undefined;
-      if (dir > 0) next = targets.find((t) => t > y + 4) ?? maxY;
+      if (dir > 0) next = targets.find((t) => t > y + 4) ?? maxScroll();
       else next = [...targets].reverse().find((t) => t < y - 4) ?? 0;
-      lenis.scrollTo(next, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
+      lenis.scrollTo(next, { duration: 0.9, easing: ease });
     };
 
     const start = () => {
