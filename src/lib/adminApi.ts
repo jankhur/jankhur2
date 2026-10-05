@@ -63,12 +63,13 @@ ctx.imageSmoothingQuality = "high";
 export async function uploadImage(file: File): Promise<string> {
   const blob = await processImage(file);
   const baseName = file.name.replace(/\.[^.]+$/, "");
-  const safeName = baseName.replace(/\s+/g, "-").toLowerCase();
+  const safeName = baseName.replace(/\s+/g, "-").toLowerCase().replace(/[^a-z0-9._-]/g, "").slice(0, 120) || "image";
   const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}.webp`;
 
+  const { token } = await adminApi({ action: "signed_upload", data: { path } });
   const { error } = await supabase.storage
     .from("images")
-    .upload(path, blob, { contentType: "image/webp" });
+    .uploadToSignedUrl(path, token, blob, { contentType: "image/webp" });
 
   if (error) throw error;
 

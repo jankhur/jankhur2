@@ -35,6 +35,21 @@ Deno.serve(async (req) => {
       case "ping":
         return json({ ok: true });
 
+      case "signed_upload": {
+        const path = String(data?.path || "");
+        if (!/^[a-z0-9._-]{1,200}\.webp$/.test(path)) {
+          return new Response(JSON.stringify({ error: "Invalid path" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const { data: result, error } = await supabase.storage
+          .from("images")
+          .createSignedUploadUrl(path);
+        if (error) throw error;
+        return json(result);
+      }
+
       case "insert": {
         const { data: result, error } = await supabase
           .from(table)
