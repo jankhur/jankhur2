@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import Lenis from "lenis";
-import Snap from "lenis/snap";
 import Header from "@/components/Header";
 import ImageFeed from "@/components/ImageFeed";
 import SketchCursor from "@/components/SketchCursor";
