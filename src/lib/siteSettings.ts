@@ -14,6 +14,8 @@ export type LogoSettings = {
   logoText: string;
   logoSize: number;
   logoSpacing: number;
+  logoUppercase: boolean;
+  showScrollControls: boolean;
 };
 
 export const DEFAULT_LOGO: LogoSettings = {
@@ -21,9 +23,11 @@ export const DEFAULT_LOGO: LogoSettings = {
   logoText: "JAN KHÜR",
   logoSize: 14,
   logoSpacing: 0.2,
+  logoUppercase: true,
+  showScrollControls: false,
 };
 
-export const LOGO_KEYS = ["header_mode", "logo_text", "logo_size", "logo_spacing"];
+export const LOGO_KEYS = ["header_mode", "logo_text", "logo_size", "logo_spacing", "logo_uppercase", "show_scroll_controls"];
 
 export function useLogoSettings() {
   return useQuery({
@@ -37,6 +41,8 @@ export function useLogoSettings() {
         logoText: v.logo_text || DEFAULT_LOGO.logoText,
         logoSize: Number(v.logo_size) || DEFAULT_LOGO.logoSize,
         logoSpacing: v.logo_spacing != null && v.logo_spacing !== "" ? Number(v.logo_spacing) : DEFAULT_LOGO.logoSpacing,
+        logoUppercase: v.logo_uppercase == null ? DEFAULT_LOGO.logoUppercase : v.logo_uppercase === "true",
+        showScrollControls: v.show_scroll_controls === "true",
       };
     },
   });

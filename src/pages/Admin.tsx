@@ -22,6 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { fontOptions, isFontChoice, type FontChoice } from "@/lib/siteFonts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { DEFAULT_LOGO, headerModeOptions, useLogoSettings, type HeaderMode } from "@/lib/siteSettings";
 
 // ─── Auth Gate ───────────────────────────────────────────────
@@ -1048,6 +1049,22 @@ function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
       <div className="flex items-center justify-between gap-3">
         <span className="font-serif text-sm">Logo text</span>
         <InlineField value={s.logoText} placeholder="JAN KHÜR" onSave={(v: string) => save("logo_text", v, { logoText: v || DEFAULT_LOGO.logoText })} className="w-64" />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="logo_uppercase">Force logo to uppercase</label>
+        <Switch
+          id="logo_uppercase"
+          checked={s.logoUppercase}
+          onCheckedChange={(checked) => save("logo_uppercase", String(checked), { logoUppercase: checked })}
+        />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="show_scroll_controls">Show scroll controls</label>
+        <Switch
+          id="show_scroll_controls"
+          checked={s.showScrollControls}
+          onCheckedChange={(checked) => save("show_scroll_controls", String(checked), { showScrollControls: checked })}
+        />
       </div>
       <label className="block space-y-1">
         <span className="font-serif text-sm flex justify-between"><span>Logo size</span><span>{size}px</span></span>
