@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { DEFAULT_LOGO, useLogoSettings } from "@/lib/siteSettings";
+import { DEFAULT_LOGO, breadcrumbFontOptions, useLogoSettings } from "@/lib/siteSettings";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -127,14 +127,16 @@ const SketchFace = () => (
 
 const menuIllustrations = [SketchMagazine, SketchMoney, SketchTracks, SketchDiary, SketchFace];
 
-const breadcrumbStyle = {
-  fontFamily: 'var(--font-logo)',
-} as const;
-
-const breadcrumbClass = "text-sm tracking-[0.2em] text-foreground uppercase";
-
 const Breadcrumbs = () => {
   const location = useLocation();
+  const { data: s = DEFAULT_LOGO } = useLogoSettings();
+  const breadcrumbStyle = {
+    fontFamily: breadcrumbFontOptions.find((o) => o.value === s.breadcrumbFont)?.family ?? "var(--font-logo)",
+    fontSize: `${s.breadcrumbSync ? s.logoSize : s.breadcrumbSize}px`,
+    letterSpacing: `${s.breadcrumbSync ? s.logoSpacing : s.breadcrumbSpacing}em`,
+    whiteSpace: "pre" as const,
+  };
+  const breadcrumbClass = `text-foreground ${s.breadcrumbUppercase ? "uppercase" : "normal-case"}`;
   const parts = location.pathname.split("/").filter(Boolean);
 
   const section = parts[0]; // editorial, journey, notes, about
@@ -312,7 +314,7 @@ const Header = ({ showName = false }: HeaderProps) => {
               )}
             </AnimatePresence>
           </Link>
-          {showName && <Breadcrumbs />}
+          {showName && logo.breadcrumbShow && <Breadcrumbs />}
         </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}

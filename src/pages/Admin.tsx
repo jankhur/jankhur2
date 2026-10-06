@@ -22,7 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { fontOptions, isFontChoice, type FontChoice } from "@/lib/siteFonts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DEFAULT_LOGO, headerModeOptions, useLogoSettings, type HeaderMode } from "@/lib/siteSettings";
+import { DEFAULT_LOGO, DEFAULT_SETTING_VALUES, breadcrumbFontOptions, headerModeOptions, useLogoSettings, type HeaderMode } from "@/lib/siteSettings";
 
 // ─── Auth Gate ───────────────────────────────────────────────
 
@@ -1118,6 +1118,86 @@ function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
           className="w-full accent-black" />
       </label>
       <p className="font-serif text-xs text-neutral-500">Logo font is chosen under Typography above.</p>
+      <BreadcrumbSettings s={s} save={save} />
+      <RestoreDefaults toast={toast} />
+    </div>
+  );
+}
+
+function BreadcrumbSettings({ s, save }: { s: typeof DEFAULT_LOGO; save: (key: string, value: string, patch: Partial<typeof DEFAULT_LOGO>) => Promise<void> }) {
+  const [size, setSize] = useState(s.breadcrumbSize);
+  const [spacing, setSpacing] = useState(s.breadcrumbSpacing);
+  useEffect(() => { setSize(s.breadcrumbSize); setSpacing(s.breadcrumbSpacing); }, [s.breadcrumbSize, s.breadcrumbSpacing]);
+  const check = (id: string, label: string, value: boolean, field: keyof typeof DEFAULT_LOGO) => (
+    <div className="flex items-center justify-between gap-3">
+      <label className="font-serif text-sm" htmlFor={id}>{label}</label>
+      <input id={id} type="checkbox" checked={value} className="h-4 w-4 accent-black"
+        onChange={(e) => { const c = e.target.checked; void save(id, String(c), { [field]: c }); }} />
+    </div>
+  );
+  return (
+    <div className="space-y-4 border-t border-border pt-6">
+      <h3 className="font-serif text-base">Breadcrumb menu (next to logo)</h3>
+      {check("breadcrumb_show", "Show breadcrumbs", s.breadcrumbShow, "breadcrumbShow")}
+      {s.breadcrumbShow && (
+        <>
+          {check("breadcrumb_uppercase", "Breadcrumbs in capitals", s.breadcrumbUppercase, "breadcrumbUppercase")}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <label className="font-serif text-sm" htmlFor="breadcrumb_font">Breadcrumb font</label>
+            <Select value={s.breadcrumbFont} onValueChange={(v) => save("breadcrumb_font", v, { breadcrumbFont: v })}>
+              <SelectTrigger id="breadcrumb_font" className="w-56 rounded-none font-serif"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {breadcrumbFontOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          {check("breadcrumb_sync", "Same size & spacing as logo", s.breadcrumbSync, "breadcrumbSync")}
+          {!s.breadcrumbSync && (
+            <>
+              <label className="block space-y-1">
+                <span className="font-serif text-sm flex justify-between"><span>Breadcrumb size</span><span>{size}px</span></span>
+                <input type="range" min={8} max={40} step={1} value={size}
+                  onChange={(e) => setSize(Number(e.target.value))}
+                  onPointerUp={() => save("breadcrumb_size", String(size), { breadcrumbSize: size })}
+                  onKeyUp={() => save("breadcrumb_size", String(size), { breadcrumbSize: size })}
+                  className="w-full accent-black" />
+              </label>
+              <label className="block space-y-1">
+                <span className="font-serif text-sm flex justify-between"><span>Breadcrumb letter spacing</span><span>{spacing.toFixed(2)}em</span></span>
+                <input type="range" min={0} max={0.6} step={0.01} value={spacing}
+                  onChange={(e) => setSpacing(Number(e.target.value))}
+                  onPointerUp={() => save("breadcrumb_spacing", String(spacing), { breadcrumbSpacing: spacing })}
+                  onKeyUp={() => save("breadcrumb_spacing", String(spacing), { breadcrumbSpacing: spacing })}
+                  className="w-full accent-black" />
+              </label>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function RestoreDefaults({ toast }: { toast: (m: string) => void }) {
+  const qc = useQueryClient();
+  const { confirm, dialog } = useConfirm();
+  const restore = async () => {
+    if (!(await confirm("Reset all header, logo, breadcrumb, font, cursor and menu settings to standard? Photos and projects are not affected."))) return;
+    try {
+      await Promise.all(Object.entries(DEFAULT_SETTING_VALUES).map(([key, value]) =>
+        adminApi({ action: "update", table: "site_settings", id: key, data: { value } })));
+      await qc.invalidateQueries();
+      toast("Restored standard settings");
+    } catch {
+      toast("Could not restore");
+    }
+  };
+  return (
+    <div className="border-t border-border pt-6">
+      {dialog}
+      <button onClick={restore} className="font-serif text-sm px-4 py-2 border border-black hover:bg-black hover:text-white">
+        Restore standard settings
+      </button>
     </div>
   );
 }
