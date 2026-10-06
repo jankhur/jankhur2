@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { DEFAULT_LOGO, breadcrumbFontOptions, useLogoSettings } from "@/lib/siteSettings";
+import { DEFAULT_LOGO, breadcrumbFontOptions, breadcrumbSeparatorOptions, useLogoSettings } from "@/lib/siteSettings";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -135,8 +135,10 @@ const Breadcrumbs = () => {
     fontSize: `${s.breadcrumbSync ? s.logoSize : s.breadcrumbSize}px`,
     letterSpacing: `${s.breadcrumbSync ? s.logoSpacing : s.breadcrumbSpacing}em`,
     whiteSpace: "pre" as const,
+    textTransform: s.breadcrumbUppercase ? "uppercase" as const : "none" as const,
   };
-  const breadcrumbClass = `text-foreground ${s.breadcrumbUppercase ? "uppercase" : "normal-case"}`;
+  const breadcrumbClass = "text-foreground";
+  const separator = breadcrumbSeparatorOptions.find((option) => option.value === s.breadcrumbSeparator)?.character ?? "·";
   const parts = location.pathname.split("/").filter(Boolean);
 
   const section = parts[0]; // editorial, journey, notes, about
@@ -175,7 +177,7 @@ const Breadcrumbs = () => {
         className={breadcrumbClass}
         style={breadcrumbStyle}
       >
-        {" · "}
+        {` ${separator} `}
       </motion.span>
       <motion.span
         key={`section-${section}`}
@@ -199,7 +201,7 @@ const Breadcrumbs = () => {
             className={breadcrumbClass}
             style={breadcrumbStyle}
           >
-            {" · "}
+            {` ${separator} `}
           </motion.span>
           <motion.span
             key={`slug-${slug}`}
@@ -290,13 +292,56 @@ const Header = ({ showName = false }: HeaderProps) => {
   }, [isLanding, logo.headerMode]);
 
   const headerHidden = hidden && !menuOpen;
+  const placementClass = logo.logoPlacement === "center"
+    ? "absolute left-1/2 -translate-x-1/2"
+    : "relative";
+  const headerSpacingClass = logo.logoPlacement === "tight"
+    ? "px-4 md:px-5 py-4"
+    : "px-6 md:px-10 py-6";
+
+  const menuControl = () => {
+    if (logo.menuButtonStyle === "dot") {
+      return (
+        <motion.span
+          className="block text-foreground leading-none"
+          animate={logo.menuAnimations && menuOpen ? { rotate: 90, scale: 1.15 } : { rotate: 0, scale: 1 }}
+          transition={{ duration: logo.menuAnimations ? 0.25 : 0 }}
+          aria-hidden="true"
+        >
+          {menuOpen ? "×" : "●"}
+        </motion.span>
+      );
+    }
+    if (logo.menuButtonStyle === "text") {
+      return <span className="text-foreground font-serif text-xs">{menuOpen ? "CLOSE" : "MENU"}</span>;
+    }
+    return (
+      <span className="flex flex-col gap-[5px]">
+        <motion.span
+          animate={logo.menuAnimations && menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+          className="block w-7 h-[2px] bg-foreground"
+          transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
+        />
+        <motion.span
+          animate={logo.menuAnimations && menuOpen ? { opacity: 0 } : { opacity: 1 }}
+          className="block w-7 h-[2px] bg-foreground"
+          transition={{ duration: logo.menuAnimations ? 0.2 : 0 }}
+        />
+        <motion.span
+          animate={logo.menuAnimations && menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+          className="block w-7 h-[2px] bg-foreground"
+          transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
+        />
+      </span>
+    );
+  };
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-6 transition-all duration-500 ${isLanding ? "bg-transparent" : "bg-background"} ${headerHidden ? (logo.headerMode === "hide" ? "-translate-y-full opacity-0 pointer-events-none" : "opacity-0 pointer-events-none") : "translate-y-0 opacity-100"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between ${headerSpacingClass} transition-all duration-500 ${isLanding ? "bg-transparent" : "bg-background"} ${headerHidden ? (logo.headerMode === "hide" ? "-translate-y-full opacity-0 pointer-events-none" : "opacity-0 pointer-events-none") : "translate-y-0 opacity-100"}`}
       >
-        <div className="relative h-6 flex items-center">
+        <div className={`${placementClass} h-6 flex items-center`}>
           <Link to="/" onClick={handleNameClick} className="cursor-pointer">
             <AnimatePresence mode="wait">
               {showName && (
@@ -318,24 +363,10 @@ const Header = ({ showName = false }: HeaderProps) => {
         </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex flex-col gap-[5px] z-50 relative"
+          className="z-50 relative min-w-7 min-h-7 flex items-center justify-center"
           aria-label="Toggle menu"
         >
-          <motion.span
-            animate={logo.menuAnimations && menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-            className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
-          />
-          <motion.span
-            animate={logo.menuAnimations && menuOpen ? { opacity: 0 } : { opacity: 1 }}
-            className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: logo.menuAnimations ? 0.2 : 0 }}
-          />
-          <motion.span
-            animate={logo.menuAnimations && menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-            className="block w-7 h-[2px] bg-foreground"
-            transition={{ duration: logo.menuAnimations ? 0.3 : 0 }}
-          />
+          {menuControl()}
         </button>
       </header>
 

@@ -22,7 +22,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { fontOptions, isFontChoice, type FontChoice } from "@/lib/siteFonts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DEFAULT_LOGO, DEFAULT_SETTING_VALUES, breadcrumbFontOptions, headerModeOptions, useLogoSettings, type HeaderMode } from "@/lib/siteSettings";
+import Header from "@/components/Header";
+import { DEFAULT_LOGO, DEFAULT_SETTING_VALUES, breadcrumbFontOptions, breadcrumbSeparatorOptions, headerModeOptions, logoPlacementOptions, menuButtonStyleOptions, useLogoSettings, type HeaderMode, type LogoPlacement, type MenuButtonStyle } from "@/lib/siteSettings";
 
 // ─── Auth Gate ───────────────────────────────────────────────
 
@@ -1049,6 +1050,24 @@ function HeaderLogoSettings({ toast }: { toast: (m: string) => void }) {
         <span className="font-serif text-sm">Logo text</span>
         <InlineField value={s.logoText} placeholder="JAN KHÜR" onSave={(v: string) => save("logo_text", v, { logoText: v || DEFAULT_LOGO.logoText })} className="w-64" />
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="logo_placement">Logo placement</label>
+        <Select value={s.logoPlacement} onValueChange={(v) => save("logo_placement", v, { logoPlacement: v as LogoPlacement })}>
+          <SelectTrigger id="logo_placement" className="w-56 rounded-none font-serif"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {logoPlacementOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="font-serif text-sm" htmlFor="menu_button_style">Menu button</label>
+        <Select value={s.menuButtonStyle} onValueChange={(v) => save("menu_button_style", v, { menuButtonStyle: v as MenuButtonStyle })}>
+          <SelectTrigger id="menu_button_style" className="w-56 rounded-none font-serif"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {menuButtonStyleOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
       <div className="flex items-center justify-between gap-3">
         <label className="font-serif text-sm" htmlFor="logo_uppercase">Force logo to uppercase</label>
         <input
@@ -1151,6 +1170,15 @@ function BreadcrumbSettings({ s, save }: { s: typeof DEFAULT_LOGO; save: (key: s
               </SelectContent>
             </Select>
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <label className="font-serif text-sm" htmlFor="breadcrumb_separator">Breadcrumb separator</label>
+            <Select value={s.breadcrumbSeparator} onValueChange={(v) => save("breadcrumb_separator", v, { breadcrumbSeparator: v as typeof s.breadcrumbSeparator })}>
+              <SelectTrigger id="breadcrumb_separator" className="w-56 rounded-none font-serif"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {breadcrumbSeparatorOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           {check("breadcrumb_sync", "Same size & spacing as logo", s.breadcrumbSync, "breadcrumbSync")}
           {!s.breadcrumbSync && (
             <>
@@ -1212,7 +1240,8 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <Header showName />
+      <div className="max-w-4xl mx-auto px-6 pt-24 pb-12">
         <div className="flex justify-between items-center mb-8">
           <h1 className="font-serif text-2xl">Admin</h1>
           <button onClick={() => { sessionStorage.removeItem("admin_password"); setAuthed(false); }} className="font-serif text-sm text-neutral-400 hover:text-black">

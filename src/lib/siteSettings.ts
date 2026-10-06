@@ -2,11 +2,32 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type HeaderMode = "hide" | "always" | "fade";
+export type LogoPlacement = "tight" | "current" | "center";
+export type BreadcrumbSeparator = "dot" | "dash" | "slash";
+export type MenuButtonStyle = "hamburger" | "dot" | "text";
 
 export const headerModeOptions: { value: HeaderMode; label: string }[] = [
   { value: "hide", label: "Hide on scroll down, show on scroll up" },
   { value: "always", label: "Always visible (floating)" },
   { value: "fade", label: "Fade out after first photo" },
+];
+
+export const logoPlacementOptions: { value: LogoPlacement; label: string }[] = [
+  { value: "tight", label: "Top left — tight" },
+  { value: "current", label: "Top left — current" },
+  { value: "center", label: "Top center" },
+];
+
+export const breadcrumbSeparatorOptions: { value: BreadcrumbSeparator; label: string; character: string }[] = [
+  { value: "dot", label: "Dot ·", character: "·" },
+  { value: "dash", label: "Dash —", character: "—" },
+  { value: "slash", label: "Slash /", character: "/" },
+];
+
+export const menuButtonStyleOptions: { value: MenuButtonStyle; label: string }[] = [
+  { value: "hamburger", label: "Hamburger" },
+  { value: "dot", label: "Dot" },
+  { value: "text", label: "MENU text" },
 ];
 
 export const breadcrumbFontOptions = [
@@ -25,6 +46,8 @@ export type LogoSettings = {
   logoSize: number;
   logoSpacing: number;
   logoUppercase: boolean;
+  logoPlacement: LogoPlacement;
+  menuButtonStyle: MenuButtonStyle;
   showScrollControls: boolean;
   customCursor: boolean;
   menuAnimations: boolean;
@@ -34,6 +57,7 @@ export type LogoSettings = {
   breadcrumbSpacing: number;
   breadcrumbUppercase: boolean;
   breadcrumbFont: string;
+  breadcrumbSeparator: BreadcrumbSeparator;
 };
 
 export const DEFAULT_LOGO: LogoSettings = {
@@ -42,6 +66,8 @@ export const DEFAULT_LOGO: LogoSettings = {
   logoSize: 14,
   logoSpacing: 0.2,
   logoUppercase: true,
+  logoPlacement: "current",
+  menuButtonStyle: "hamburger",
   showScrollControls: false,
   customCursor: true,
   menuAnimations: true,
@@ -49,8 +75,9 @@ export const DEFAULT_LOGO: LogoSettings = {
   breadcrumbSync: true,
   breadcrumbSize: 14,
   breadcrumbSpacing: 0.2,
-  breadcrumbUppercase: true,
+  breadcrumbUppercase: false,
   breadcrumbFont: "logo",
+  breadcrumbSeparator: "dot",
 };
 
 /** Setting key -> stored string for every display default (used by "Restore standard"). */
@@ -60,6 +87,8 @@ export const DEFAULT_SETTING_VALUES: Record<string, string> = {
   logo_size: String(DEFAULT_LOGO.logoSize),
   logo_spacing: String(DEFAULT_LOGO.logoSpacing),
   logo_uppercase: "true",
+  logo_placement: DEFAULT_LOGO.logoPlacement,
+  menu_button_style: DEFAULT_LOGO.menuButtonStyle,
   show_scroll_controls: "false",
   custom_cursor: "true",
   menu_animations: "true",
@@ -67,8 +96,9 @@ export const DEFAULT_SETTING_VALUES: Record<string, string> = {
   breadcrumb_sync: "true",
   breadcrumb_size: String(DEFAULT_LOGO.breadcrumbSize),
   breadcrumb_spacing: String(DEFAULT_LOGO.breadcrumbSpacing),
-  breadcrumb_uppercase: "true",
+  breadcrumb_uppercase: "false",
   breadcrumb_font: "logo",
+  breadcrumb_separator: DEFAULT_LOGO.breadcrumbSeparator,
   logo_font: "current",
   serif_font: "current",
 };
@@ -85,12 +115,17 @@ export function useLogoSettings() {
       const { data } = await supabase.from("site_settings").select("key, value").in("key", LOGO_KEYS);
       const v = Object.fromEntries((data ?? []).map(({ key, value }) => [key, value])) as Record<string, string | undefined>;
       const mode = v.header_mode as HeaderMode;
+      const placement = v.logo_placement as LogoPlacement;
+      const menuButtonStyle = v.menu_button_style as MenuButtonStyle;
+      const separator = v.breadcrumb_separator as BreadcrumbSeparator;
       return {
         headerMode: ["hide", "always", "fade"].includes(mode) ? mode : DEFAULT_LOGO.headerMode,
         logoText: v.logo_text || DEFAULT_LOGO.logoText,
         logoSize: Number(v.logo_size) || DEFAULT_LOGO.logoSize,
         logoSpacing: num(v.logo_spacing, DEFAULT_LOGO.logoSpacing),
         logoUppercase: bool(v.logo_uppercase, DEFAULT_LOGO.logoUppercase),
+        logoPlacement: logoPlacementOptions.some((o) => o.value === placement) ? placement : DEFAULT_LOGO.logoPlacement,
+        menuButtonStyle: menuButtonStyleOptions.some((o) => o.value === menuButtonStyle) ? menuButtonStyle : DEFAULT_LOGO.menuButtonStyle,
         showScrollControls: v.show_scroll_controls === "true",
         customCursor: bool(v.custom_cursor, DEFAULT_LOGO.customCursor),
         menuAnimations: bool(v.menu_animations, DEFAULT_LOGO.menuAnimations),
@@ -98,8 +133,9 @@ export function useLogoSettings() {
         breadcrumbSync: bool(v.breadcrumb_sync, true),
         breadcrumbSize: Number(v.breadcrumb_size) || DEFAULT_LOGO.breadcrumbSize,
         breadcrumbSpacing: num(v.breadcrumb_spacing, DEFAULT_LOGO.breadcrumbSpacing),
-        breadcrumbUppercase: bool(v.breadcrumb_uppercase, true),
-        breadcrumbFont: breadcrumbFontOptions.some((o) => o.value === v.breadcrumb_font) ? v.breadcrumb_font! : "logo",
+        breadcrumbUppercase: bool(v.breadcrumb_uppercase, DEFAULT_LOGO.breadcrumbUppercase),
+        breadcrumbFont: breadcrumbFontOptions.some((o) => o.value === v.breadcrumb_font) ? String(v.breadcrumb_font) : "logo",
+        breadcrumbSeparator: breadcrumbSeparatorOptions.some((o) => o.value === separator) ? separator : DEFAULT_LOGO.breadcrumbSeparator,
       };
     },
   });
