@@ -136,6 +136,7 @@ const Breadcrumbs = () => {
     letterSpacing: `${s.breadcrumbSync ? s.logoSpacing : s.breadcrumbSpacing}em`,
     whiteSpace: "pre" as const,
     textTransform: s.breadcrumbUppercase ? "uppercase" as const : "none" as const,
+    lineHeight: 1,
   };
   const breadcrumbClass = "text-foreground";
   const separator = breadcrumbSeparatorOptions.find((option) => option.value === s.breadcrumbSeparator)?.character ?? "·";
@@ -185,6 +186,8 @@ const Breadcrumbs = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
+        className="inline-flex items-baseline"
+        style={breadcrumbStyle}
       >
         <Link to={`/${section}`} className={breadcrumbClass} style={breadcrumbStyle}>
           {sectionLabel}
@@ -341,8 +344,8 @@ const Header = ({ showName = false }: HeaderProps) => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between ${headerSpacingClass} transition-all duration-500 ${isLanding ? "bg-transparent" : "bg-background"} ${headerHidden ? (logo.headerMode === "hide" ? "-translate-y-full opacity-0 pointer-events-none" : "opacity-0 pointer-events-none") : "translate-y-0 opacity-100"}`}
       >
-        <div className={`${placementClass} h-6 flex items-center`}>
-          <Link to="/" onClick={handleNameClick} className="cursor-pointer">
+        <div className={`${placementClass} h-6 flex items-baseline`}>
+          <Link to="/" onClick={handleNameClick} className="cursor-pointer inline-flex items-baseline leading-none">
             <AnimatePresence mode="wait">
               {showName && (
                 <motion.span
@@ -351,8 +354,8 @@ const Header = ({ showName = false }: HeaderProps) => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.8 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className={`text-foreground ${logo.logoUppercase ? "uppercase" : "normal-case"}`}
-                  style={{ fontFamily: 'var(--font-logo)', fontSize: `${logo.logoSize}px`, letterSpacing: `${logo.logoSpacing}em` }}
+                  className={`text-foreground leading-none ${logo.logoUppercase ? "uppercase" : "normal-case"}`}
+                  style={{ fontFamily: 'var(--font-logo)', fontSize: `${logo.logoSize}px`, letterSpacing: `${logo.logoSpacing}em`, lineHeight: 1 }}
                 >
                   {logo.logoText}
                 </motion.span>
