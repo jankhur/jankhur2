@@ -33,7 +33,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    sessionStorage.setItem("admin_password", pw);
+    setError("");
     try {
       const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const res = await fetch(
@@ -51,6 +51,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
         setError("Wrong password");
         sessionStorage.removeItem("admin_password");
       } else {
+        sessionStorage.setItem("admin_password", pw);
         onAuth();
       }
     } catch {
