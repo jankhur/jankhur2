@@ -13,6 +13,7 @@ import Notes from "./pages/Notes.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
 import { SiteFontSettings } from "./components/SiteFontSettings.tsx";
+import { DesignToolbar } from "./components/DesignToolbar.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <DesignToolbar />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
