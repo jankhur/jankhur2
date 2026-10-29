@@ -1237,6 +1237,14 @@ const Admin = () => {
   const [authed, setAuthed] = useState(() => !!sessionStorage.getItem("admin_password"));
   const { msg, show } = useToastMessage();
 
+  useEffect(() => {
+    const onOut = () => setAuthed(false);
+    window.addEventListener("admin-signed-out", onOut);
+    // Verify a saved password still works; if not, adminApi signs out.
+    if (sessionStorage.getItem("admin_password")) adminApi({ action: "ping" }).catch(() => {});
+    return () => window.removeEventListener("admin-signed-out", onOut);
+  }, []);
+
   if (!authed) return <AdminLogin onAuth={() => setAuthed(true)} />;
 
   return (
