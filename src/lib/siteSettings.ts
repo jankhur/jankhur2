@@ -101,9 +101,11 @@ export const DEFAULT_SETTING_VALUES: Record<string, string> = {
   breadcrumb_separator: DEFAULT_LOGO.breadcrumbSeparator,
   logo_font: "current",
   serif_font: "current",
+  color_background: "#ffffff",
+  color_foreground: "#000000",
 };
 
-export const LOGO_KEYS = Object.keys(DEFAULT_SETTING_VALUES).filter((k) => k !== "logo_font" && k !== "serif_font");
+export const LOGO_KEYS = Object.keys(DEFAULT_SETTING_VALUES).filter((k) => !["logo_font", "serif_font", "color_background", "color_foreground"].includes(k));
 
 const bool = (v: string | undefined, d: boolean) => (v == null || v === "" ? d : v === "true");
 const num = (v: string | undefined, d: number) => (v != null && v !== "" && !isNaN(Number(v)) ? Number(v) : d);
