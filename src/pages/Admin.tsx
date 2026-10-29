@@ -33,7 +33,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    sessionStorage.setItem("admin_password", pw);
+    setError("");
     try {
       const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const res = await fetch(
@@ -51,6 +51,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
         setError("Wrong password");
         sessionStorage.removeItem("admin_password");
       } else {
+        sessionStorage.setItem("admin_password", pw);
         onAuth();
       }
     } catch {
@@ -1235,6 +1236,14 @@ function RestoreDefaults({ toast }: { toast: (m: string) => void }) {
 const Admin = () => {
   const [authed, setAuthed] = useState(() => !!sessionStorage.getItem("admin_password"));
   const { msg, show } = useToastMessage();
+
+  useEffect(() => {
+    const onOut = () => setAuthed(false);
+    window.addEventListener("admin-signed-out", onOut);
+    // Verify a saved password still works; if not, adminApi signs out.
+    if (sessionStorage.getItem("admin_password")) adminApi({ action: "ping" }).catch(() => {});
+    return () => window.removeEventListener("admin-signed-out", onOut);
+  }, []);
 
   if (!authed) return <AdminLogin onAuth={() => setAuthed(true)} />;
 
