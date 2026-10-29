@@ -16,8 +16,14 @@ export async function adminApi(body: Record<string, unknown>) {
     },
     body: JSON.stringify(body),
   });
+  if (res.status === 401) {
+    // Stale or wrong saved password: sign out so the login screen shows again.
+    sessionStorage.removeItem("admin_password");
+    window.dispatchEvent(new Event("admin-signed-out"));
+    throw new Error("Signed out — please log in again");
+  }
   if (!res.ok) {
-    const err = await res.json();
+    const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Admin API error");
   }
   return res.json();
