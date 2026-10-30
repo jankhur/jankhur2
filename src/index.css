@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400&display=swap');
 @import url('https://fonts.cdnfonts.com/css/tex-gyre-termes');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,700,800&f[]=general-sans@400,500,700&display=swap');
 
 @font-face {
   font-family: 'KristallLL';
@@ -91,6 +93,21 @@
   :root[data-serif-font='tinos'] {
     --font-serif: 'Tinos', 'Times New Roman', serif;
   }
+  :root[data-logo-font='syne'] { --font-logo: 'Syne', sans-serif; }
+  :root[data-serif-font='syne'] { --font-serif: 'Syne', sans-serif; }
+
+  :root[data-logo-font='cabinet'] { --font-logo: 'Cabinet Grotesk', sans-serif; }
+  :root[data-serif-font='cabinet'] { --font-serif: 'Cabinet Grotesk', sans-serif; }
+
+  :root[data-logo-font='spacegrotesk'] { --font-logo: 'Space Grotesk', sans-serif; }
+  :root[data-serif-font='spacegrotesk'] { --font-serif: 'Space Grotesk', sans-serif; }
+
+  :root[data-logo-font='generalsans'] { --font-logo: 'General Sans', sans-serif; }
+  :root[data-serif-font='generalsans'] { --font-serif: 'General Sans', sans-serif; }
+
+  :root[data-logo-font='inter'] { --font-logo: 'Inter', sans-serif; }
+  :root[data-serif-font='inter'] { --font-serif: 'Inter', sans-serif; }
+
 }
 
 @layer base {
